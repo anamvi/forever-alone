@@ -23,7 +23,21 @@ class Function(object):
 class FunctionsTable:
     def __init__(self):
         self.functions = {}
-        self.add_function("global", 'void', {})
+        self.add_function("global", 'void')
+
+    def __str__(self):
+        output = "------------ functions -------------\n"
+        for i in self.functions:
+            func = self.functions[i]
+            output += "-----> " + func.name + " : " + \
+                str(func.type) + "\n"
+            for j in self.functions[func.name].variables:
+                variable = self.functions[func.name].variables[j]
+                output += "NAME: " + variable.name + "\n"
+                output += "TYPE: " + str(variable.type) + "\n\n"
+
+            output += "\n"
+        return output
 
     def add_function(self, name, type):
         if name in self.functions:

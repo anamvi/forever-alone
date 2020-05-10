@@ -1,0 +1,19 @@
+programa hola;
+var int: i, j[2];
+funcion int uno(); {
+  lee(i,j[1]);
+  j[0] = i+j[1];
+  desde x = 0 hasta 10 hacer {
+    escribe(j[2], 'funciona');
+  }
+  regresa(i);
+}
+principal() {
+  i=2;
+  si(uno() == i) entonces {
+    regresa(j);
+  }
+  sino {
+    regresa(i);
+  }
+}

@@ -1,8 +1,11 @@
 import ply.lex as lex
 import ply.yacc as yacc
-from var_table import VariableTable
+from functions_table import FunctionsTable
 
-vars = VariableTable()
+DirFunc = FunctionsTable()
+current_scope = ''
+var_list = []
+counter = 0
 
 # PALABRAS RESERVADAS
 reserved = {
@@ -117,6 +120,13 @@ def p_prog(p):
     '''
         prog : PROGRAM ID SEMICOLON variables prog_funcs func_princ
     '''
+    global current_scope
+    current_scope = 'global'
+    for i in var_list:
+        DirFunc.functions['global'].add_variable(i[0], i[1])
+        
+    var_list.clear()
+    print(DirFunc)
 
 def p_prog_funcs(p):
     '''
@@ -129,12 +139,14 @@ def p_variables(p):
         variables : VAR variables_2
         | empty
     '''
-
 def p_variables_2(p):
     '''
         variables_2 : tipo COLON lista_id SEMICOLON variables_rep
     '''
-    vars.insert_var(p[3], p[1], 'global')
+    global counter
+    while counter>0:
+        var_list[counter-1].append(p[1])
+        counter-=1
 
 def p_variables_rep(p):
     '''
@@ -146,6 +158,11 @@ def p_lista_id(p):
     '''
         lista_id : ID dimension_var lista_id_rep
     '''
+    global counter
+    global var_list
+    var_list.append([p[1]])
+    counter+=1
+    # DirFunc.functions[current_scope].add_var(p[1], current_type)
 
 def p_lista_id_rep(p):
     '''
@@ -165,6 +182,8 @@ def p_tipo(p):
         | FLOAT
         | CHAR
     '''
+
+    p[0] = p[1]
 
 def p_func_princ(p):
     '''
