@@ -4,10 +4,11 @@ class Variable:
         self.type = type
 
 class Function(object):
-    def __init__(self, name, type):
+    def __init__(self, name, type, parameters):
         self.name = name
         self.type = type
         self.variables = {}
+        self.parameters = parameters
         # agregar parámetros a arreglo de parámetros
 
     def add_variable(self, name, type):
@@ -23,7 +24,7 @@ class Function(object):
 class FunctionsTable:
     def __init__(self):
         self.functions = {}
-        self.add_function("global", 'void')
+        self.add_function("global", 'void', [])
 
     def __str__(self):
         output = "------------ functions -------------\n"
@@ -31,6 +32,7 @@ class FunctionsTable:
             func = self.functions[i]
             output += "-----> " + func.name + " : " + \
                 str(func.type) + "\n"
+            output += "PARAMETERS: " + str(func.parameters) + "\n\n"
             for j in self.functions[func.name].variables:
                 variable = self.functions[func.name].variables[j]
                 output += "NAME: " + variable.name + "\n"
@@ -39,11 +41,11 @@ class FunctionsTable:
             output += "\n"
         return output
 
-    def add_function(self, name, type):
+    def add_function(self, name, type, parameters):
         if name in self.functions:
             raise Exception("La función ya existe.")
         else:
-            self.functions[name] = Function(name, type)
+            self.functions[name] = Function(name, type, parameters)
 
     def function_exists(self, name):
         if name in self.functions:

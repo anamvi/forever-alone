@@ -211,9 +211,13 @@ def p_funcion(p):
     '''
         funcion : FUNC tipo_func ID PARENTHESESL funcion_param PARENTHESESR SEMICOLON variables CURLYL estatuto_rep CURLYR
     '''
+    temp = []
+    if p[5] is not None:
+        for i in p[5]:
+            temp.append(i[1])
     # Add function to functions directory
     if not DirFunc.function_exists(p[3]):
-        DirFunc.add_function(p[3], p[2])
+        DirFunc.add_function(p[3], p[2], temp)
     # add parameters to variable table for current function
     if p[5] is not None:
         for i in p[5]:
