@@ -45,7 +45,7 @@ class FunctionsTable:
         else:
             self.functions[name] = Function(name, type)
 
-    def check_function_exists(self, name):
+    def function_exists(self, name):
         if name in self.functions:
             return True
         return False

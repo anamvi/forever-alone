@@ -120,12 +120,10 @@ def p_prog(p):
     '''
         prog : PROGRAM ID SEMICOLON variables prog_funcs func_princ
     '''
-    global current_scope
-    current_scope = 'global'
-    for i in p[4]:
-        DirFunc.functions['global'].add_variable(i[0], i[1])
-
-    # var_list.clear()
+    # Add variables to variable table for the global scope
+    if p[4] is not None:
+        for i in p[4]:
+            DirFunc.functions['global'].add_variable(i[0], i[1])
     print(DirFunc)
 
 def p_prog_funcs(p):
@@ -139,6 +137,7 @@ def p_variables(p):
         variables : VAR variables_2
         | empty
     '''
+    # if there are variables, return the list
     if p[1] == 'var':
         p[0] = p[2]
 
@@ -146,12 +145,14 @@ def p_variables_2(p):
     '''
         variables_2 : tipo COLON lista_id SEMICOLON variables_rep
     '''
-    global counter
+    # add the current type to each ID in the list
     for i in p[3]:
         i.append(p[1])
+    # add the result of the recursion to the list
     if p[5] is not None:
         for j in p[5]:
             p[3].append(j)
+    # return the list
     p[0] = p[3]
 
 def p_variables_rep(p):
@@ -159,26 +160,28 @@ def p_variables_rep(p):
         variables_rep : variables_2
         | empty
     '''
+    # Call recursion
     p[0] = p[1]
 
 def p_lista_id(p):
     '''
         lista_id : ID dimension_var lista_id_rep
     '''
-    global counter
-    # global var_list
-    # var_list.append([p[1]])
+    # create a list of IDs, appending the new ID in each recursion
     p[0] = []
+    #       Appends current ID
     p[0].append([p[1]])
+    #       Appends result of recursion
     if p[3] is not None:
-        p[0].append(p[3][0])
-        counter+=1
+        for x in p[3]:
+            p[0].append(x)
 
 def p_lista_id_rep(p):
     '''
         lista_id_rep : COMMA lista_id
         | empty
     '''
+    # if there is a comma, call the function to get the next ID
     if p[1] == ',':
         p[0] = p[2]
     else:
@@ -208,17 +211,20 @@ def p_funcion(p):
     '''
         funcion : FUNC tipo_func ID PARENTHESESL funcion_param PARENTHESESR SEMICOLON variables CURLYL estatuto_rep CURLYR
     '''
-    # DirFunc.add_function(p[3], p[2])
-    # for i in var_list:
-    #     DirFunc.functions[p[3]].add_variable(i[0], i[1])
-    #
-    # var_list.clear()
+    # Add function to functions directory
+    if not DirFunc.function_exists(p[3]):
+        DirFunc.add_function(p[3], p[2])
+    # add variable table for function
+    if p[8] is not None:
+        for i in p[8]:
+            DirFunc.functions[p[3]].add_variable(i[0], i[1])
 
 def p_tipo_func(p):
     '''
         tipo_func : tipo
         | VOID
     '''
+    # return type
     p[0] = p[1]
 
 def p_funcion_param(p):
