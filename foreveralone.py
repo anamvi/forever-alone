@@ -214,7 +214,11 @@ def p_funcion(p):
     # Add function to functions directory
     if not DirFunc.function_exists(p[3]):
         DirFunc.add_function(p[3], p[2])
-    # add variable table for function
+    # add parameters to variable table for current function
+    if p[5] is not None:
+        for i in p[5]:
+            DirFunc.functions[p[3]].add_variable(i[0], i[1])
+    # add variables to variable table
     if p[8] is not None:
         for i in p[8]:
             DirFunc.functions[p[3]].add_variable(i[0], i[1])
@@ -232,12 +236,23 @@ def p_funcion_param(p):
         funcion_param : tipo ID funcion_param_rep
         | empty
     '''
+    temp = []
+    if p[1] is not None:
+        # Append current id and its type
+        temp.append([p[2], p[1]])
+        # Append result of recursion
+        if p[3] is not None:
+            for x in p[3]:
+                temp.append(x)
+        p[0] = temp
 
 def p_funcion_param_rep(p):
     '''
         funcion_param_rep : COMMA funcion_param
         | empty
     '''
+    if p[1] is not None:
+        p[0] = p[2]
 
 def p_estatuto_rep(p):
     '''

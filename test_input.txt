@@ -2,7 +2,7 @@ programa hola;
 var
 int: i, j[2];
 char: x;
-funcion int uno();
+funcion int uno(char c);
 var
 float: a, b, i;
 {
@@ -12,6 +12,10 @@ float: a, b, i;
     escribe(j[2], 'funciona');
   }
   regresa(i);
+}
+funcion char dos(char hola, int crayola, float jeje);
+{
+  regresa(hola);
 }
 principal() {
   i=2;
