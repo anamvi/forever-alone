@@ -122,10 +122,10 @@ def p_prog(p):
     '''
     global current_scope
     current_scope = 'global'
-    for i in var_list:
+    for i in p[4]:
         DirFunc.functions['global'].add_variable(i[0], i[1])
-        
-    var_list.clear()
+
+    # var_list.clear()
     print(DirFunc)
 
 def p_prog_funcs(p):
@@ -139,36 +139,50 @@ def p_variables(p):
         variables : VAR variables_2
         | empty
     '''
+    if p[1] == 'var':
+        p[0] = p[2]
+
 def p_variables_2(p):
     '''
         variables_2 : tipo COLON lista_id SEMICOLON variables_rep
     '''
     global counter
-    while counter>0:
-        var_list[counter-1].append(p[1])
-        counter-=1
+    for i in p[3]:
+        i.append(p[1])
+    if p[5] is not None:
+        for j in p[5]:
+            p[3].append(j)
+    p[0] = p[3]
 
 def p_variables_rep(p):
     '''
         variables_rep : variables_2
         | empty
     '''
+    p[0] = p[1]
 
 def p_lista_id(p):
     '''
         lista_id : ID dimension_var lista_id_rep
     '''
     global counter
-    global var_list
-    var_list.append([p[1]])
-    counter+=1
-    # DirFunc.functions[current_scope].add_var(p[1], current_type)
+    # global var_list
+    # var_list.append([p[1]])
+    p[0] = []
+    p[0].append([p[1]])
+    if p[3] is not None:
+        p[0].append(p[3][0])
+        counter+=1
 
 def p_lista_id_rep(p):
     '''
         lista_id_rep : COMMA lista_id
         | empty
     '''
+    if p[1] == ',':
+        p[0] = p[2]
+    else:
+        p[0] = None
 
 def p_dimension_var(p):
     '''
@@ -194,11 +208,18 @@ def p_funcion(p):
     '''
         funcion : FUNC tipo_func ID PARENTHESESL funcion_param PARENTHESESR SEMICOLON variables CURLYL estatuto_rep CURLYR
     '''
+    # DirFunc.add_function(p[3], p[2])
+    # for i in var_list:
+    #     DirFunc.functions[p[3]].add_variable(i[0], i[1])
+    #
+    # var_list.clear()
+
 def p_tipo_func(p):
     '''
         tipo_func : tipo
         | VOID
     '''
+    p[0] = p[1]
 
 def p_funcion_param(p):
     '''
