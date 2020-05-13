@@ -1,9 +1,10 @@
 import ply.lex as lex
 import ply.yacc as yacc
 from functions_table import FunctionsTable
+from semantic_cube import SemanticCube
 
 DirFunc = FunctionsTable()
-# cube = SemanticCube()
+cube = SemanticCube()
 
 # PALABRAS RESERVADAS
 reserved = {
@@ -119,6 +120,7 @@ def p_prog(p):
         prog : PROGRAM ID SEMICOLON variables prog_funcs func_princ
     '''
     # Add variables to variable table for the global scope
+    print(cube)
     if p[4] is not None:
         for i in p[4]:
             DirFunc.functions['global'].add_variable(i[0], i[1])
