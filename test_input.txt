@@ -8,17 +8,17 @@ float: a, b, i;
 {
   lee(i,j[1]);
   j[0] = i+j[1];
-  desde x = 0 hasta 10 hacer {
+  desde x = -5 hasta 10 hacer {
     escribe(j[2], 'funciona');
   }
   regresa(i);
 }
-funcion char dos(char hola, int crayola, float jeje);
+funcion char dos(char hola, int ola, float crayola);
 {
   regresa(hola);
 }
 principal() {
-  i=2;
+  i= -2;
   si(uno() == i) entonces {
     regresa(j);
   }

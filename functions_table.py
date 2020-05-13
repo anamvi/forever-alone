@@ -3,7 +3,7 @@ class Variable:
         self.name = name
         self.type = type
 
-class Function(object):
+class Function:
     def __init__(self, name, type, parameters):
         self.name = name
         self.type = type
@@ -13,10 +13,10 @@ class Function(object):
 
     def add_variable(self, name, type):
         if name in self.variables:
-            raise Exception("La variable ya existe en este contexto.")
+            raise Exception("La variable '"+name+"' ya existe en este contexto.")
         self.variables[name] = Variable(name, type)
 
-    def check_variable_exists(self, name):
+    def variable_exists(self, name):
         if name in self.variables:
             return True
         return False

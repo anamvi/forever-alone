@@ -3,9 +3,7 @@ import ply.yacc as yacc
 from functions_table import FunctionsTable
 
 DirFunc = FunctionsTable()
-current_scope = ''
-var_list = []
-counter = 0
+# cube = SemanticCube()
 
 # PALABRAS RESERVADAS
 reserved = {
@@ -92,12 +90,12 @@ def t_error(t):
     t.lexer.skip(1)
 
 def t_CTE_FLOAT(t):
-    r'\d*\.[\d]+'
+    r'[+|-]?\d*\.[\d]+'
     t.value = float(t.value)
     return t
 
 def t_CTE_INT(t):
-    r'0|[1-9][0-9]*'
+    r'0|[+|-]?[1-9][0-9]*'
     t.value = int(t.value)
     return t
 
@@ -216,8 +214,7 @@ def p_funcion(p):
         for i in p[5]:
             temp.append(i[1])
     # Add function to functions directory
-    if not DirFunc.function_exists(p[3]):
-        DirFunc.add_function(p[3], p[2], temp)
+    DirFunc.add_function(p[3], p[2], temp)
     # add parameters to variable table for current function
     if p[5] is not None:
         for i in p[5]:
