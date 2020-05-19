@@ -4,11 +4,12 @@ int: i, j[2];
 char: x;
 funcion int uno(char c);
 var
+int: w;
 float: a, b, i;
 {
-  lee(i,j[1]);
-  j[0] = i+j[1];
-  desde x = -5 hasta 10 hacer {
+  lee(i,j[1*5]);
+  j[0] = w+j[1];
+  desde w = -5 hasta 10 hacer {
     escribe(j[2], 'funciona');
   }
   regresa(i);

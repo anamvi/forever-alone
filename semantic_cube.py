@@ -193,6 +193,43 @@ class SemanticCube:
                 'string': 'bool'
             }
         }
+        self.cube['=']={
+            'int': {
+                'int': 'int',
+                'float': 'error',
+                'char': 'error',
+                'bool': 'error',
+                'string': 'error'
+            },
+            'float': {
+                'int': 'error',
+                'float': 'float',
+                'char': 'error',
+                'bool': 'error',
+                'string': 'error'
+            },
+            'char': {
+                'int': 'error',
+                'float': 'error',
+                'char': 'char',
+                'bool': 'error',
+                'string': 'error'
+            },
+            'bool': {
+                'int': 'error',
+                'float': 'error',
+                'char': 'error',
+                'bool': 'bool',
+                'string': 'error'
+            },
+            'string': {
+                'int': 'error',
+                'float': 'error',
+                'char': 'error',
+                'bool': 'error',
+                'string': 'string'
+            }
+        }
 
     def __str__(self):
         output = "------------ semantic cube -------------\n"

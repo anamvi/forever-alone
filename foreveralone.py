@@ -1,10 +1,12 @@
 import ply.lex as lex
 import ply.yacc as yacc
 from functions_table import FunctionsTable
-from semantic_cube import SemanticCube
+from intermediate_code import InterCode
 
-DirFunc = FunctionsTable()
-cube = SemanticCube()
+dir_func = FunctionsTable()
+inter_code = InterCode()
+current_scope = 'global'
+current_type = ''
 
 # PALABRAS RESERVADAS
 reserved = {
@@ -117,15 +119,21 @@ lexer = lex.lex()
 
 def p_prog(p):
     '''
-        prog : PROGRAM ID SEMICOLON variables prog_funcs func_princ
+        prog : PROGRAM ID SEMICOLON variables np_push_global_vars_ prog_funcs func_princ
+    '''
+
+    print(dir_func)
+    for x in inter_code.quadruples:
+        print(x)
+
+def p_np_push_global_vars_(p):
+    '''
+        np_push_global_vars_ :
     '''
     # Add variables to variable table for the global scope
-    print(cube)
-    if p[4] is not None:
-        for i in p[4]:
-            DirFunc.functions['global'].add_variable(i[0], i[1])
-    print(DirFunc)
-
+    if p[-1] is not None:
+        for i in p[-1]:
+            dir_func.functions['global'].add_variable(i[0], i[1])
 def p_prog_funcs(p):
     '''
         prog_funcs : funcion prog_funcs
@@ -209,22 +217,44 @@ def p_func_princ(p):
 
 def p_funcion(p):
     '''
-        funcion : FUNC tipo_func ID PARENTHESESL funcion_param PARENTHESESR SEMICOLON variables CURLYL estatuto_rep CURLYR
+        funcion : FUNC tipo_func ID np_set_scope_ PARENTHESESL funcion_param np_add_func_to_directory_ PARENTHESESR SEMICOLON variables np_add_vars_to_table_ CURLYL estatuto_rep CURLYR
     '''
+
+def p_np_set_scope_(p):
+    '''
+        np_set_scope_ :
+    '''
+    global current_scope, current_type
+    current_scope = p[-1]
+    current_type = p[-2]
+
+def p_np_add_func_to_directory_(p):
+    '''
+        np_add_func_to_directory_ :
+    '''
+    global current_scope, current_type
     temp = []
-    if p[5] is not None:
-        for i in p[5]:
+    if p[-1] is not None:
+        for i in p[-1]:
             temp.append(i[1])
     # Add function to functions directory
-    DirFunc.add_function(p[3], p[2], temp)
+    print(current_scope)
+    dir_func.add_function(current_scope, current_type, temp)
+
     # add parameters to variable table for current function
-    if p[5] is not None:
-        for i in p[5]:
-            DirFunc.functions[p[3]].add_variable(i[0], i[1])
+    if p[-1] is not None:
+        for i in p[-1]:
+            dir_func.functions[current_scope].add_variable(i[0], i[1])
+
+def p_np_add_vars_to_table_(p):
+    '''
+        np_add_vars_to_table_ :
+    '''
+    global current_scope
     # add variables to variable table
-    if p[8] is not None:
-        for i in p[8]:
-            DirFunc.functions[p[3]].add_variable(i[0], i[1])
+    if p[-1] is not None:
+        for i in p[-1]:
+            dir_func.functions[current_scope].add_variable(i[0], i[1])
 
 def p_tipo_func(p):
     '''
@@ -275,15 +305,62 @@ def p_estatuto(p):
         | rep_nc
     '''
 
+def p_np_assign_quad_(p):
+    '''
+        np_assign_quad_ :
+    '''
+    # llamar a func de crear quad de asignacion dentro de inter_code
+    if inter_code.operator_stack!= []:
+        if inter_code.operator_stack[len(inter_code.operator_stack)-1] == '=':
+            inter_code.add_assignment_quadruple()
+
+
+def p_np_push_var_(p):
+    '''
+        np_push_var_ :
+    '''
+    inter_code.variable_stack.append(p[-1])
+    print(inter_code.variable_stack)
+    print(inter_code.operator_stack)
+    if dir_func.functions[current_scope].variable_exists(p[-1]):
+        var_type = dir_func.functions[current_scope].variables[p[-1]].type
+    elif dir_func.functions['global'].variable_exists(p[-1]):
+        var_type = dir_func.functions['global'].variables[p[-1]].type
+    else:
+        raise Exception('Variable does not exist')
+    inter_code.type_stack.append(var_type)
+    print(inter_code.type_stack)
+
+def p_np_push_operator_(p):
+    '''
+        np_push_operator_ :
+    '''
+    inter_code.operator_stack.append(p[-1])
+    print(inter_code.operator_stack)
+
 def p_asignacion(p):
     '''
-        asignacion : ID dimension ASSIGN expresion
+        asignacion : ID np_push_var_ dimension ASSIGN np_push_operator_ expresion np_assign_quad_
     '''
+
+    # dejar igual, solo después de dimension hacer un pop al stack del resultado de la variable dimensionada y otro push de eso nuevo usando el mismo np
+
 def p_dimension(p):
     '''
-        dimension : SQUAREL expresion SQUARER
+        dimension : SQUAREL np_add_false_bottom_ expresion np_pop_dimension_ np_remove_false_bottom_ SQUARER
         | empty
     '''
+
+def p_np_pop_dimension_(p):
+    '''
+        np_pop_dimension_ :
+    '''
+    inter_code.variable_stack.pop()
+    inter_code.type_stack.pop()
+    print('se hace pop a dim')
+    print(inter_code.variable_stack)
+    print(inter_code.operator_stack)
+    print(inter_code.type_stack)
 
 def p_llamada(p):
     '''
@@ -390,41 +467,103 @@ def p_comp_sym(p):
 
 def p_exp_ar(p):
     '''
-        exp_ar : termino exp_ar_2
+        exp_ar : termino np_operation_quad_ exp_ar_2
     '''
 
 def p_exp_ar_2(p):
     '''
-        exp_ar_2 : PLUS exp_ar
-        | MINUS exp_ar
+        exp_ar_2 : PLUS np_push_operator_ exp_ar
+        | MINUS np_push_operator_ exp_ar
         | empty
     '''
+
+def p_np_operation_quad_(p):
+    '''
+        np_operation_quad_ :
+    '''
+    if inter_code.operator_stack!= []:
+        if inter_code.operator_stack[len(inter_code.operator_stack)-1] in ['+', '-']:
+            inter_code.add_operation_quadruple()
+
 def p_termino(p):
     '''
-        termino : factor termino_2
+        termino : factor np_check_op_stack_factor_ termino_2
     '''
 
 def p_termino_2(p):
     '''
-        termino_2 : MULT termino
-        | DIVIDE termino
+        termino_2 : MULT np_push_operator_ termino
+        | DIVIDE np_push_operator_ termino
         | empty
     '''
+
+def p_np_check_op_stack_factor_(p):
+    '''
+        np_check_op_stack_factor_ :
+    '''
+    if inter_code.operator_stack != []:
+        if inter_code.operator_stack[len(inter_code.operator_stack)-1] in ['*', '/']:
+            inter_code.add_operation_quadruple()
 
 def p_factor(p):
     '''
         factor : const
-        | ID dimension
-        | PARENTHESESL expresion PARENTHESESR
+        | ID np_push_var_ dimension
+        | PARENTHESESL np_add_false_bottom_ expresion PARENTHESESR np_remove_false_bottom_
         | llamada
     '''
+    # poner np_push_const_ aqui???
+
+def p_np_add_false_bottom_(p):
+    '''
+        np_add_false_bottom_ :
+    '''
+    inter_code.operator_stack.append('(')
+
+def p_np_remove_false_bottom_(p):
+    '''
+        np_remove_false_bottom_ :
+    '''
+    fb = inter_code.operator_stack.pop()
+    if fb != '(':
+        raise Exception('el false bottom no jalo')
 
 def p_const(p):
     '''
-        const : CTE_INT
-        | CTE_CHAR
-        | CTE_FLOAT
+        const : CTE_INT np_push_const_int_
+        | CTE_CHAR np_push_const_char_
+        | CTE_FLOAT np_push_const_float_
     '''
+
+def p_np_push_const_int_(p):
+    '''
+        np_push_const_int_ :
+    '''
+    inter_code.variable_stack.append(p[-1])
+    print(inter_code.variable_stack)
+    print(inter_code.operator_stack)
+    inter_code.type_stack.append('int')
+    print(inter_code.type_stack)
+
+def p_np_push_const_char_(p):
+    '''
+        np_push_const_char_ :
+    '''
+    inter_code.variable_stack.append(p[-1])
+    print(inter_code.variable_stack)
+    print(inter_code.operator_stack)
+    inter_code.type_stack.append('char')
+    print(inter_code.type_stack)
+
+def p_np_push_const_float_(p):
+    '''
+        np_push_const_float_ :
+    '''
+    inter_code.variable_stack.append(p[-1])
+    print(inter_code.variable_stack)
+    print(inter_code.operator_stack)
+    inter_code.type_stack.append('float')
+    print(inter_code.type_stack)
 
 def p_letrero(p):
     '''

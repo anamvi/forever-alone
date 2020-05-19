@@ -9,7 +9,6 @@ class Function:
         self.type = type
         self.variables = {}
         self.parameters = parameters
-        # agregar parámetros a arreglo de parámetros
 
     def add_variable(self, name, type):
         if name in self.variables:
