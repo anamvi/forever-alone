@@ -93,12 +93,12 @@ def t_error(t):
     t.lexer.skip(1)
 
 def t_CTE_FLOAT(t):
-    r'[+|-]?\d*\.[\d]+'
+    r'\d*\.[\d]+'
     t.value = float(t.value)
     return t
 
 def t_CTE_INT(t):
-    r'0|[+|-]?[1-9][0-9]*'
+    r'0|[1-9]\d*'
     t.value = int(t.value)
     return t
 
@@ -123,8 +123,10 @@ def p_prog(p):
     '''
 
     print(dir_func)
+    counter = 0
     for x in inter_code.quadruples:
-        print(x)
+        print(counter, " ",x)
+        counter+=1
 
 def p_np_push_global_vars_(p):
     '''
@@ -238,7 +240,6 @@ def p_np_add_func_to_directory_(p):
         for i in p[-1]:
             temp.append(i[1])
     # Add function to functions directory
-    print(current_scope)
     dir_func.add_function(current_scope, current_type, temp)
 
     # add parameters to variable table for current function
@@ -305,42 +306,63 @@ def p_estatuto(p):
         | rep_nc
     '''
 
-def p_np_assign_quad_(p):
+def p_np_check(p):
     '''
-        np_assign_quad_ :
+        np_check :
+    '''
+    print('soi una estupida')
+def p_np_quadruple_assignment_(p):
+    '''
+        np_quadruple_assignment_ :
     '''
     # llamar a func de crear quad de asignacion dentro de inter_code
     if inter_code.operator_stack!= []:
-        if inter_code.operator_stack[len(inter_code.operator_stack)-1] == '=':
-            inter_code.add_assignment_quadruple()
+        inter_code.add_assignment_quadruple()
 
+def p_np_quadruple_IO_(p):
+    '''
+        np_quadruple_IO_ :
+    '''
+    # llamar a func de crear quad de asignacion dentro de inter_code
+    if inter_code.operator_stack!= []:
+        inter_code.add_IO_quadruple()
 
 def p_np_push_var_(p):
     '''
         np_push_var_ :
     '''
-    inter_code.variable_stack.append(p[-1])
-    print(inter_code.variable_stack)
-    print(inter_code.operator_stack)
     if dir_func.functions[current_scope].variable_exists(p[-1]):
         var_type = dir_func.functions[current_scope].variables[p[-1]].type
     elif dir_func.functions['global'].variable_exists(p[-1]):
         var_type = dir_func.functions['global'].variables[p[-1]].type
     else:
         raise Exception('Variable does not exist')
+    inter_code.variable_stack.append(p[-1])
     inter_code.type_stack.append(var_type)
+    print(inter_code.variable_stack)
     print(inter_code.type_stack)
+    print(inter_code.operator_stack)
+    print('\n')
 
 def p_np_push_operator_(p):
     '''
         np_push_operator_ :
     '''
     inter_code.operator_stack.append(p[-1])
+    print(inter_code.variable_stack)
+    print(inter_code.type_stack)
     print(inter_code.operator_stack)
+    print('\n')
+
+def p_np_pop_operator_(p):
+    '''
+        np_pop_operator_ :
+    '''
+    inter_code.operator_stack.pop()
 
 def p_asignacion(p):
     '''
-        asignacion : ID np_push_var_ dimension ASSIGN np_push_operator_ expresion np_assign_quad_
+        asignacion : ID np_push_var_ np_check dimension ASSIGN np_push_operator_ expresion np_quadruple_assignment_
     '''
 
     # dejar igual, solo después de dimension hacer un pop al stack del resultado de la variable dimensionada y otro push de eso nuevo usando el mismo np
@@ -357,10 +379,10 @@ def p_np_pop_dimension_(p):
     '''
     inter_code.variable_stack.pop()
     inter_code.type_stack.pop()
-    print('se hace pop a dim')
     print(inter_code.variable_stack)
-    print(inter_code.operator_stack)
     print(inter_code.type_stack)
+    print(inter_code.operator_stack)
+    print('\n')
 
 def p_llamada(p):
     '''
@@ -369,24 +391,24 @@ def p_llamada(p):
 
 def p_lectura(p):
     '''
-        lectura : READ PARENTHESESL lista_lectura PARENTHESESR
+        lectura : READ np_push_operator_ PARENTHESESL lista_lectura PARENTHESESR np_pop_operator_
     '''
 
 def p_lista_lectura(p):
     '''
-        lista_lectura : ID dimension COMMA lista_lectura
-        | ID dimension
+        lista_lectura : ID np_push_var_ dimension np_quadruple_IO_ COMMA lista_lectura
+        | ID np_push_var_ dimension np_quadruple_IO_
     '''
 
 def p_escritura(p):
     '''
-        escritura : PRINT PARENTHESESL lista_escritura PARENTHESESR
+        escritura : PRINT np_push_operator_ PARENTHESESL lista_escritura PARENTHESESR np_pop_operator_
     '''
 
 def p_lista_escritura(p):
     '''
-        lista_escritura : letrero lista_escritura_rep
-        | expresion lista_escritura_rep
+        lista_escritura : letrero np_quadruple_IO_ lista_escritura_rep
+        | expresion np_quadruple_IO_ lista_escritura_rep
     '''
 
 def p_lista_escritura_rep(p):
@@ -397,19 +419,60 @@ def p_lista_escritura_rep(p):
 
 def p_decision(p):
     '''
-        decision : IF PARENTHESESL expresion PARENTHESESR THEN CURLYL estatuto_rep CURLYR decision_alt
+        decision : IF PARENTHESESL expresion PARENTHESESR np_gotoF_ THEN CURLYL estatuto_rep CURLYR decision_alt
     '''
 
 def p_decision_alt(p):
     '''
-        decision_alt : ELSE CURLYL estatuto_rep CURLYR
-        | empty
+        decision_alt : ELSE np_false_condition_ CURLYL estatuto_rep CURLYR np_end_if_actions
+        | empty np_end_if_actions
     '''
+
+def p_np_gotoF_(p):
+    '''
+        np_gotoF_ :
+    '''
+    exp_type = inter_code.type_stack.pop()
+    if exp_type != 'bool':
+        raise Exception('Type mismatch ', inter_code.variable_stack.pop()," ",exp_type )
+    else :
+        inter_code.add_gotof_quadruple(None)
+
+def p_np_false_condition_(p):
+    '''
+        np_false_condition_ :
+    '''
+    inter_code.add_goto_quadruple(None)
+    false = inter_code.jumps_stack.pop()
+    inter_code.push_jump(-1)
+    inter_code.fill(false, len(inter_code.quadruples))
+
+def p_np_end_if_actions(p):
+    '''
+        np_end_if_actions :
+    '''
+    end = inter_code.jumps_stack.pop()
+    inter_code.fill(end,len(inter_code.quadruples))
 
 def p_rep_c(p):
     '''
-        rep_c : WHILE PARENTHESESL expresion PARENTHESESR DO CURLYL estatuto_rep CURLYR
+        rep_c : WHILE np_push_jump_ PARENTHESESL expresion PARENTHESESR np_gotoF_ DO CURLYL estatuto_rep CURLYR np_end_while_actions_
     '''
+
+def p_np_push_jump_(p):
+    '''
+        np_push_jump_ :
+    '''
+    inter_code.push_jump(0)
+
+def p_np_end_while_actions_(p):
+    '''
+        np_end_while_actions_ :
+    '''
+    end = inter_code.jumps_stack.pop()
+    ret = inter_code.jumps_stack.pop()
+    inter_code.add_goto_quadruple(ret)
+    inter_code.fill(end, len(inter_code.quadruples))
 
 def p_rep_nc(p):
     '''
@@ -430,20 +493,34 @@ def p_expresion_rep_2(p):
 
 def p_retorno(p):
     '''
-        retorno : RETURN PARENTHESESL expresion PARENTHESESR
+        retorno : RETURN PARENTHESESL expresion PARENTHESESR np_quadruple_return_
     '''
+
+def p_np_quadruple_return_(p):
+    '''
+        np_quadruple_return_ :
+    '''
+    inter_code.add_return_quadruple()
 
 def p_expresion(p):
     '''
-        expresion : exp_comp expresion_2
+        expresion : exp_comp np_quadruple_logic_ expresion_2
     '''
 
 def p_expresion_2(p):
     '''
-        expresion_2 : AND expresion
-        | OR expresion
+        expresion_2 : AND np_push_operator_ expresion
+        | OR np_push_operator_ expresion
         | empty
     '''
+
+def p_np_quadruple_logic_(p):
+    '''
+        np_quadruple_logic_ :
+    '''
+    if inter_code.operator_stack!= []:
+        if inter_code.operator_stack[len(inter_code.operator_stack)-1] in ['&', '|']:
+            inter_code.add_operation_quadruple()
 
 def p_exp_comp(p):
     '''
@@ -451,9 +528,19 @@ def p_exp_comp(p):
     '''
 def p_exp_comp_2(p):
     '''
-        exp_comp_2 : comp_sym exp_ar
+        exp_comp_2 : comp_sym np_push_operator_ exp_ar np_quadruple_compare_
         | empty
     '''
+
+def p_np_quadruple_compare_(p):
+    '''
+        np_quadruple_compare_ :
+    '''
+    if inter_code.operator_stack!= []:
+        if inter_code.operator_stack[len(inter_code.operator_stack)-1] in ['<', '>', '>=', '<=','==', '!=']:
+            inter_code.add_operation_quadruple()
+        else:
+            raise Exception('tronando como palomitas')
 
 def p_comp_sym(p):
     '''
@@ -465,9 +552,11 @@ def p_comp_sym(p):
         | NOTEQUAL
     '''
 
+    p[0] = p[1]
+
 def p_exp_ar(p):
     '''
-        exp_ar : termino np_operation_quad_ exp_ar_2
+        exp_ar : termino np_quadruple_term exp_ar_2
     '''
 
 def p_exp_ar_2(p):
@@ -477,9 +566,9 @@ def p_exp_ar_2(p):
         | empty
     '''
 
-def p_np_operation_quad_(p):
+def p_np_quadruple_term(p):
     '''
-        np_operation_quad_ :
+        np_quadruple_term :
     '''
     if inter_code.operator_stack!= []:
         if inter_code.operator_stack[len(inter_code.operator_stack)-1] in ['+', '-']:
@@ -487,7 +576,7 @@ def p_np_operation_quad_(p):
 
 def p_termino(p):
     '''
-        termino : factor np_check_op_stack_factor_ termino_2
+        termino : unary np_quadruple_factor_ termino_2
     '''
 
 def p_termino_2(p):
@@ -497,14 +586,34 @@ def p_termino_2(p):
         | empty
     '''
 
-def p_np_check_op_stack_factor_(p):
+def p_np_quadruple_factor_(p):
     '''
-        np_check_op_stack_factor_ :
+        np_quadruple_factor_ :
     '''
     if inter_code.operator_stack != []:
         if inter_code.operator_stack[len(inter_code.operator_stack)-1] in ['*', '/']:
             inter_code.add_operation_quadruple()
 
+# UNARY--------------------------------
+def p_unary(p):
+    '''
+        unary : factor
+        | MINUS unary change_sign
+        | PLUS unary
+    '''
+
+def p_change_sign(p):
+    '''
+        change_sign :
+    '''
+    # chage this to an integer????
+    num = inter_code.variable_stack.pop()
+    if str(num)[0]== '-':
+        inter_code.variable_stack.append(num[1:])
+    else:
+        inter_code.variable_stack.append("-"+str(num))
+
+# ---------------------------------------
 def p_factor(p):
     '''
         factor : const
@@ -512,13 +621,16 @@ def p_factor(p):
         | PARENTHESESL np_add_false_bottom_ expresion PARENTHESESR np_remove_false_bottom_
         | llamada
     '''
-    # poner np_push_const_ aqui???
 
 def p_np_add_false_bottom_(p):
     '''
         np_add_false_bottom_ :
     '''
     inter_code.operator_stack.append('(')
+    print(inter_code.variable_stack)
+    print(inter_code.type_stack)
+    print(inter_code.operator_stack)
+    print('\n')
 
 def p_np_remove_false_bottom_(p):
     '''
@@ -527,6 +639,11 @@ def p_np_remove_false_bottom_(p):
     fb = inter_code.operator_stack.pop()
     if fb != '(':
         raise Exception('el false bottom no jalo')
+
+    print(inter_code.variable_stack)
+    print(inter_code.type_stack)
+    print(inter_code.operator_stack)
+    print('\n')
 
 def p_const(p):
     '''
@@ -541,9 +658,10 @@ def p_np_push_const_int_(p):
     '''
     inter_code.variable_stack.append(p[-1])
     print(inter_code.variable_stack)
-    print(inter_code.operator_stack)
     inter_code.type_stack.append('int')
     print(inter_code.type_stack)
+    print(inter_code.operator_stack)
+    print('\n')
 
 def p_np_push_const_char_(p):
     '''
@@ -551,9 +669,10 @@ def p_np_push_const_char_(p):
     '''
     inter_code.variable_stack.append(p[-1])
     print(inter_code.variable_stack)
-    print(inter_code.operator_stack)
     inter_code.type_stack.append('char')
     print(inter_code.type_stack)
+    print(inter_code.operator_stack)
+    print('\n')
 
 def p_np_push_const_float_(p):
     '''
@@ -561,13 +680,25 @@ def p_np_push_const_float_(p):
     '''
     inter_code.variable_stack.append(p[-1])
     print(inter_code.variable_stack)
-    print(inter_code.operator_stack)
     inter_code.type_stack.append('float')
     print(inter_code.type_stack)
+    print(inter_code.operator_stack)
+    print('\n')
+
+def p_np_push_const_string_(p):
+    '''
+        np_push_const_string_ :
+    '''
+    inter_code.variable_stack.append(p[-1])
+    print(inter_code.variable_stack)
+    inter_code.type_stack.append('string')
+    print(inter_code.type_stack)
+    print(inter_code.operator_stack)
+    print('\n')
 
 def p_letrero(p):
     '''
-        letrero : CTE_STR
+        letrero : CTE_STR np_push_const_string_
     '''
 
 def p_empty(p):

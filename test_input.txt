@@ -4,26 +4,32 @@ int: i, j[2];
 char: x;
 funcion int uno(char c);
 var
-int: w;
-float: a, b, i;
+int: w, i;
+float: a, b;
 {
   lee(i,j[1*5]);
   j[0] = w+j[1];
-  desde w = -5 hasta 10 hacer {
+  desde w = -(-5+8) hasta 10 hacer {
     escribe(j[2], 'funciona');
   }
   regresa(i);
 }
 funcion char dos(char hola, int ola, float crayola);
 {
+  mientras (ola > 5) hacer {
+    crayola = ola * 5.5;
+    ola = ola + 1;
+  }
   regresa(hola);
 }
 principal() {
-  i= -2;
-  si(uno() == i) entonces {
+  i= 5+2;
+  si(--5 == i & i >= j[0]) entonces {
+    i = j[0]-1;
     regresa(j);
   }
   sino {
+    i = j[0]--4;
     regresa(i);
   }
 }
