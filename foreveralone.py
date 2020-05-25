@@ -306,11 +306,6 @@ def p_estatuto(p):
         | rep_nc
     '''
 
-def p_np_check(p):
-    '''
-        np_check :
-    '''
-    print('soi una estupida')
 def p_np_quadruple_assignment_(p):
     '''
         np_quadruple_assignment_ :
@@ -362,7 +357,7 @@ def p_np_pop_operator_(p):
 
 def p_asignacion(p):
     '''
-        asignacion : ID np_push_var_ np_check dimension ASSIGN np_push_operator_ expresion np_quadruple_assignment_
+        asignacion : ID np_push_var_ dimension ASSIGN np_push_operator_ expresion np_quadruple_assignment_
     '''
 
     # dejar igual, solo después de dimension hacer un pop al stack del resultado de la variable dimensionada y otro push de eso nuevo usando el mismo np
@@ -476,8 +471,16 @@ def p_np_end_while_actions_(p):
 
 def p_rep_nc(p):
     '''
-        rep_nc : FROM asignacion UNTIL expresion DO CURLYL estatuto_rep CURLYR
+        rep_nc : FROM asignacion UNTIL expresion np_add_for_quad_ DO CURLYL estatuto_rep CURLYR
     '''
+
+def p_np_add_for_quad_(p):
+    '''
+        np_add_for_quad_ :
+    '''
+    # inter_code.operator_stack.append("<=")
+    # inter_code.add_operation_quadruple()
+    # inter_code.variable_stack.append()
 
 def p_expresion_rep(p):
     '''
@@ -705,6 +708,12 @@ def p_empty(p):
     '''
         empty :
     '''
+
+def p_np_check(p):
+    '''
+        np_check :
+    '''
+    print('BEEP BEEP I AM HERE I AM CHECK')
 
 def p_error(p):
    print("Syntax error", p)

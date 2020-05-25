@@ -16,7 +16,7 @@ float: a, b;
 }
 funcion char dos(char hola, int ola, float crayola);
 {
-  mientras (ola > 5) hacer {
+  mientras (ola > (5+i)) hacer {
     crayola = ola * 5.5;
     ola = ola + 1;
   }

@@ -2,7 +2,8 @@ class SemanticCube:
     def __init__(self):
         comparison_ops = ['>', '<', '>=', '<=']
         logic_ops = ['&', '|']
-        aritmethic_ops = ['+', '-', '*']
+        aritmethic_ops_unary = ['+', '-']
+        aritmethic_ops = ['+', '-','*', '/']
         self.cube = {}
         for x in comparison_ops:
             self.cube[x]={
@@ -80,6 +81,9 @@ class SemanticCube:
                     'string': 'error'
                 }
             }
+        for x in aritmethic_ops_unary:
+            self.cube[x]['int'][None] = 'int'
+            self.cube[x]['float'][None] = 'float'
         for x in logic_ops:
             self.cube[x]={
                 'int': {
@@ -119,43 +123,6 @@ class SemanticCube:
                 }
             }
 
-        self.cube['/']={
-            'int': {
-                'int': 'float',
-                'float': 'float',
-                'char': 'error',
-                'bool': 'error',
-                'string': 'error'
-            },
-            'float': {
-                'int': 'float',
-                'float': 'float',
-                'char': 'error',
-                'bool': 'error',
-                'string': 'error'
-            },
-            'char': {
-                'int': 'error',
-                'float': 'error',
-                'char': 'error',
-                'bool': 'error',
-                'string': 'error'
-            },
-            'bool': {
-                'int': 'error',
-                'float': 'error',
-                'char': 'error',
-                'bool': 'error',
-                'string': 'error'
-            },
-            'string': {
-                'int': 'error',
-                'float': 'error',
-                'char': 'error',
-                'bool': 'error',
-                'string': 'error'
-            }
-        }
         self.cube['==']={
             'int': {
                 'int': 'bool',
