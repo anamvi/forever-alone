@@ -1,7 +1,6 @@
 from semantic_cube import SemanticCube
 
 temp_counter = 1
-cont = 0
 
 class Quadruple:
     def __init__(self, operator, left_operand, right_operand, result):

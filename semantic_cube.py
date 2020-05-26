@@ -10,7 +10,6 @@ class SemanticCube:
                 'int': {
                     'int': 'bool',
                     'float': 'bool',
-                    'char': 'error',
                     'bool': 'error',
                     'string': 'error',
                     None : 'error'
@@ -18,15 +17,6 @@ class SemanticCube:
                 'float': {
                     'int': 'bool',
                     'float': 'bool',
-                    'char': 'error',
-                    'bool': 'error',
-                    'string': 'error',
-                    None : 'error'
-                },
-                'char': {
-                    'int': 'error',
-                    'float': 'error',
-                    'char': 'bool',
                     'bool': 'error',
                     'string': 'error',
                     None : 'error'
@@ -34,7 +24,6 @@ class SemanticCube:
                 'bool': {
                     'int': 'error',
                     'float': 'error',
-                    'char': 'error',
                     'bool': 'error',
                     'string': 'error',
                     None : 'error'
@@ -42,7 +31,6 @@ class SemanticCube:
                 'string': {
                     'int': 'error',
                     'float': 'error',
-                    'char': 'error',
                     'bool': 'error',
                     'string': 'bool',
                     None : 'error'
@@ -53,7 +41,6 @@ class SemanticCube:
                 'int': {
                     'int': 'int',
                     'float': 'float',
-                    'char': 'error',
                     'bool': 'error',
                     'string': 'error',
                     None : 'error'
@@ -61,15 +48,6 @@ class SemanticCube:
                 'float': {
                     'int': 'float',
                     'float': 'float',
-                    'char': 'error',
-                    'bool': 'error',
-                    'string': 'error',
-                    None : 'error'
-                },
-                'char': {
-                    'int': 'error',
-                    'float': 'error',
-                    'char': 'error',
                     'bool': 'error',
                     'string': 'error',
                     None : 'error'
@@ -77,7 +55,6 @@ class SemanticCube:
                 'bool': {
                     'int': 'error',
                     'float': 'error',
-                    'char': 'error',
                     'bool': 'error',
                     'string': 'error',
                     None : 'error'
@@ -85,7 +62,6 @@ class SemanticCube:
                 'string': {
                     'int': 'error',
                     'float': 'error',
-                    'char': 'error',
                     'bool': 'error',
                     'string': 'error',
                     None : 'error'
@@ -99,7 +75,6 @@ class SemanticCube:
                 'int': {
                     'int': 'error',
                     'float': 'error',
-                    'char': 'error',
                     'bool': 'error',
                     'string': 'error',
                     None : 'error'
@@ -107,15 +82,6 @@ class SemanticCube:
                 'float': {
                     'int': 'error',
                     'float': 'error',
-                    'char': 'error',
-                    'bool': 'error',
-                    'string': 'error',
-                    None : 'error'
-                },
-                'char': {
-                    'int': 'error',
-                    'float': 'error',
-                    'char': 'error',
                     'bool': 'error',
                     'string': 'error',
                     None : 'error'
@@ -123,7 +89,6 @@ class SemanticCube:
                 'bool': {
                     'int': 'error',
                     'float': 'error',
-                    'char': 'error',
                     'bool': 'bool',
                     'string': 'error',
                     None : 'error'
@@ -131,7 +96,6 @@ class SemanticCube:
                 'string': {
                     'int': 'error',
                     'float': 'error',
-                    'char': 'error',
                     'bool': 'error',
                     'string': 'error',
                     None : 'error'
@@ -142,7 +106,6 @@ class SemanticCube:
             'int': {
                 'int': 'bool',
                 'float': 'error',
-                'char': 'error',
                 'bool': 'error',
                 'string': 'error',
                 None : 'error'
@@ -150,15 +113,6 @@ class SemanticCube:
             'float': {
                 'int': 'error',
                 'float': 'bool',
-                'char': 'error',
-                'bool': 'error',
-                'string': 'error',
-                None : 'error'
-            },
-            'char': {
-                'int': 'error',
-                'float': 'error',
-                'char': 'bool',
                 'bool': 'error',
                 'string': 'error',
                 None : 'error'
@@ -166,7 +120,6 @@ class SemanticCube:
             'bool': {
                 'int': 'error',
                 'float': 'error',
-                'char': 'error',
                 'bool': 'bool',
                 'string': 'error',
                 None : 'error'
@@ -174,7 +127,6 @@ class SemanticCube:
             'string': {
                 'int': 'error',
                 'float': 'error',
-                'char': 'error',
                 'bool': 'error',
                 'string': 'bool',
                 None : 'error'
@@ -184,7 +136,6 @@ class SemanticCube:
             'int': {
                 'int': 'int',
                 'float': 'error',
-                'char': 'error',
                 'bool': 'error',
                 'string': 'error',
                 None : 'error'
@@ -192,15 +143,6 @@ class SemanticCube:
             'float': {
                 'int': 'error',
                 'float': 'float',
-                'char': 'error',
-                'bool': 'error',
-                'string': 'error',
-                None : 'error'
-            },
-            'char': {
-                'int': 'error',
-                'float': 'error',
-                'char': 'char',
                 'bool': 'error',
                 'string': 'error',
                 None : 'error'
@@ -208,7 +150,6 @@ class SemanticCube:
             'bool': {
                 'int': 'error',
                 'float': 'error',
-                'char': 'error',
                 'bool': 'bool',
                 'string': 'error',
                 None : 'error'
@@ -216,7 +157,6 @@ class SemanticCube:
             'string': {
                 'int': 'error',
                 'float': 'error',
-                'char': 'error',
                 'bool': 'error',
                 'string': 'string',
                 None : 'error'

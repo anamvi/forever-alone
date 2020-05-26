@@ -15,7 +15,7 @@ reserved = {
     'funcion' : 'FUNC',
     'int' : 'INT',
     'float' : 'FLOAT',
-    'char' : 'CHAR',
+    'string' : 'STRING',
     'void' : 'VOID',
     'principal' : 'PRINCIPAL',
     'regresa'   : 'RETURN',
@@ -38,7 +38,6 @@ tokens = [
     'COMMA',
     'CTE_INT',
     'CTE_FLOAT',
-    'CTE_CHAR',
     'CTE_STR',
     'CURLYL',
     'CURLYR',
@@ -100,10 +99,6 @@ def t_CTE_FLOAT(t):
 def t_CTE_INT(t):
     r'0|[1-9]\d*'
     t.value = int(t.value)
-    return t
-
-def t_CTE_CHAR(t):
-    r'\'[\w\d\s.]?\''
     return t
 
 def t_CTE_STR(t):
@@ -207,7 +202,7 @@ def p_tipo(p):
     '''
         tipo : INT
         | FLOAT
-        | CHAR
+        | STRING
     '''
 
     p[0] = p[1]
@@ -683,7 +678,7 @@ def p_np_remove_false_bottom_(p):
 def p_const(p):
     '''
         const : CTE_INT np_push_const_int_
-        | CTE_CHAR np_push_const_char_
+        | letrero
         | CTE_FLOAT np_push_const_float_
     '''
 
@@ -724,7 +719,7 @@ def p_np_push_const_string_(p):
     '''
         np_push_const_string_ :
     '''
-    inter_code.variable_stack.append(str(p[-1]))
+    inter_code.variable_stack.append(str(p[-1][1:-1]))
     print(inter_code.variable_stack)
     inter_code.type_stack.append('string')
     print(inter_code.type_stack)

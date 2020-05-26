@@ -1,8 +1,8 @@
 programa hola;
 var
 int: i, j[2];
-char: x;
-funcion int uno(char c);
+string: x;
+funcion int uno(string c);
 var
 int: w, i;
 float: a, b;
@@ -14,7 +14,7 @@ float: a, b;
   }
   regresa(i);
 }
-funcion char dos(char hola, int ola, float crayola);
+funcion string dos(string hola, int ola, float crayola);
 {
   mientras (ola > (5+i)) hacer {
     crayola = ola * 5.5;
