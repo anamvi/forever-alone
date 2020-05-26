@@ -118,6 +118,7 @@ def p_prog(p):
     '''
 
     print(dir_func)
+    print(inter_code.mem)
     counter = 0
     for x in inter_code.quadruples:
         print(counter, " ",x)

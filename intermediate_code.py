@@ -1,4 +1,5 @@
 from semantic_cube import SemanticCube
+from virtual_memory import VirtualMemory
 
 temp_counter = 1
 
@@ -21,6 +22,7 @@ class InterCode:
         self.type_stack = []
         self.jumps_stack = []
         self.semantic = SemanticCube()
+        self.mem = VirtualMemory()
 
     def add_operation_quadruple(self):
         global temp_counter
