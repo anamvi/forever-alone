@@ -9,7 +9,7 @@ float: a, b;
 {
   lee(i,j[1*5]);
   j[0] = w+j[1];
-  desde w = -(-5+8) hasta 10 hacer {
+  desde -(-5+8) hasta 10 hacer {
     escribe(j[2], 'funciona');
   }
   regresa(i);

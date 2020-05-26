@@ -359,7 +359,7 @@ def p_asignacion(p):
     '''
         asignacion : ID np_push_var_ dimension ASSIGN np_push_operator_ expresion np_quadruple_assignment_
     '''
-
+    p[0]=p[6]
     # dejar igual, solo después de dimension hacer un pop al stack del resultado de la variable dimensionada y otro push de eso nuevo usando el mismo np
 
 def p_dimension(p):
@@ -471,16 +471,46 @@ def p_np_end_while_actions_(p):
 
 def p_rep_nc(p):
     '''
-        rep_nc : FROM asignacion UNTIL expresion np_add_for_quad_ DO CURLYL estatuto_rep CURLYR
+        rep_nc : FROM expresion np_assign_temp_ UNTIL expresion np_quadruple_for_ np_gotoF_ DO CURLYL estatuto_rep CURLYR np_end_for_actions
     '''
 
-def p_np_add_for_quad_(p):
+def p_np_assign_temp_(p):
     '''
-        np_add_for_quad_ :
+        np_assign_temp_ :
     '''
-    # inter_code.operator_stack.append("<=")
-    # inter_code.add_operation_quadruple()
-    # inter_code.variable_stack.append()
+    inter_code.add_assign_temp_quadruple()
+
+def p_np_quadruple_for_(p):
+    '''
+        np_quadruple_for_ : np_push_jump_
+    '''
+    # checar que las dos expresion es sean enteras
+    val1_type = inter_code.type_stack.pop()
+    val2_type = inter_code.type_stack.pop()
+    val1 = inter_code.variable_stack.pop()
+    val2 = inter_code.variable_stack.pop()
+    if val1_type == 'int' and val2_type == 'int':
+        inter_code.type_stack.append(val2_type)
+        inter_code.type_stack.append(val2_type)
+        inter_code.type_stack.append(val1_type)
+        inter_code.variable_stack.append(val2)
+        inter_code.variable_stack.append(val2)
+        inter_code.variable_stack.append(val1)
+        inter_code.operator_stack.append("<=")
+        inter_code.add_operation_quadruple()
+    else:
+        raise Exception('ERROR type mismatch. Solo se pueden usar enteros en un ciclo no condicional.')
+
+def p_np_end_for_actions(p):
+    '''
+        np_end_for_actions : np_increment_temp_ np_end_while_actions_
+    '''
+
+def p_np_increment_temp_(p):
+    '''
+        np_increment_temp_ :
+    '''
+    inter_code.add_self_increment_quadruple(1)
 
 def p_expresion_rep(p):
     '''
@@ -509,6 +539,12 @@ def p_expresion(p):
     '''
         expresion : exp_comp np_quadruple_logic_ expresion_2
     '''
+    # var = inter_code.variable_stack.pop()
+    # var_type = inter_code.type_stack.pop()
+    # if var_type = 'int':
+    #     p[0]=var
+    # inter_code.variable_stack.append(var)
+    # inter_code.type_stack.append(var_type)
 
 def p_expresion_2(p):
     '''
@@ -529,6 +565,7 @@ def p_exp_comp(p):
     '''
         exp_comp : exp_ar exp_comp_2
     '''
+
 def p_exp_comp_2(p):
     '''
         exp_comp_2 : comp_sym np_push_operator_ exp_ar np_quadruple_compare_
@@ -554,7 +591,6 @@ def p_comp_sym(p):
         | EQUAL
         | NOTEQUAL
     '''
-
     p[0] = p[1]
 
 def p_exp_ar(p):
@@ -601,20 +637,16 @@ def p_np_quadruple_factor_(p):
 def p_unary(p):
     '''
         unary : factor
-        | MINUS unary change_sign
+        | MINUS np_push_operator_ unary change_sign
         | PLUS unary
     '''
+    p[0]=p[1]
 
 def p_change_sign(p):
     '''
         change_sign :
     '''
-    # chage this to an integer????
-    num = inter_code.variable_stack.pop()
-    if str(num)[0]== '-':
-        inter_code.variable_stack.append(num[1:])
-    else:
-        inter_code.variable_stack.append("-"+str(num))
+    inter_code.add_unary_quadruple()
 
 # ---------------------------------------
 def p_factor(p):
@@ -659,7 +691,7 @@ def p_np_push_const_int_(p):
     '''
         np_push_const_int_ :
     '''
-    inter_code.variable_stack.append(p[-1])
+    inter_code.variable_stack.append(int(p[-1]))
     print(inter_code.variable_stack)
     inter_code.type_stack.append('int')
     print(inter_code.type_stack)
@@ -670,7 +702,7 @@ def p_np_push_const_char_(p):
     '''
         np_push_const_char_ :
     '''
-    inter_code.variable_stack.append(p[-1])
+    inter_code.variable_stack.append(str(p[-1]))
     print(inter_code.variable_stack)
     inter_code.type_stack.append('char')
     print(inter_code.type_stack)
@@ -681,7 +713,7 @@ def p_np_push_const_float_(p):
     '''
         np_push_const_float_ :
     '''
-    inter_code.variable_stack.append(p[-1])
+    inter_code.variable_stack.append(float(p[-1]))
     print(inter_code.variable_stack)
     inter_code.type_stack.append('float')
     print(inter_code.type_stack)
@@ -692,7 +724,7 @@ def p_np_push_const_string_(p):
     '''
         np_push_const_string_ :
     '''
-    inter_code.variable_stack.append(p[-1])
+    inter_code.variable_stack.append(str(p[-1]))
     print(inter_code.variable_stack)
     inter_code.type_stack.append('string')
     print(inter_code.type_stack)

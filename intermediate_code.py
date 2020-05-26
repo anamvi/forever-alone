@@ -73,7 +73,6 @@ class InterCode:
         self.operator_stack.append(op)
 
     def add_assignment_quadruple(self):
-        global temp_counter
         op = self.operator_stack.pop()
         val = self.variable_stack.pop()
         value_type = self.type_stack.pop()
@@ -107,3 +106,47 @@ class InterCode:
 
     def push_jump(self, offset):
         self.jumps_stack.append(len(self.quadruples)+offset)
+
+    def add_unary_quadruple(self):
+        global temp_counter
+        op = self.operator_stack.pop()
+        num_type = self.type_stack.pop()
+        num = self.variable_stack.pop()
+        print(self.variable_stack)
+        print(self.type_stack)
+        print(self.operator_stack)
+        print('\n')
+        if self.semantic.cube[op][num_type][None] != 'error':
+            res = 't'+str(temp_counter)
+            current_quad = Quadruple(op,num,None,res)
+            self.quadruples.append(current_quad)
+            temp_counter+=1
+            self.variable_stack.append(res)
+            self.type_stack.append(num_type)
+        else:
+            raise Exception('ERROR type mismatch'+ '\n values of type '+ num_type + " cannot be made negative" )
+
+    def add_assign_temp_quadruple(self):
+        global temp_counter
+        num_type = self.type_stack.pop()
+        num = self.variable_stack.pop()
+        print(self.variable_stack)
+        print(self.type_stack)
+        print(self.operator_stack)
+        print('\n')
+        res = 't'+str(temp_counter) # del tipo del num
+        current_quad = Quadruple('=',num,None,res)
+        self.quadruples.append(current_quad)
+        temp_counter+=1
+        self.variable_stack.append(res)
+        self.type_stack.append(num_type)
+
+    def add_self_increment_quadruple(self, increment):
+        num_type = self.type_stack.pop()
+        num = self.variable_stack.pop()
+        res = 't'+str(temp_counter)
+        # maybe make a += operator?
+        current_quad = Quadruple('+',num,increment,res)
+        self.quadruples.append(current_quad)
+        current_quad = Quadruple('=',res,None,num)
+        self.quadruples.append(current_quad)
