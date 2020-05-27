@@ -7,7 +7,7 @@ class MemorySegment:
         self.bools = []
         self.pointers = []
 
-        # Offset data types
+        # Offset for each data type
         self._BASE_INT = 0
         self._BASE_FLOAT = 2000
         self._BASE_STRING = 4000

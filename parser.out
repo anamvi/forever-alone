@@ -118,12 +118,11 @@ Rule 112   const -> CTE_INT np_push_const_int_
 Rule 113   const -> letrero
 Rule 114   const -> CTE_FLOAT np_push_const_float_
 Rule 115   np_push_const_int_ -> <empty>
-Rule 116   np_push_const_char_ -> <empty>
-Rule 117   np_push_const_float_ -> <empty>
-Rule 118   np_push_const_string_ -> <empty>
-Rule 119   letrero -> CTE_STR np_push_const_string_
-Rule 120   empty -> <empty>
-Rule 121   np_check -> <empty>
+Rule 116   np_push_const_float_ -> <empty>
+Rule 117   np_push_const_string_ -> <empty>
+Rule 118   letrero -> CTE_STR np_push_const_string_
+Rule 119   empty -> <empty>
+Rule 120   np_check -> <empty>
 
 Terminals, with rules where they appear
 
@@ -133,7 +132,7 @@ COLON                : 7
 COMMA                : 11 27 50 55 73
 CTE_FLOAT            : 114
 CTE_INT              : 13 112
-CTE_STR              : 119
+CTE_STR              : 118
 CURLYL               : 18 19 57 58 63 66
 CURLYR               : 18 19 57 58 63 66
 DIVIDE               : 99
@@ -221,10 +220,9 @@ np_gotoF_            : 57 63 66
 np_increment_temp_   : 69
 np_pop_dimension_    : 45
 np_pop_operator_     : 49 52
-np_push_const_char_  : 
 np_push_const_float_ : 114
 np_push_const_int_   : 112
-np_push_const_string_ : 119
+np_push_const_string_ : 118
 np_push_global_vars_ : 1
 np_push_jump_        : 63 68
 np_push_operator_    : 44 49 52 78 79 83 93 94 98 99 103
@@ -289,11 +287,11 @@ state 4
     (1) prog -> PROGRAM ID SEMICOLON . variables np_push_global_vars_ prog_funcs func_princ
     (5) variables -> . VAR variables_2
     (6) variables -> . empty
-    (120) empty -> .
+    (119) empty -> .
 
     VAR             shift and go to state 6
-    FUNC            reduce using rule 120 (empty -> .)
-    PRINCIPAL       reduce using rule 120 (empty -> .)
+    FUNC            reduce using rule 119 (empty -> .)
+    PRINCIPAL       reduce using rule 119 (empty -> .)
 
     variables                      shift and go to state 5
     empty                          shift and go to state 7
@@ -338,10 +336,10 @@ state 8
     (3) prog_funcs -> . funcion prog_funcs
     (4) prog_funcs -> . empty
     (19) funcion -> . FUNC tipo_func ID np_set_scope_ PARENTHESESL funcion_param np_add_func_to_directory_ PARENTHESESR SEMICOLON variables np_add_vars_to_table_ CURLYL estatuto_rep CURLYR
-    (120) empty -> .
+    (119) empty -> .
 
     FUNC            shift and go to state 17
-    PRINCIPAL       reduce using rule 120 (empty -> .)
+    PRINCIPAL       reduce using rule 119 (empty -> .)
 
     prog_funcs                     shift and go to state 14
     funcion                        shift and go to state 15
@@ -402,10 +400,10 @@ state 15
     (3) prog_funcs -> . funcion prog_funcs
     (4) prog_funcs -> . empty
     (19) funcion -> . FUNC tipo_func ID np_set_scope_ PARENTHESESL funcion_param np_add_func_to_directory_ PARENTHESESR SEMICOLON variables np_add_vars_to_table_ CURLYL estatuto_rep CURLYR
-    (120) empty -> .
+    (119) empty -> .
 
     FUNC            shift and go to state 17
-    PRINCIPAL       reduce using rule 120 (empty -> .)
+    PRINCIPAL       reduce using rule 119 (empty -> .)
 
     funcion                        shift and go to state 15
     prog_funcs                     shift and go to state 21
@@ -498,11 +496,11 @@ state 26
     (10) lista_id -> ID . dimension_var lista_id_rep
     (13) dimension_var -> . SQUAREL CTE_INT SQUARER
     (14) dimension_var -> . empty
-    (120) empty -> .
+    (119) empty -> .
 
     SQUAREL         shift and go to state 31
-    COMMA           reduce using rule 120 (empty -> .)
-    SEMICOLON       reduce using rule 120 (empty -> .)
+    COMMA           reduce using rule 119 (empty -> .)
+    SEMICOLON       reduce using rule 119 (empty -> .)
 
     dimension_var                  shift and go to state 30
     empty                          shift and go to state 32
@@ -529,14 +527,14 @@ state 29
     (8) variables_rep -> . variables_2
     (9) variables_rep -> . empty
     (7) variables_2 -> . tipo COLON lista_id SEMICOLON variables_rep
-    (120) empty -> .
+    (119) empty -> .
     (15) tipo -> . INT
     (16) tipo -> . FLOAT
     (17) tipo -> . STRING
 
-    FUNC            reduce using rule 120 (empty -> .)
-    PRINCIPAL       reduce using rule 120 (empty -> .)
-    CURLYL          reduce using rule 120 (empty -> .)
+    FUNC            reduce using rule 119 (empty -> .)
+    PRINCIPAL       reduce using rule 119 (empty -> .)
+    CURLYL          reduce using rule 119 (empty -> .)
     INT             shift and go to state 11
     FLOAT           shift and go to state 12
     STRING          shift and go to state 13
@@ -551,10 +549,10 @@ state 30
     (10) lista_id -> ID dimension_var . lista_id_rep
     (11) lista_id_rep -> . COMMA lista_id
     (12) lista_id_rep -> . empty
-    (120) empty -> .
+    (119) empty -> .
 
     COMMA           shift and go to state 39
-    SEMICOLON       reduce using rule 120 (empty -> .)
+    SEMICOLON       reduce using rule 119 (empty -> .)
 
     lista_id_rep                   shift and go to state 38
     empty                          shift and go to state 40
@@ -658,7 +656,7 @@ state 42
     (36) estatuto -> . decision
     (37) estatuto -> . rep_c
     (38) estatuto -> . rep_nc
-    (120) empty -> .
+    (119) empty -> .
     (44) asignacion -> . ID np_push_var_ dimension ASSIGN np_push_operator_ expresion np_quadruple_assignment_
     (48) llamada -> . ID PARENTHESESL expresion_rep PARENTHESESR
     (75) retorno -> . RETURN PARENTHESESL expresion PARENTHESESR np_quadruple_return_
@@ -668,7 +666,7 @@ state 42
     (63) rep_c -> . WHILE np_push_jump_ PARENTHESESL expresion PARENTHESESR np_gotoF_ DO CURLYL estatuto_rep CURLYR np_end_while_actions_
     (66) rep_nc -> . FROM expresion np_assign_temp_ UNTIL expresion np_quadruple_for_ np_gotoF_ DO CURLYL estatuto_rep CURLYR np_end_for_actions
 
-    CURLYR          reduce using rule 120 (empty -> .)
+    CURLYR          reduce using rule 119 (empty -> .)
     ID              shift and go to state 57
     RETURN          shift and go to state 58
     READ            shift and go to state 59
@@ -697,12 +695,12 @@ state 43
     (15) tipo -> . INT
     (16) tipo -> . FLOAT
     (17) tipo -> . STRING
-    (120) empty -> .
+    (119) empty -> .
 
     INT             shift and go to state 11
     FLOAT           shift and go to state 12
     STRING          shift and go to state 13
-    PARENTHESESR    reduce using rule 120 (empty -> .)
+    PARENTHESESR    reduce using rule 119 (empty -> .)
 
     funcion_param                  shift and go to state 64
     tipo                           shift and go to state 65
@@ -743,7 +741,7 @@ state 47
     (36) estatuto -> . decision
     (37) estatuto -> . rep_c
     (38) estatuto -> . rep_nc
-    (120) empty -> .
+    (119) empty -> .
     (44) asignacion -> . ID np_push_var_ dimension ASSIGN np_push_operator_ expresion np_quadruple_assignment_
     (48) llamada -> . ID PARENTHESESL expresion_rep PARENTHESESR
     (75) retorno -> . RETURN PARENTHESESL expresion PARENTHESESR np_quadruple_return_
@@ -753,7 +751,7 @@ state 47
     (63) rep_c -> . WHILE np_push_jump_ PARENTHESESL expresion PARENTHESESR np_gotoF_ DO CURLYL estatuto_rep CURLYR np_end_while_actions_
     (66) rep_nc -> . FROM expresion np_assign_temp_ UNTIL expresion np_quadruple_for_ np_gotoF_ DO CURLYL estatuto_rep CURLYR np_end_for_actions
 
-    CURLYR          reduce using rule 120 (empty -> .)
+    CURLYR          reduce using rule 119 (empty -> .)
     ID              shift and go to state 57
     RETURN          shift and go to state 58
     READ            shift and go to state 59
@@ -929,7 +927,7 @@ state 63
     (113) const -> . letrero
     (114) const -> . CTE_FLOAT np_push_const_float_
     (48) llamada -> . ID PARENTHESESL expresion_rep PARENTHESESR
-    (119) letrero -> . CTE_STR np_push_const_string_
+    (118) letrero -> . CTE_STR np_push_const_string_
 
     MINUS           shift and go to state 87
     PLUS            shift and go to state 88
@@ -1061,10 +1059,10 @@ state 74
     (44) asignacion -> ID np_push_var_ . dimension ASSIGN np_push_operator_ expresion np_quadruple_assignment_
     (45) dimension -> . SQUAREL np_add_false_bottom_ expresion np_pop_dimension_ np_remove_false_bottom_ SQUARER
     (46) dimension -> . empty
-    (120) empty -> .
+    (119) empty -> .
 
     SQUAREL         shift and go to state 100
-    ASSIGN          reduce using rule 120 (empty -> .)
+    ASSIGN          reduce using rule 119 (empty -> .)
 
     dimension                      shift and go to state 99
     empty                          shift and go to state 101
@@ -1076,7 +1074,7 @@ state 75
     (72) expresion_rep -> . empty
     (73) expresion_rep_2 -> . expresion COMMA expresion_rep_2
     (74) expresion_rep_2 -> . expresion
-    (120) empty -> .
+    (119) empty -> .
     (77) expresion -> . exp_comp np_quadruple_logic_ expresion_2
     (82) exp_comp -> . exp_ar exp_comp_2
     (92) exp_ar -> . termino np_quadruple_term exp_ar_2
@@ -1092,9 +1090,9 @@ state 75
     (113) const -> . letrero
     (114) const -> . CTE_FLOAT np_push_const_float_
     (48) llamada -> . ID PARENTHESESL expresion_rep PARENTHESESR
-    (119) letrero -> . CTE_STR np_push_const_string_
+    (118) letrero -> . CTE_STR np_push_const_string_
 
-    PARENTHESESR    reduce using rule 120 (empty -> .)
+    PARENTHESESR    reduce using rule 119 (empty -> .)
     MINUS           shift and go to state 87
     PLUS            shift and go to state 88
     ID              shift and go to state 90
@@ -1134,7 +1132,7 @@ state 76
     (113) const -> . letrero
     (114) const -> . CTE_FLOAT np_push_const_float_
     (48) llamada -> . ID PARENTHESESL expresion_rep PARENTHESESR
-    (119) letrero -> . CTE_STR np_push_const_string_
+    (118) letrero -> . CTE_STR np_push_const_string_
 
     MINUS           shift and go to state 87
     PLUS            shift and go to state 88
@@ -1186,7 +1184,7 @@ state 79
     (113) const -> . letrero
     (114) const -> . CTE_FLOAT np_push_const_float_
     (48) llamada -> . ID PARENTHESESL expresion_rep PARENTHESESR
-    (119) letrero -> . CTE_STR np_push_const_string_
+    (118) letrero -> . CTE_STR np_push_const_string_
 
     MINUS           shift and go to state 87
     PLUS            shift and go to state 88
@@ -1249,7 +1247,7 @@ state 83
     (89) comp_sym -> . GREATEREQUAL
     (90) comp_sym -> . EQUAL
     (91) comp_sym -> . NOTEQUAL
-    (120) empty -> .
+    (119) empty -> .
 
     LESSTHAN        shift and go to state 116
     GREATERTHAN     shift and go to state 117
@@ -1257,14 +1255,14 @@ state 83
     GREATEREQUAL    shift and go to state 119
     EQUAL           shift and go to state 120
     NOTEQUAL        shift and go to state 121
-    AND             reduce using rule 120 (empty -> .)
-    OR              reduce using rule 120 (empty -> .)
-    UNTIL           reduce using rule 120 (empty -> .)
-    COMMA           reduce using rule 120 (empty -> .)
-    PARENTHESESR    reduce using rule 120 (empty -> .)
-    SQUARER         reduce using rule 120 (empty -> .)
-    DO              reduce using rule 120 (empty -> .)
-    SEMICOLON       reduce using rule 120 (empty -> .)
+    AND             reduce using rule 119 (empty -> .)
+    OR              reduce using rule 119 (empty -> .)
+    UNTIL           reduce using rule 119 (empty -> .)
+    COMMA           reduce using rule 119 (empty -> .)
+    PARENTHESESR    reduce using rule 119 (empty -> .)
+    SQUARER         reduce using rule 119 (empty -> .)
+    DO              reduce using rule 119 (empty -> .)
+    SEMICOLON       reduce using rule 119 (empty -> .)
 
     exp_comp_2                     shift and go to state 113
     comp_sym                       shift and go to state 114
@@ -1373,7 +1371,7 @@ state 88
     (113) const -> . letrero
     (114) const -> . CTE_FLOAT np_push_const_float_
     (48) llamada -> . ID PARENTHESESL expresion_rep PARENTHESESR
-    (119) letrero -> . CTE_STR np_push_const_string_
+    (118) letrero -> . CTE_STR np_push_const_string_
 
     MINUS           shift and go to state 87
     PLUS            shift and go to state 88
@@ -1534,52 +1532,52 @@ state 94
 state 95
 
     (114) const -> CTE_FLOAT . np_push_const_float_
-    (117) np_push_const_float_ -> .
+    (116) np_push_const_float_ -> .
 
-    MULT            reduce using rule 117 (np_push_const_float_ -> .)
-    DIVIDE          reduce using rule 117 (np_push_const_float_ -> .)
-    PLUS            reduce using rule 117 (np_push_const_float_ -> .)
-    MINUS           reduce using rule 117 (np_push_const_float_ -> .)
-    LESSTHAN        reduce using rule 117 (np_push_const_float_ -> .)
-    GREATERTHAN     reduce using rule 117 (np_push_const_float_ -> .)
-    LESSEQUAL       reduce using rule 117 (np_push_const_float_ -> .)
-    GREATEREQUAL    reduce using rule 117 (np_push_const_float_ -> .)
-    EQUAL           reduce using rule 117 (np_push_const_float_ -> .)
-    NOTEQUAL        reduce using rule 117 (np_push_const_float_ -> .)
-    AND             reduce using rule 117 (np_push_const_float_ -> .)
-    OR              reduce using rule 117 (np_push_const_float_ -> .)
-    UNTIL           reduce using rule 117 (np_push_const_float_ -> .)
-    COMMA           reduce using rule 117 (np_push_const_float_ -> .)
-    PARENTHESESR    reduce using rule 117 (np_push_const_float_ -> .)
-    SQUARER         reduce using rule 117 (np_push_const_float_ -> .)
-    DO              reduce using rule 117 (np_push_const_float_ -> .)
-    SEMICOLON       reduce using rule 117 (np_push_const_float_ -> .)
+    MULT            reduce using rule 116 (np_push_const_float_ -> .)
+    DIVIDE          reduce using rule 116 (np_push_const_float_ -> .)
+    PLUS            reduce using rule 116 (np_push_const_float_ -> .)
+    MINUS           reduce using rule 116 (np_push_const_float_ -> .)
+    LESSTHAN        reduce using rule 116 (np_push_const_float_ -> .)
+    GREATERTHAN     reduce using rule 116 (np_push_const_float_ -> .)
+    LESSEQUAL       reduce using rule 116 (np_push_const_float_ -> .)
+    GREATEREQUAL    reduce using rule 116 (np_push_const_float_ -> .)
+    EQUAL           reduce using rule 116 (np_push_const_float_ -> .)
+    NOTEQUAL        reduce using rule 116 (np_push_const_float_ -> .)
+    AND             reduce using rule 116 (np_push_const_float_ -> .)
+    OR              reduce using rule 116 (np_push_const_float_ -> .)
+    UNTIL           reduce using rule 116 (np_push_const_float_ -> .)
+    COMMA           reduce using rule 116 (np_push_const_float_ -> .)
+    PARENTHESESR    reduce using rule 116 (np_push_const_float_ -> .)
+    SQUARER         reduce using rule 116 (np_push_const_float_ -> .)
+    DO              reduce using rule 116 (np_push_const_float_ -> .)
+    SEMICOLON       reduce using rule 116 (np_push_const_float_ -> .)
 
     np_push_const_float_           shift and go to state 129
 
 state 96
 
-    (119) letrero -> CTE_STR . np_push_const_string_
-    (118) np_push_const_string_ -> .
+    (118) letrero -> CTE_STR . np_push_const_string_
+    (117) np_push_const_string_ -> .
 
-    MULT            reduce using rule 118 (np_push_const_string_ -> .)
-    DIVIDE          reduce using rule 118 (np_push_const_string_ -> .)
-    PLUS            reduce using rule 118 (np_push_const_string_ -> .)
-    MINUS           reduce using rule 118 (np_push_const_string_ -> .)
-    LESSTHAN        reduce using rule 118 (np_push_const_string_ -> .)
-    GREATERTHAN     reduce using rule 118 (np_push_const_string_ -> .)
-    LESSEQUAL       reduce using rule 118 (np_push_const_string_ -> .)
-    GREATEREQUAL    reduce using rule 118 (np_push_const_string_ -> .)
-    EQUAL           reduce using rule 118 (np_push_const_string_ -> .)
-    NOTEQUAL        reduce using rule 118 (np_push_const_string_ -> .)
-    AND             reduce using rule 118 (np_push_const_string_ -> .)
-    OR              reduce using rule 118 (np_push_const_string_ -> .)
-    UNTIL           reduce using rule 118 (np_push_const_string_ -> .)
-    COMMA           reduce using rule 118 (np_push_const_string_ -> .)
-    PARENTHESESR    reduce using rule 118 (np_push_const_string_ -> .)
-    SQUARER         reduce using rule 118 (np_push_const_string_ -> .)
-    DO              reduce using rule 118 (np_push_const_string_ -> .)
-    SEMICOLON       reduce using rule 118 (np_push_const_string_ -> .)
+    MULT            reduce using rule 117 (np_push_const_string_ -> .)
+    DIVIDE          reduce using rule 117 (np_push_const_string_ -> .)
+    PLUS            reduce using rule 117 (np_push_const_string_ -> .)
+    MINUS           reduce using rule 117 (np_push_const_string_ -> .)
+    LESSTHAN        reduce using rule 117 (np_push_const_string_ -> .)
+    GREATERTHAN     reduce using rule 117 (np_push_const_string_ -> .)
+    LESSEQUAL       reduce using rule 117 (np_push_const_string_ -> .)
+    GREATEREQUAL    reduce using rule 117 (np_push_const_string_ -> .)
+    EQUAL           reduce using rule 117 (np_push_const_string_ -> .)
+    NOTEQUAL        reduce using rule 117 (np_push_const_string_ -> .)
+    AND             reduce using rule 117 (np_push_const_string_ -> .)
+    OR              reduce using rule 117 (np_push_const_string_ -> .)
+    UNTIL           reduce using rule 117 (np_push_const_string_ -> .)
+    COMMA           reduce using rule 117 (np_push_const_string_ -> .)
+    PARENTHESESR    reduce using rule 117 (np_push_const_string_ -> .)
+    SQUARER         reduce using rule 117 (np_push_const_string_ -> .)
+    DO              reduce using rule 117 (np_push_const_string_ -> .)
+    SEMICOLON       reduce using rule 117 (np_push_const_string_ -> .)
 
     np_push_const_string_          shift and go to state 130
 
@@ -1595,10 +1593,10 @@ state 98
     (25) funcion_param -> tipo ID . funcion_param_rep
     (27) funcion_param_rep -> . COMMA funcion_param
     (28) funcion_param_rep -> . empty
-    (120) empty -> .
+    (119) empty -> .
 
     COMMA           shift and go to state 133
-    PARENTHESESR    reduce using rule 120 (empty -> .)
+    PARENTHESESR    reduce using rule 119 (empty -> .)
 
     funcion_param_rep              shift and go to state 132
     empty                          shift and go to state 134
@@ -1702,7 +1700,7 @@ state 108
     (52) escritura -> PRINT np_push_operator_ PARENTHESESL . lista_escritura PARENTHESESR np_pop_operator_
     (53) lista_escritura -> . letrero np_quadruple_IO_ lista_escritura_rep
     (54) lista_escritura -> . expresion np_quadruple_IO_ lista_escritura_rep
-    (119) letrero -> . CTE_STR np_push_const_string_
+    (118) letrero -> . CTE_STR np_push_const_string_
     (77) expresion -> . exp_comp np_quadruple_logic_ expresion_2
     (82) exp_comp -> . exp_ar exp_comp_2
     (92) exp_ar -> . termino np_quadruple_term exp_ar_2
@@ -1763,7 +1761,7 @@ state 110
     (113) const -> . letrero
     (114) const -> . CTE_FLOAT np_push_const_float_
     (48) llamada -> . ID PARENTHESESL expresion_rep PARENTHESESR
-    (119) letrero -> . CTE_STR np_push_const_string_
+    (118) letrero -> . CTE_STR np_push_const_string_
 
     MINUS           shift and go to state 87
     PLUS            shift and go to state 88
@@ -1796,16 +1794,16 @@ state 112
     (78) expresion_2 -> . AND np_push_operator_ expresion
     (79) expresion_2 -> . OR np_push_operator_ expresion
     (80) expresion_2 -> . empty
-    (120) empty -> .
+    (119) empty -> .
 
     AND             shift and go to state 149
     OR              shift and go to state 150
-    UNTIL           reduce using rule 120 (empty -> .)
-    COMMA           reduce using rule 120 (empty -> .)
-    PARENTHESESR    reduce using rule 120 (empty -> .)
-    SQUARER         reduce using rule 120 (empty -> .)
-    DO              reduce using rule 120 (empty -> .)
-    SEMICOLON       reduce using rule 120 (empty -> .)
+    UNTIL           reduce using rule 119 (empty -> .)
+    COMMA           reduce using rule 119 (empty -> .)
+    PARENTHESESR    reduce using rule 119 (empty -> .)
+    SQUARER         reduce using rule 119 (empty -> .)
+    DO              reduce using rule 119 (empty -> .)
+    SEMICOLON       reduce using rule 119 (empty -> .)
 
     expresion_2                    shift and go to state 148
     empty                          shift and go to state 151
@@ -1937,24 +1935,24 @@ state 122
     (93) exp_ar_2 -> . PLUS np_push_operator_ exp_ar
     (94) exp_ar_2 -> . MINUS np_push_operator_ exp_ar
     (95) exp_ar_2 -> . empty
-    (120) empty -> .
+    (119) empty -> .
 
     PLUS            shift and go to state 154
     MINUS           shift and go to state 155
-    LESSTHAN        reduce using rule 120 (empty -> .)
-    GREATERTHAN     reduce using rule 120 (empty -> .)
-    LESSEQUAL       reduce using rule 120 (empty -> .)
-    GREATEREQUAL    reduce using rule 120 (empty -> .)
-    EQUAL           reduce using rule 120 (empty -> .)
-    NOTEQUAL        reduce using rule 120 (empty -> .)
-    AND             reduce using rule 120 (empty -> .)
-    OR              reduce using rule 120 (empty -> .)
-    UNTIL           reduce using rule 120 (empty -> .)
-    COMMA           reduce using rule 120 (empty -> .)
-    PARENTHESESR    reduce using rule 120 (empty -> .)
-    SQUARER         reduce using rule 120 (empty -> .)
-    DO              reduce using rule 120 (empty -> .)
-    SEMICOLON       reduce using rule 120 (empty -> .)
+    LESSTHAN        reduce using rule 119 (empty -> .)
+    GREATERTHAN     reduce using rule 119 (empty -> .)
+    LESSEQUAL       reduce using rule 119 (empty -> .)
+    GREATEREQUAL    reduce using rule 119 (empty -> .)
+    EQUAL           reduce using rule 119 (empty -> .)
+    NOTEQUAL        reduce using rule 119 (empty -> .)
+    AND             reduce using rule 119 (empty -> .)
+    OR              reduce using rule 119 (empty -> .)
+    UNTIL           reduce using rule 119 (empty -> .)
+    COMMA           reduce using rule 119 (empty -> .)
+    PARENTHESESR    reduce using rule 119 (empty -> .)
+    SQUARER         reduce using rule 119 (empty -> .)
+    DO              reduce using rule 119 (empty -> .)
+    SEMICOLON       reduce using rule 119 (empty -> .)
 
     exp_ar_2                       shift and go to state 153
     empty                          shift and go to state 156
@@ -1965,26 +1963,26 @@ state 123
     (98) termino_2 -> . MULT np_push_operator_ termino
     (99) termino_2 -> . DIVIDE np_push_operator_ termino
     (100) termino_2 -> . empty
-    (120) empty -> .
+    (119) empty -> .
 
     MULT            shift and go to state 158
     DIVIDE          shift and go to state 159
-    PLUS            reduce using rule 120 (empty -> .)
-    MINUS           reduce using rule 120 (empty -> .)
-    LESSTHAN        reduce using rule 120 (empty -> .)
-    GREATERTHAN     reduce using rule 120 (empty -> .)
-    LESSEQUAL       reduce using rule 120 (empty -> .)
-    GREATEREQUAL    reduce using rule 120 (empty -> .)
-    EQUAL           reduce using rule 120 (empty -> .)
-    NOTEQUAL        reduce using rule 120 (empty -> .)
-    AND             reduce using rule 120 (empty -> .)
-    OR              reduce using rule 120 (empty -> .)
-    UNTIL           reduce using rule 120 (empty -> .)
-    COMMA           reduce using rule 120 (empty -> .)
-    PARENTHESESR    reduce using rule 120 (empty -> .)
-    SQUARER         reduce using rule 120 (empty -> .)
-    DO              reduce using rule 120 (empty -> .)
-    SEMICOLON       reduce using rule 120 (empty -> .)
+    PLUS            reduce using rule 119 (empty -> .)
+    MINUS           reduce using rule 119 (empty -> .)
+    LESSTHAN        reduce using rule 119 (empty -> .)
+    GREATERTHAN     reduce using rule 119 (empty -> .)
+    LESSEQUAL       reduce using rule 119 (empty -> .)
+    GREATEREQUAL    reduce using rule 119 (empty -> .)
+    EQUAL           reduce using rule 119 (empty -> .)
+    NOTEQUAL        reduce using rule 119 (empty -> .)
+    AND             reduce using rule 119 (empty -> .)
+    OR              reduce using rule 119 (empty -> .)
+    UNTIL           reduce using rule 119 (empty -> .)
+    COMMA           reduce using rule 119 (empty -> .)
+    PARENTHESESR    reduce using rule 119 (empty -> .)
+    SQUARER         reduce using rule 119 (empty -> .)
+    DO              reduce using rule 119 (empty -> .)
+    SEMICOLON       reduce using rule 119 (empty -> .)
 
     termino_2                      shift and go to state 157
     empty                          shift and go to state 160
@@ -2003,7 +2001,7 @@ state 124
     (113) const -> . letrero
     (114) const -> . CTE_FLOAT np_push_const_float_
     (48) llamada -> . ID PARENTHESESL expresion_rep PARENTHESESR
-    (119) letrero -> . CTE_STR np_push_const_string_
+    (118) letrero -> . CTE_STR np_push_const_string_
 
     MINUS           shift and go to state 87
     PLUS            shift and go to state 88
@@ -2048,27 +2046,27 @@ state 126
     (107) factor -> ID np_push_var_ . dimension
     (45) dimension -> . SQUAREL np_add_false_bottom_ expresion np_pop_dimension_ np_remove_false_bottom_ SQUARER
     (46) dimension -> . empty
-    (120) empty -> .
+    (119) empty -> .
 
     SQUAREL         shift and go to state 100
-    MULT            reduce using rule 120 (empty -> .)
-    DIVIDE          reduce using rule 120 (empty -> .)
-    PLUS            reduce using rule 120 (empty -> .)
-    MINUS           reduce using rule 120 (empty -> .)
-    LESSTHAN        reduce using rule 120 (empty -> .)
-    GREATERTHAN     reduce using rule 120 (empty -> .)
-    LESSEQUAL       reduce using rule 120 (empty -> .)
-    GREATEREQUAL    reduce using rule 120 (empty -> .)
-    EQUAL           reduce using rule 120 (empty -> .)
-    NOTEQUAL        reduce using rule 120 (empty -> .)
-    AND             reduce using rule 120 (empty -> .)
-    OR              reduce using rule 120 (empty -> .)
-    UNTIL           reduce using rule 120 (empty -> .)
-    COMMA           reduce using rule 120 (empty -> .)
-    PARENTHESESR    reduce using rule 120 (empty -> .)
-    SQUARER         reduce using rule 120 (empty -> .)
-    DO              reduce using rule 120 (empty -> .)
-    SEMICOLON       reduce using rule 120 (empty -> .)
+    MULT            reduce using rule 119 (empty -> .)
+    DIVIDE          reduce using rule 119 (empty -> .)
+    PLUS            reduce using rule 119 (empty -> .)
+    MINUS           reduce using rule 119 (empty -> .)
+    LESSTHAN        reduce using rule 119 (empty -> .)
+    GREATERTHAN     reduce using rule 119 (empty -> .)
+    LESSEQUAL       reduce using rule 119 (empty -> .)
+    GREATEREQUAL    reduce using rule 119 (empty -> .)
+    EQUAL           reduce using rule 119 (empty -> .)
+    NOTEQUAL        reduce using rule 119 (empty -> .)
+    AND             reduce using rule 119 (empty -> .)
+    OR              reduce using rule 119 (empty -> .)
+    UNTIL           reduce using rule 119 (empty -> .)
+    COMMA           reduce using rule 119 (empty -> .)
+    PARENTHESESR    reduce using rule 119 (empty -> .)
+    SQUARER         reduce using rule 119 (empty -> .)
+    DO              reduce using rule 119 (empty -> .)
+    SEMICOLON       reduce using rule 119 (empty -> .)
 
     dimension                      shift and go to state 162
     empty                          shift and go to state 101
@@ -2091,7 +2089,7 @@ state 127
     (113) const -> . letrero
     (114) const -> . CTE_FLOAT np_push_const_float_
     (48) llamada -> . ID PARENTHESESL expresion_rep PARENTHESESR
-    (119) letrero -> . CTE_STR np_push_const_string_
+    (118) letrero -> . CTE_STR np_push_const_string_
 
     MINUS           shift and go to state 87
     PLUS            shift and go to state 88
@@ -2161,26 +2159,26 @@ state 129
 
 state 130
 
-    (119) letrero -> CTE_STR np_push_const_string_ .
+    (118) letrero -> CTE_STR np_push_const_string_ .
 
-    MULT            reduce using rule 119 (letrero -> CTE_STR np_push_const_string_ .)
-    DIVIDE          reduce using rule 119 (letrero -> CTE_STR np_push_const_string_ .)
-    PLUS            reduce using rule 119 (letrero -> CTE_STR np_push_const_string_ .)
-    MINUS           reduce using rule 119 (letrero -> CTE_STR np_push_const_string_ .)
-    LESSTHAN        reduce using rule 119 (letrero -> CTE_STR np_push_const_string_ .)
-    GREATERTHAN     reduce using rule 119 (letrero -> CTE_STR np_push_const_string_ .)
-    LESSEQUAL       reduce using rule 119 (letrero -> CTE_STR np_push_const_string_ .)
-    GREATEREQUAL    reduce using rule 119 (letrero -> CTE_STR np_push_const_string_ .)
-    EQUAL           reduce using rule 119 (letrero -> CTE_STR np_push_const_string_ .)
-    NOTEQUAL        reduce using rule 119 (letrero -> CTE_STR np_push_const_string_ .)
-    AND             reduce using rule 119 (letrero -> CTE_STR np_push_const_string_ .)
-    OR              reduce using rule 119 (letrero -> CTE_STR np_push_const_string_ .)
-    UNTIL           reduce using rule 119 (letrero -> CTE_STR np_push_const_string_ .)
-    COMMA           reduce using rule 119 (letrero -> CTE_STR np_push_const_string_ .)
-    PARENTHESESR    reduce using rule 119 (letrero -> CTE_STR np_push_const_string_ .)
-    SQUARER         reduce using rule 119 (letrero -> CTE_STR np_push_const_string_ .)
-    DO              reduce using rule 119 (letrero -> CTE_STR np_push_const_string_ .)
-    SEMICOLON       reduce using rule 119 (letrero -> CTE_STR np_push_const_string_ .)
+    MULT            reduce using rule 118 (letrero -> CTE_STR np_push_const_string_ .)
+    DIVIDE          reduce using rule 118 (letrero -> CTE_STR np_push_const_string_ .)
+    PLUS            reduce using rule 118 (letrero -> CTE_STR np_push_const_string_ .)
+    MINUS           reduce using rule 118 (letrero -> CTE_STR np_push_const_string_ .)
+    LESSTHAN        reduce using rule 118 (letrero -> CTE_STR np_push_const_string_ .)
+    GREATERTHAN     reduce using rule 118 (letrero -> CTE_STR np_push_const_string_ .)
+    LESSEQUAL       reduce using rule 118 (letrero -> CTE_STR np_push_const_string_ .)
+    GREATEREQUAL    reduce using rule 118 (letrero -> CTE_STR np_push_const_string_ .)
+    EQUAL           reduce using rule 118 (letrero -> CTE_STR np_push_const_string_ .)
+    NOTEQUAL        reduce using rule 118 (letrero -> CTE_STR np_push_const_string_ .)
+    AND             reduce using rule 118 (letrero -> CTE_STR np_push_const_string_ .)
+    OR              reduce using rule 118 (letrero -> CTE_STR np_push_const_string_ .)
+    UNTIL           reduce using rule 118 (letrero -> CTE_STR np_push_const_string_ .)
+    COMMA           reduce using rule 118 (letrero -> CTE_STR np_push_const_string_ .)
+    PARENTHESESR    reduce using rule 118 (letrero -> CTE_STR np_push_const_string_ .)
+    SQUARER         reduce using rule 118 (letrero -> CTE_STR np_push_const_string_ .)
+    DO              reduce using rule 118 (letrero -> CTE_STR np_push_const_string_ .)
+    SEMICOLON       reduce using rule 118 (letrero -> CTE_STR np_push_const_string_ .)
 
 
 state 131
@@ -2205,12 +2203,12 @@ state 133
     (15) tipo -> . INT
     (16) tipo -> . FLOAT
     (17) tipo -> . STRING
-    (120) empty -> .
+    (119) empty -> .
 
     INT             shift and go to state 11
     FLOAT           shift and go to state 12
     STRING          shift and go to state 13
-    PARENTHESESR    reduce using rule 120 (empty -> .)
+    PARENTHESESR    reduce using rule 119 (empty -> .)
 
     funcion_param                  shift and go to state 165
     tipo                           shift and go to state 65
@@ -2256,7 +2254,7 @@ state 136
     (113) const -> . letrero
     (114) const -> . CTE_FLOAT np_push_const_float_
     (48) llamada -> . ID PARENTHESESL expresion_rep PARENTHESESR
-    (119) letrero -> . CTE_STR np_push_const_string_
+    (118) letrero -> . CTE_STR np_push_const_string_
 
     MINUS           shift and go to state 87
     PLUS            shift and go to state 88
@@ -2320,7 +2318,7 @@ state 138
     (113) const -> . letrero
     (114) const -> . CTE_FLOAT np_push_const_float_
     (48) llamada -> . ID PARENTHESESL expresion_rep PARENTHESESR
-    (119) letrero -> . CTE_STR np_push_const_string_
+    (118) letrero -> . CTE_STR np_push_const_string_
 
     MINUS           shift and go to state 87
     PLUS            shift and go to state 88
@@ -2448,7 +2446,7 @@ state 147
     (113) const -> . letrero
     (114) const -> . CTE_FLOAT np_push_const_float_
     (48) llamada -> . ID PARENTHESESL expresion_rep PARENTHESESR
-    (119) letrero -> . CTE_STR np_push_const_string_
+    (118) letrero -> . CTE_STR np_push_const_string_
 
     MINUS           shift and go to state 87
     PLUS            shift and go to state 88
@@ -2538,7 +2536,7 @@ state 152
     (113) const -> . letrero
     (114) const -> . CTE_FLOAT np_push_const_float_
     (48) llamada -> . ID PARENTHESESL expresion_rep PARENTHESESR
-    (119) letrero -> . CTE_STR np_push_const_string_
+    (118) letrero -> . CTE_STR np_push_const_string_
 
     MINUS           shift and go to state 87
     PLUS            shift and go to state 88
@@ -2762,10 +2760,10 @@ state 164
     (19) funcion -> FUNC tipo_func ID np_set_scope_ PARENTHESESL funcion_param np_add_func_to_directory_ PARENTHESESR SEMICOLON . variables np_add_vars_to_table_ CURLYL estatuto_rep CURLYR
     (5) variables -> . VAR variables_2
     (6) variables -> . empty
-    (120) empty -> .
+    (119) empty -> .
 
     VAR             shift and go to state 6
-    CURLYL          reduce using rule 120 (empty -> .)
+    CURLYL          reduce using rule 119 (empty -> .)
 
     variables                      shift and go to state 187
     empty                          shift and go to state 7
@@ -2795,7 +2793,7 @@ state 166
     (113) const -> . letrero
     (114) const -> . CTE_FLOAT np_push_const_float_
     (48) llamada -> . ID PARENTHESESL expresion_rep PARENTHESESR
-    (119) letrero -> . CTE_STR np_push_const_string_
+    (118) letrero -> . CTE_STR np_push_const_string_
 
     MINUS           shift and go to state 87
     PLUS            shift and go to state 88
@@ -2853,11 +2851,11 @@ state 171
     (51) lista_lectura -> ID np_push_var_ . dimension np_quadruple_IO_
     (45) dimension -> . SQUAREL np_add_false_bottom_ expresion np_pop_dimension_ np_remove_false_bottom_ SQUARER
     (46) dimension -> . empty
-    (120) empty -> .
+    (119) empty -> .
 
     SQUAREL         shift and go to state 100
-    COMMA           reduce using rule 120 (empty -> .)
-    PARENTHESESR    reduce using rule 120 (empty -> .)
+    COMMA           reduce using rule 119 (empty -> .)
+    PARENTHESESR    reduce using rule 119 (empty -> .)
 
     dimension                      shift and go to state 191
     empty                          shift and go to state 101
@@ -2876,10 +2874,10 @@ state 173
     (53) lista_escritura -> letrero np_quadruple_IO_ . lista_escritura_rep
     (55) lista_escritura_rep -> . COMMA lista_escritura
     (56) lista_escritura_rep -> . empty
-    (120) empty -> .
+    (119) empty -> .
 
     COMMA           shift and go to state 194
-    PARENTHESESR    reduce using rule 120 (empty -> .)
+    PARENTHESESR    reduce using rule 119 (empty -> .)
 
     lista_escritura_rep            shift and go to state 193
     empty                          shift and go to state 195
@@ -2889,10 +2887,10 @@ state 174
     (54) lista_escritura -> expresion np_quadruple_IO_ . lista_escritura_rep
     (55) lista_escritura_rep -> . COMMA lista_escritura
     (56) lista_escritura_rep -> . empty
-    (120) empty -> .
+    (119) empty -> .
 
     COMMA           shift and go to state 194
-    PARENTHESESR    reduce using rule 120 (empty -> .)
+    PARENTHESESR    reduce using rule 119 (empty -> .)
 
     lista_escritura_rep            shift and go to state 196
     empty                          shift and go to state 195
@@ -2942,7 +2940,7 @@ state 178
     (113) const -> . letrero
     (114) const -> . CTE_FLOAT np_push_const_float_
     (48) llamada -> . ID PARENTHESESL expresion_rep PARENTHESESR
-    (119) letrero -> . CTE_STR np_push_const_string_
+    (118) letrero -> . CTE_STR np_push_const_string_
 
     MINUS           shift and go to state 87
     PLUS            shift and go to state 88
@@ -2980,7 +2978,7 @@ state 179
     (113) const -> . letrero
     (114) const -> . CTE_FLOAT np_push_const_float_
     (48) llamada -> . ID PARENTHESESL expresion_rep PARENTHESESR
-    (119) letrero -> . CTE_STR np_push_const_string_
+    (118) letrero -> . CTE_STR np_push_const_string_
 
     MINUS           shift and go to state 87
     PLUS            shift and go to state 88
@@ -3032,7 +3030,7 @@ state 181
     (113) const -> . letrero
     (114) const -> . CTE_FLOAT np_push_const_float_
     (48) llamada -> . ID PARENTHESESL expresion_rep PARENTHESESR
-    (119) letrero -> . CTE_STR np_push_const_string_
+    (118) letrero -> . CTE_STR np_push_const_string_
 
     MINUS           shift and go to state 87
     PLUS            shift and go to state 88
@@ -3066,7 +3064,7 @@ state 182
     (113) const -> . letrero
     (114) const -> . CTE_FLOAT np_push_const_float_
     (48) llamada -> . ID PARENTHESESL expresion_rep PARENTHESESR
-    (119) letrero -> . CTE_STR np_push_const_string_
+    (118) letrero -> . CTE_STR np_push_const_string_
 
     MINUS           shift and go to state 87
     PLUS            shift and go to state 88
@@ -3099,7 +3097,7 @@ state 183
     (113) const -> . letrero
     (114) const -> . CTE_FLOAT np_push_const_float_
     (48) llamada -> . ID PARENTHESESL expresion_rep PARENTHESESR
-    (119) letrero -> . CTE_STR np_push_const_string_
+    (118) letrero -> . CTE_STR np_push_const_string_
 
     MINUS           shift and go to state 87
     PLUS            shift and go to state 88
@@ -3131,7 +3129,7 @@ state 184
     (113) const -> . letrero
     (114) const -> . CTE_FLOAT np_push_const_float_
     (48) llamada -> . ID PARENTHESESL expresion_rep PARENTHESESR
-    (119) letrero -> . CTE_STR np_push_const_string_
+    (118) letrero -> . CTE_STR np_push_const_string_
 
     MINUS           shift and go to state 87
     PLUS            shift and go to state 88
@@ -3262,7 +3260,7 @@ state 194
     (55) lista_escritura_rep -> COMMA . lista_escritura
     (53) lista_escritura -> . letrero np_quadruple_IO_ lista_escritura_rep
     (54) lista_escritura -> . expresion np_quadruple_IO_ lista_escritura_rep
-    (119) letrero -> . CTE_STR np_push_const_string_
+    (118) letrero -> . CTE_STR np_push_const_string_
     (77) expresion -> . exp_comp np_quadruple_logic_ expresion_2
     (82) exp_comp -> . exp_ar exp_comp_2
     (92) exp_ar -> . termino np_quadruple_term exp_ar_2
@@ -3538,7 +3536,7 @@ state 214
     (36) estatuto -> . decision
     (37) estatuto -> . rep_c
     (38) estatuto -> . rep_nc
-    (120) empty -> .
+    (119) empty -> .
     (44) asignacion -> . ID np_push_var_ dimension ASSIGN np_push_operator_ expresion np_quadruple_assignment_
     (48) llamada -> . ID PARENTHESESL expresion_rep PARENTHESESR
     (75) retorno -> . RETURN PARENTHESESL expresion PARENTHESESR np_quadruple_return_
@@ -3548,7 +3546,7 @@ state 214
     (63) rep_c -> . WHILE np_push_jump_ PARENTHESESL expresion PARENTHESESR np_gotoF_ DO CURLYL estatuto_rep CURLYR np_end_while_actions_
     (66) rep_nc -> . FROM expresion np_assign_temp_ UNTIL expresion np_quadruple_for_ np_gotoF_ DO CURLYL estatuto_rep CURLYR np_end_for_actions
 
-    CURLYR          reduce using rule 120 (empty -> .)
+    CURLYR          reduce using rule 119 (empty -> .)
     ID              shift and go to state 57
     RETURN          shift and go to state 58
     READ            shift and go to state 59
@@ -3596,7 +3594,7 @@ state 217
     (36) estatuto -> . decision
     (37) estatuto -> . rep_c
     (38) estatuto -> . rep_nc
-    (120) empty -> .
+    (119) empty -> .
     (44) asignacion -> . ID np_push_var_ dimension ASSIGN np_push_operator_ expresion np_quadruple_assignment_
     (48) llamada -> . ID PARENTHESESL expresion_rep PARENTHESESR
     (75) retorno -> . RETURN PARENTHESESL expresion PARENTHESESR np_quadruple_return_
@@ -3606,7 +3604,7 @@ state 217
     (63) rep_c -> . WHILE np_push_jump_ PARENTHESESL expresion PARENTHESESR np_gotoF_ DO CURLYL estatuto_rep CURLYR np_end_while_actions_
     (66) rep_nc -> . FROM expresion np_assign_temp_ UNTIL expresion np_quadruple_for_ np_gotoF_ DO CURLYL estatuto_rep CURLYR np_end_for_actions
 
-    CURLYR          reduce using rule 120 (empty -> .)
+    CURLYR          reduce using rule 119 (empty -> .)
     ID              shift and go to state 57
     RETURN          shift and go to state 58
     READ            shift and go to state 59
@@ -3682,7 +3680,7 @@ state 221
     (36) estatuto -> . decision
     (37) estatuto -> . rep_c
     (38) estatuto -> . rep_nc
-    (120) empty -> .
+    (119) empty -> .
     (44) asignacion -> . ID np_push_var_ dimension ASSIGN np_push_operator_ expresion np_quadruple_assignment_
     (48) llamada -> . ID PARENTHESESL expresion_rep PARENTHESESR
     (75) retorno -> . RETURN PARENTHESESL expresion PARENTHESESR np_quadruple_return_
@@ -3692,7 +3690,7 @@ state 221
     (63) rep_c -> . WHILE np_push_jump_ PARENTHESESL expresion PARENTHESESR np_gotoF_ DO CURLYL estatuto_rep CURLYR np_end_while_actions_
     (66) rep_nc -> . FROM expresion np_assign_temp_ UNTIL expresion np_quadruple_for_ np_gotoF_ DO CURLYL estatuto_rep CURLYR np_end_for_actions
 
-    CURLYR          reduce using rule 120 (empty -> .)
+    CURLYR          reduce using rule 119 (empty -> .)
     ID              shift and go to state 57
     RETURN          shift and go to state 58
     READ            shift and go to state 59
@@ -3739,17 +3737,17 @@ state 225
     (57) decision -> IF PARENTHESESL expresion PARENTHESESR np_gotoF_ THEN CURLYL estatuto_rep CURLYR . decision_alt
     (58) decision_alt -> . ELSE np_false_condition_ CURLYL estatuto_rep CURLYR np_end_if_actions
     (59) decision_alt -> . empty np_end_if_actions
-    (120) empty -> .
+    (119) empty -> .
 
     ELSE            shift and go to state 230
-    ID              reduce using rule 120 (empty -> .)
-    RETURN          reduce using rule 120 (empty -> .)
-    READ            reduce using rule 120 (empty -> .)
-    PRINT           reduce using rule 120 (empty -> .)
-    IF              reduce using rule 120 (empty -> .)
-    WHILE           reduce using rule 120 (empty -> .)
-    FROM            reduce using rule 120 (empty -> .)
-    CURLYR          reduce using rule 120 (empty -> .)
+    ID              reduce using rule 119 (empty -> .)
+    RETURN          reduce using rule 119 (empty -> .)
+    READ            reduce using rule 119 (empty -> .)
+    PRINT           reduce using rule 119 (empty -> .)
+    IF              reduce using rule 119 (empty -> .)
+    WHILE           reduce using rule 119 (empty -> .)
+    FROM            reduce using rule 119 (empty -> .)
+    CURLYR          reduce using rule 119 (empty -> .)
 
     decision_alt                   shift and go to state 229
     empty                          shift and go to state 231
@@ -3774,7 +3772,7 @@ state 227
     (36) estatuto -> . decision
     (37) estatuto -> . rep_c
     (38) estatuto -> . rep_nc
-    (120) empty -> .
+    (119) empty -> .
     (44) asignacion -> . ID np_push_var_ dimension ASSIGN np_push_operator_ expresion np_quadruple_assignment_
     (48) llamada -> . ID PARENTHESESL expresion_rep PARENTHESESR
     (75) retorno -> . RETURN PARENTHESESL expresion PARENTHESESR np_quadruple_return_
@@ -3784,7 +3782,7 @@ state 227
     (63) rep_c -> . WHILE np_push_jump_ PARENTHESESL expresion PARENTHESESR np_gotoF_ DO CURLYL estatuto_rep CURLYR np_end_while_actions_
     (66) rep_nc -> . FROM expresion np_assign_temp_ UNTIL expresion np_quadruple_for_ np_gotoF_ DO CURLYL estatuto_rep CURLYR np_end_for_actions
 
-    CURLYR          reduce using rule 120 (empty -> .)
+    CURLYR          reduce using rule 119 (empty -> .)
     ID              shift and go to state 57
     RETURN          shift and go to state 58
     READ            shift and go to state 59
@@ -3941,7 +3939,7 @@ state 238
     (36) estatuto -> . decision
     (37) estatuto -> . rep_c
     (38) estatuto -> . rep_nc
-    (120) empty -> .
+    (119) empty -> .
     (44) asignacion -> . ID np_push_var_ dimension ASSIGN np_push_operator_ expresion np_quadruple_assignment_
     (48) llamada -> . ID PARENTHESESL expresion_rep PARENTHESESR
     (75) retorno -> . RETURN PARENTHESESL expresion PARENTHESESR np_quadruple_return_
@@ -3951,7 +3949,7 @@ state 238
     (63) rep_c -> . WHILE np_push_jump_ PARENTHESESL expresion PARENTHESESR np_gotoF_ DO CURLYL estatuto_rep CURLYR np_end_while_actions_
     (66) rep_nc -> . FROM expresion np_assign_temp_ UNTIL expresion np_quadruple_for_ np_gotoF_ DO CURLYL estatuto_rep CURLYR np_end_for_actions
 
-    CURLYR          reduce using rule 120 (empty -> .)
+    CURLYR          reduce using rule 119 (empty -> .)
     ID              shift and go to state 57
     RETURN          shift and go to state 58
     READ            shift and go to state 59

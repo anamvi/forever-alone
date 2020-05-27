@@ -1,7 +1,8 @@
 class Variable:
-    def __init__(self, name, type):
+    def __init__(self, name, type, dir):
         self.name = name
         self.type = type
+        self.dir = dir
 
 class Function:
     def __init__(self, name, type, parameters):
@@ -10,10 +11,10 @@ class Function:
         self.variables = {}
         self.parameters = parameters
 
-    def add_variable(self, name, type):
+    def add_variable(self, name, type, dir):
         if name in self.variables:
             raise Exception("La variable '"+name+"' ya existe en este contexto.")
-        self.variables[name] = Variable(name, type)
+        self.variables[name] = Variable(name, type, dir)
 
     def variable_exists(self, name):
         if name in self.variables:
@@ -35,7 +36,8 @@ class FunctionsTable:
             for j in self.functions[func.name].variables:
                 variable = self.functions[func.name].variables[j]
                 output += "NAME: " + variable.name + "\n"
-                output += "TYPE: " + str(variable.type) + "\n\n"
+                output += "TYPE: " + str(variable.type) + "\n"
+                output += "DIRECTION: " + str(variable.dir) + "\n\n"
 
             output += "\n"
         return output

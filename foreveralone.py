@@ -131,7 +131,8 @@ def p_np_push_global_vars_(p):
     # Add variables to variable table for the global scope
     if p[-1] is not None:
         for i in p[-1]:
-            dir_func.functions['global'].add_variable(i[0], i[1])
+            dir = inter_code.mem.global_.add_value(i[0],i[1])
+            dir_func.functions['global'].add_variable(i[0], i[1], dir)
 def p_prog_funcs(p):
     '''
         prog_funcs : funcion prog_funcs
@@ -241,7 +242,8 @@ def p_np_add_func_to_directory_(p):
     # add parameters to variable table for current function
     if p[-1] is not None:
         for i in p[-1]:
-            dir_func.functions[current_scope].add_variable(i[0], i[1])
+            dir = inter_code.mem.local_.add_value(i[0],i[1])
+            dir_func.functions[current_scope].add_variable(i[0], i[1], dir)
 
 def p_np_add_vars_to_table_(p):
     '''
@@ -251,7 +253,8 @@ def p_np_add_vars_to_table_(p):
     # add variables to variable table
     if p[-1] is not None:
         for i in p[-1]:
-            dir_func.functions[current_scope].add_variable(i[0], i[1])
+            dir = inter_code.mem.local_.add_value(i[0],i[1])
+            dir_func.functions[current_scope].add_variable(i[0], i[1],dir)
 
 def p_tipo_func(p):
     '''
@@ -324,11 +327,13 @@ def p_np_push_var_(p):
     '''
     if dir_func.functions[current_scope].variable_exists(p[-1]):
         var_type = dir_func.functions[current_scope].variables[p[-1]].type
+        var = dir_func.functions[current_scope].variables[p[-1]].dir
     elif dir_func.functions['global'].variable_exists(p[-1]):
         var_type = dir_func.functions['global'].variables[p[-1]].type
+        var = dir_func.functions['global'].variables[p[-1]].dir
     else:
         raise Exception('Variable does not exist')
-    inter_code.variable_stack.append(p[-1])
+    inter_code.variable_stack.append(var)
     inter_code.type_stack.append(var_type)
     print(inter_code.variable_stack)
     print(inter_code.type_stack)
@@ -687,20 +692,10 @@ def p_np_push_const_int_(p):
     '''
         np_push_const_int_ :
     '''
-    inter_code.variable_stack.append(int(p[-1]))
+    var = inter_code.mem.constant_.add_value(int(p[-1]),'int')
+    inter_code.variable_stack.append(var)
     print(inter_code.variable_stack)
     inter_code.type_stack.append('int')
-    print(inter_code.type_stack)
-    print(inter_code.operator_stack)
-    print('\n')
-
-def p_np_push_const_char_(p):
-    '''
-        np_push_const_char_ :
-    '''
-    inter_code.variable_stack.append(str(p[-1]))
-    print(inter_code.variable_stack)
-    inter_code.type_stack.append('char')
     print(inter_code.type_stack)
     print(inter_code.operator_stack)
     print('\n')
@@ -709,7 +704,8 @@ def p_np_push_const_float_(p):
     '''
         np_push_const_float_ :
     '''
-    inter_code.variable_stack.append(float(p[-1]))
+    var = inter_code.mem.constant_.add_value(float(p[-1]),'float')
+    inter_code.variable_stack.append(var)
     print(inter_code.variable_stack)
     inter_code.type_stack.append('float')
     print(inter_code.type_stack)
@@ -720,7 +716,8 @@ def p_np_push_const_string_(p):
     '''
         np_push_const_string_ :
     '''
-    inter_code.variable_stack.append(str(p[-1][1:-1]))
+    var = inter_code.mem.constant_.add_value(str(p[-1][1:-1]),'string')
+    inter_code.variable_stack.append(var)
     print(inter_code.variable_stack)
     inter_code.type_stack.append('string')
     print(inter_code.type_stack)
