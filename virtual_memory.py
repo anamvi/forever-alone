@@ -18,23 +18,28 @@ class MemorySegment:
         output = '-- Initial Direction: '+ str(self.initial_dir)
         output+= '\n        INTEGERS:'
         output+= '\n        -- start: ' + str(self.initial_dir+self._BASE_INT)
-        output+= '\n        -- end: ' + str(self.initial_dir+self._BASE_INT+len(self.integers))
+        output+= '\n        -- end: ' + str(self.initial_dir+self._BASE_INT+1999)
+        output+= '\n        -- current: ' + str(self.initial_dir+self._BASE_INT+len(self.integers))
         output+= '\n        -- ' + str(self.integers)
         output+= '\n        FLOATS:'
         output+= '\n        -- start: ' + str(self.initial_dir+self._BASE_FLOAT)
-        output+= '\n        -- end: ' + str(self.initial_dir+self._BASE_FLOAT+len(self.floats))
+        output+= '\n        -- end: ' + str(self.initial_dir+self._BASE_FLOAT+1999)
+        output+= '\n        -- current: ' + str(self.initial_dir+self._BASE_FLOAT+len(self.floats))
         output+= '\n        -- ' + str(self.floats)
         output+= '\n        STRINGS:'
         output+= '\n        -- start: ' + str(self.initial_dir+self._BASE_STRING)
-        output+= '\n        -- end: ' + str(self.initial_dir+self._BASE_STRING+len(self.strings))
+        output+= '\n        -- end: ' + str(self.initial_dir+self._BASE_STRING+1999)
+        output+= '\n        -- current: ' + str(self.initial_dir+self._BASE_STRING+len(self.strings))
         output+= '\n        -- ' + str(self.strings)
         output+= '\n        BOOLS:'
         output+= '\n        -- start: ' + str(self.initial_dir+self._BASE_BOOL)
-        output+= '\n        -- end: ' + str(self.initial_dir+self._BASE_BOOL+len(self.bools))
+        output+= '\n        -- end: ' + str(self.initial_dir+self._BASE_BOOL+1999)
+        output+= '\n        -- current: ' + str(self.initial_dir+self._BASE_BOOL+len(self.bools))
         output+= '\n        -- ' + str(self.bools)
         output+= '\n        POINTERS:'
         output+= '\n        -- start: ' + str(self.initial_dir+self._BASE_PTR)
-        output+= '\n        -- end: ' + str(self.initial_dir+self._BASE_PTR+len(self.pointers))
+        output+= '\n        -- end: ' + str(self.initial_dir+self._BASE_PTR+1999)
+        output+= '\n        -- current: ' + str(self.initial_dir+self._BASE_PTR+len(self.pointers))
         output+= '\n        -- ' + str(self.pointers)
         output+= '\n\n'
         return output
@@ -85,22 +90,23 @@ class MemorySegment:
 
 class VirtualMemory:
     def __init__(self):
+        # Declare initial directions of each memory segment.
+        # Global, Local and Constant have 8000 spaces each (2000 for each data type).
+        # Temporal adds 2000 extra for pointers.
         self._BASE_GLOBAL = 1000
-        self._BASE_GLOBAL_TEMP = 11000
-        self._BASE_LOCAL = 21000
-        self._BASE_LOCAL_TEMP = 31000
-        self._BASE_CONSTANT = 41000
+        self._BASE_LOCAL = 9000
+        self._BASE_TEMP = 17000
+        self._BASE_CONSTANT = 27000
+        # Create the four memory segments
         self.global_ = MemorySegment(self._BASE_GLOBAL)
-        self.global_temp = MemorySegment(self._BASE_GLOBAL_TEMP)
         self.local_ = MemorySegment(self._BASE_LOCAL)
-        self.local_temp = MemorySegment(self._BASE_LOCAL_TEMP)
+        self.temp_ = MemorySegment(self._BASE_TEMP)
         self.constant_ = MemorySegment(self._BASE_CONSTANT)
 
     def __str__(self):
         output = '---------- GLOBAL MEMORY ---------- \n' + str(self.global_)
-        output += '---------- GLOBAL TEMPORALS ---------- \n' + str(self.global_temp)
         output += '---------- LOCAL MEMORY ---------- \n' + str(self.local_)
-        output += '---------- LOCAL TEMPORALS ---------- \n' + str(self.local_temp)
+        output += '---------- TEMPORALS ---------- \n' + str(self.temp_)
         output += '---------- CONSTANTS ---------- \n' + str(self.constant_)
         output+= '\n'
         return output

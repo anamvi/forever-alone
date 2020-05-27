@@ -1,8 +1,6 @@
 from semantic_cube import SemanticCube
 from virtual_memory import VirtualMemory
 
-temp_counter = 1
-
 class Quadruple:
     def __init__(self, operator, left_operand, right_operand, result):
         self.operator = operator
@@ -16,6 +14,7 @@ class Quadruple:
 
 class InterCode:
     def __init__(self):
+        self.temp_counter = 1
         self.quadruples = []
         self.operator_stack = []
         self.variable_stack = []
@@ -25,20 +24,19 @@ class InterCode:
         self.mem = VirtualMemory()
 
     def add_operation_quadruple(self):
-        global temp_counter
         op = self.operator_stack.pop()
         r_var = self.variable_stack.pop()
         r_var_type = self.type_stack.pop()
         l_var = self.variable_stack.pop()
         l_var_type = self.type_stack.pop()
-        res = 't'+str(temp_counter)
+        # res = 't'+str(self.temp_counter)
         # print('operation quadruple -- ' + op + ' ' +str(l_var) + ' ' + str(r_var) + ' '+ res)
 
         res_type = self.semantic.cube[op][r_var_type][l_var_type]
-
+        res = self.mem.temp_.add_value(self.temp_counter,res_type)
+        self.temp_counter+=1
         if res_type != 'error' :
             current_quad = Quadruple(op, l_var, r_var, res)
-            temp_counter+=1
             self.quadruples.append(current_quad)
             self.variable_stack.append(res)
             self.type_stack.append(res_type)
@@ -109,7 +107,6 @@ class InterCode:
         self.jumps_stack.append(len(self.quadruples)+offset)
 
     def add_unary_quadruple(self):
-        global temp_counter
         op = self.operator_stack.pop()
         num_type = self.type_stack.pop()
         num = self.variable_stack.pop()
@@ -117,35 +114,36 @@ class InterCode:
         print(self.type_stack)
         print(self.operator_stack)
         print('\n')
-        if self.semantic.cube[op][num_type][None] != 'error':
-            res = 't'+str(temp_counter)
+        res_type=self.semantic.cube[op][num_type][None]
+        if res_type != 'error':
+            res = self.mem.temp_.add_value(self.temp_counter,res_type)
+            self.temp_counter+=1
             current_quad = Quadruple(op,num,None,res)
             self.quadruples.append(current_quad)
-            temp_counter+=1
             self.variable_stack.append(res)
             self.type_stack.append(num_type)
         else:
             raise Exception('ERROR type mismatch'+ '\n values of type '+ num_type + " cannot be made negative" )
 
     def add_assign_temp_quadruple(self):
-        global temp_counter
         num_type = self.type_stack.pop()
         num = self.variable_stack.pop()
         print(self.variable_stack)
         print(self.type_stack)
         print(self.operator_stack)
         print('\n')
-        res = 't'+str(temp_counter) # del tipo del num
+        res = self.mem.temp_.add_value(self.temp_counter,num_type)
+        self.temp_counter+=1
         current_quad = Quadruple('=',num,None,res)
         self.quadruples.append(current_quad)
-        temp_counter+=1
         self.variable_stack.append(res)
         self.type_stack.append(num_type)
 
     def add_self_increment_quadruple(self, increment):
         num_type = self.type_stack.pop()
         num = self.variable_stack.pop()
-        res = 't'+str(temp_counter)
+        res = self.mem.temp_.add_value(self.temp_counter,num_type)
+        self.temp_counter+=1
         # maybe make a += operator?
         current_quad = Quadruple('+',num,increment,res)
         self.quadruples.append(current_quad)
