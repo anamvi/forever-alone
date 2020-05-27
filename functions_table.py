@@ -3,6 +3,7 @@ class Variable:
         self.name = name
         self.type = type
         self.dir = dir
+        self.array_size = 0
 
 class Function:
     def __init__(self, name, type, parameters):

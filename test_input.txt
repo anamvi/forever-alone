@@ -1,6 +1,6 @@
 programa hola;
 var
-int: i, j[2];
+int: i, j[6];
 string: x;
 funcion int uno(string c);
 var

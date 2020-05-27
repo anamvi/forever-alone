@@ -131,8 +131,15 @@ def p_np_push_global_vars_(p):
     # Add variables to variable table for the global scope
     if p[-1] is not None:
         for i in p[-1]:
-            dir = inter_code.mem.global_.add_value(i[0],i[1])
-            dir_func.functions['global'].add_variable(i[0], i[1], dir)
+            dir = inter_code.mem.global_.add_value(i[0],i[2])
+            dir_func.functions['global'].add_variable(i[0], i[2], dir)
+            if i[1] is not None:
+                dir_func.functions['global'].variables[i[0]].array_size = int(i[1])
+                x=1
+                while x < int(i[1]):
+                    inter_code.mem.global_.add_value(i[0]+str(x),i[2])
+                    x+=1
+
 def p_prog_funcs(p):
     '''
         prog_funcs : funcion prog_funcs
@@ -177,7 +184,7 @@ def p_lista_id(p):
     # create a list of IDs, appending the new ID in each recursion
     p[0] = []
     #       Appends current ID
-    p[0].append([p[1]])
+    p[0].append([p[1],p[2]])
     #       Appends result of recursion
     if p[3] is not None:
         for x in p[3]:
@@ -199,6 +206,18 @@ def p_dimension_var(p):
         dimension_var : SQUAREL CTE_INT SQUARER
         | empty
     '''
+    if p[1] is not None:
+        p[0] = p[2]
+
+def p_np_is_array_(p):
+    '''
+        np_is_array_ :
+    '''
+    # type = dir_func.functions[current_scope].variables[p[-3]].type
+    # dir_func.functions[current_scope].variables[p[-3]].array_size = int(p[-1])
+    # i = 1
+    # while i < int(p[-1]):
+    #     inter_code.mem.local_.add_value()
 
 def p_tipo(p):
     '''
@@ -253,8 +272,15 @@ def p_np_add_vars_to_table_(p):
     # add variables to variable table
     if p[-1] is not None:
         for i in p[-1]:
-            dir = inter_code.mem.local_.add_value(i[0],i[1])
-            dir_func.functions[current_scope].add_variable(i[0], i[1],dir)
+            dir = inter_code.mem.local_.add_value(i[0],i[2])
+            dir_func.functions[current_scope].add_variable(i[0], i[2],dir)
+            if i[1] is not None:
+                dir_func.functions[current_scope].variables[i[0]].array_size = int(i[1])
+                x=1
+                while x < int(i[1]):
+                    inter_code.mem.global_.add_value(i[0]+str(x),i[2])
+                    x+=1
+
 
 def p_tipo_func(p):
     '''
@@ -368,6 +394,7 @@ def p_dimension(p):
         dimension : SQUAREL np_add_false_bottom_ expresion np_pop_dimension_ np_remove_false_bottom_ SQUARER
         | empty
     '''
+    # p[0] = dirección de p[-1] + dirección de expresion
 
 def p_np_pop_dimension_(p):
     '''
