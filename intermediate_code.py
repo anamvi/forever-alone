@@ -33,7 +33,7 @@ class InterCode:
         # print('operation quadruple -- ' + op + ' ' +str(l_var) + ' ' + str(r_var) + ' '+ res)
 
         res_type = self.semantic.cube[op][r_var_type][l_var_type]
-        res = self.mem.temp_.add_value(self.temp_counter,res_type)
+        res = self.mem.temp_.add_value('t'+str(self.temp_counter),res_type)
         self.temp_counter+=1
         if res_type != 'error' :
             current_quad = Quadruple(op, l_var, r_var, res)
@@ -116,7 +116,7 @@ class InterCode:
         print('\n')
         res_type=self.semantic.cube[op][num_type][None]
         if res_type != 'error':
-            res = self.mem.temp_.add_value(self.temp_counter,res_type)
+            res = self.mem.temp_.add_value('t'+str(self.temp_counter),res_type)
             self.temp_counter+=1
             current_quad = Quadruple(op,num,None,res)
             self.quadruples.append(current_quad)
@@ -132,7 +132,7 @@ class InterCode:
         print(self.type_stack)
         print(self.operator_stack)
         print('\n')
-        res = self.mem.temp_.add_value(self.temp_counter,num_type)
+        res = self.mem.temp_.add_value('t'+str(self.temp_counter),num_type)
         self.temp_counter+=1
         current_quad = Quadruple('=',num,None,res)
         self.quadruples.append(current_quad)
@@ -142,10 +142,39 @@ class InterCode:
     def add_self_increment_quadruple(self, increment):
         num_type = self.type_stack.pop()
         num = self.variable_stack.pop()
-        res = self.mem.temp_.add_value(self.temp_counter,num_type)
+        res = self.mem.temp_.add_value('t'+str(self.temp_counter),num_type)
+        print(self.variable_stack)
+        print(self.type_stack)
+        print(self.operator_stack)
         self.temp_counter+=1
         # maybe make a += operator?
         current_quad = Quadruple('+',num,increment,res)
         self.quadruples.append(current_quad)
         current_quad = Quadruple('=',res,None,num)
         self.quadruples.append(current_quad)
+
+
+    def add_verify_limits_quadruple(self):
+        dim = self.variable_stack.pop()
+        limit = self.variable_stack.pop()
+        type = self.type_stack.pop()
+        print(self.variable_stack)
+        print(self.type_stack)
+        print(self.operator_stack)
+        current_quad = Quadruple('ver',dim,None,limit) #create a function in virtual memory that will be called by the virtual machine
+        self.quadruples.append(current_quad)
+        self.variable_stack.append(dim)
+
+    def add_array_base_direction_quadruple(self):
+        size = self.variable_stack.pop()
+        dir = self.variable_stack.pop()
+        type = self.type_stack.pop()
+        print(self.variable_stack)
+        print(self.type_stack)
+        print(self.operator_stack)
+        res = self.mem.temp_.add_value('t'+str(self.temp_counter),'ptr')
+        self.temp_counter+=1
+        current_quad = Quadruple('+',size,dir,res)
+        self.quadruples.append(current_quad)
+        self.variable_stack.append(res)
+        self.type_stack.append(type)

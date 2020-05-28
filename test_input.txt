@@ -1,6 +1,7 @@
 programa hola;
 var
 int: i, j[6];
+float: y[4];
 string: x;
 funcion int uno(string c);
 var
@@ -24,12 +25,12 @@ funcion string dos(string hola, int ola, float crayola);
 }
 principal() {
   i= 5+2;
-  si(--5 == i & i >= j[0]) entonces {
+  si(--5 == i & i >= y[0+5/2]) entonces {
     i = j[0]-1;
     regresa(j);
   }
   sino {
-    i = j[0]--4;
+    i = j[0+j[5]]--4;
     regresa(i);
   }
 }

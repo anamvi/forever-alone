@@ -78,21 +78,21 @@ class MemorySegment:
 
     def get_value(self, dir):
         if self._BASE_INT <= dir-self.initial_dir < self._BASE_FLOAT:
-            return self.pointers[dir-self.initial_dir-self._BASE_INT]
+            return self.integers[dir-self.initial_dir-self._BASE_INT]
         elif self._BASE_FLOAT <= dir-self.initial_dir < self._BASE_STRING:
-            return self.pointers[dir-self.initial_dir-self._BASE_FLOAT]
+            return self.floats[dir-self.initial_dir-self._BASE_FLOAT]
         elif self._BASE_STRING <= dir-self.initial_dir < self._BASE_BOOL:
-            return self.pointers[dir-self.initial_dir-self._BASE_STRING]
+            return self.strings[dir-self.initial_dir-self._BASE_STRING]
         elif self._BASE_BOOL <= dir-self.initial_dir < self._BASE_PTR:
-            return self.pointers[dir-self.initial_dir-self._BASE_BOOL]
+            return self.bools[dir-self.initial_dir-self._BASE_BOOL]
         elif self._BASE_PTR <= dir-self.initial_dir:
             return self.pointers[dir-self.initial_dir-self._BASE_PTR]
 
 class VirtualMemory:
     def __init__(self):
         # Declare initial directions of each memory segment.
-        # Global, Local and Constant have 8000 spaces each (2000 for each data type).
-        # Temporal adds 2000 extra for pointers.
+        # Global and Local have 8000 spaces each (2000 for each data type).
+        # Temporal and Constant adds 2000 extra for pointers.
         self._BASE_GLOBAL = 1000
         self._BASE_LOCAL = 9000
         self._BASE_TEMP = 17000
@@ -110,3 +110,13 @@ class VirtualMemory:
         output += '---------- CONSTANTS ---------- \n' + str(self.constant_)
         output+= '\n'
         return output
+
+    def get_value(self, dir):
+        if self._BASE_GLOBAL <= dir < self._BASE_LOCAL:
+            self.global_.get_value(dir)
+        elif self._BASE_LOCAL <= dir < self._BASE_TEMP:
+            self.local_.get_value(dir)
+        elif self._BASE_TEMP <= dir < self._BASE_CONSTANT:
+            self.temp_.get_value(dir)
+        elif self._BASE_CONSTANT <= dir:
+            self.constant_.get_value(dir)

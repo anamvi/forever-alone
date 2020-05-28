@@ -134,9 +134,10 @@ def p_np_push_global_vars_(p):
             dir = inter_code.mem.global_.add_value(i[0],i[2])
             dir_func.functions['global'].add_variable(i[0], i[2], dir)
             if i[1] is not None:
-                dir_func.functions['global'].variables[i[0]].array_size = int(i[1])
+                dim = inter_code.mem.constant_.get_value(i[1])
+                dir_func.functions['global'].variables[i[0]].array_size = i[1]
                 x=1
-                while x < int(i[1]):
+                while x < dim:
                     inter_code.mem.global_.add_value(i[0]+str(x),i[2])
                     x+=1
 
@@ -207,7 +208,7 @@ def p_dimension_var(p):
         | empty
     '''
     if p[1] is not None:
-        p[0] = p[2]
+        p[0] = inter_code.mem.constant_.add_value(int(p[2]),'int')
 
 def p_np_is_array_(p):
     '''
@@ -280,7 +281,6 @@ def p_np_add_vars_to_table_(p):
                 while x < int(i[1]):
                     inter_code.mem.global_.add_value(i[0]+str(x),i[2])
                     x+=1
-
 
 def p_tipo_func(p):
     '''
@@ -391,21 +391,39 @@ def p_asignacion(p):
 
 def p_dimension(p):
     '''
-        dimension : SQUAREL np_add_false_bottom_ expresion np_pop_dimension_ np_remove_false_bottom_ SQUARER
+        dimension : SQUAREL np_verify_dimensions_ np_add_false_bottom_ expresion np_manage_array_ np_remove_false_bottom_ SQUARER
         | empty
     '''
     # p[0] = dirección de p[-1] + dirección de expresion
+def p_np_verify_dimensions_(p):
+    '''
+        np_verify_dimensions_ :
+    '''
+    id_dir = inter_code.variable_stack.pop()
+    type = inter_code.type_stack.pop()
+    if id_dir < inter_code.mem._BASE_LOCAL:
+        id = inter_code.mem.global_.get_value(id_dir)
+        size = dir_func.functions['global'].variables[str(id)].array_size
+    else:
+        id = inter_code.mem.local_.get_value(id_dir)
+        size = dir_func.functions[current_scope].variables[str(id)].array_size
 
-def p_np_pop_dimension_(p):
+    if size == 0:
+        raise Exception('The variable ' + id + ' is not an array.')
+    else:
+        initial_dir = inter_code.mem.constant_.add_value(int(id_dir),'int')
+        inter_code.variable_stack.append(initial_dir)
+        inter_code.type_stack.append(type)
+        inter_code.variable_stack.append(size)
+
+def p_np_manage_array_(p):
     '''
-        np_pop_dimension_ :
+        np_manage_array_ :
     '''
-    inter_code.variable_stack.pop()
-    inter_code.type_stack.pop()
-    print(inter_code.variable_stack)
-    print(inter_code.type_stack)
-    print(inter_code.operator_stack)
-    print('\n')
+    if inter_code.type_stack[-1]!='int':
+        raise Exception('Type mismatch: array dimesions must be integers.')
+    inter_code.add_verify_limits_quadruple()
+    inter_code.add_array_base_direction_quadruple()
 
 def p_llamada(p):
     '''

@@ -38,7 +38,8 @@ class FunctionsTable:
                 variable = self.functions[func.name].variables[j]
                 output += "NAME: " + variable.name + "\n"
                 output += "TYPE: " + str(variable.type) + "\n"
-                output += "DIRECTION: " + str(variable.dir) + "\n\n"
+                output += "DIRECTION: " + str(variable.dir) + "\n"
+                output += "ARRAY: " + str(variable.array_size) + "\n\n"
 
             output += "\n"
         return output
