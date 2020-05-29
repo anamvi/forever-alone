@@ -88,6 +88,15 @@ class MemorySegment:
         elif self._BASE_PTR <= dir-self.initial_dir:
             return self.pointers[dir-self.initial_dir-self._BASE_PTR]
 
+    def count_content(self):
+        counter = 0
+        counter+= len(self.integers)
+        counter+= len(self.floats)
+        counter+= len(self.strings)
+        counter+= len(self.bools)
+        counter+= len(self.pointers)
+        return counter
+
 class VirtualMemory:
     def __init__(self):
         # Declare initial directions of each memory segment.

@@ -102,7 +102,7 @@ def t_CTE_INT(t):
     return t
 
 def t_CTE_STR(t):
-    r'\'[\w\d\s.]*\''
+    r'[\'|"][\w\d\s.]*[\'|"]'
     return t
 
 def t_ID(t):
@@ -114,7 +114,7 @@ lexer = lex.lex()
 
 def p_prog(p):
     '''
-        prog : PROGRAM ID SEMICOLON variables np_push_global_vars_ prog_funcs func_princ
+        prog : PROGRAM ID np_goto_ SEMICOLON variables np_push_global_vars_ prog_funcs func_princ
     '''
 
     print(dir_func)
@@ -123,6 +123,14 @@ def p_prog(p):
     for x in inter_code.quadruples:
         print(counter, " ",x)
         counter+=1
+
+def p_np_goto_(p):
+    '''
+        np_goto_ :
+    '''
+    # Add empty goto quadruple
+    inter_code.add_goto_quadruple(None)
+    inter_code.push_jump(-1)
 
 def p_np_push_global_vars_(p):
     '''
@@ -210,16 +218,6 @@ def p_dimension_var(p):
     if p[1] is not None:
         p[0] = inter_code.mem.constant_.add_value(int(p[2]),'int')
 
-def p_np_is_array_(p):
-    '''
-        np_is_array_ :
-    '''
-    # type = dir_func.functions[current_scope].variables[p[-3]].type
-    # dir_func.functions[current_scope].variables[p[-3]].array_size = int(p[-1])
-    # i = 1
-    # while i < int(p[-1]):
-    #     inter_code.mem.local_.add_value()
-
 def p_tipo(p):
     '''
         tipo : INT
@@ -231,13 +229,32 @@ def p_tipo(p):
 
 def p_func_princ(p):
     '''
-        func_princ : PRINCIPAL PARENTHESESL PARENTHESESR CURLYL estatuto_rep CURLYR
+        func_princ : PRINCIPAL np_start_main_ PARENTHESESL PARENTHESESR CURLYL estatuto_rep CURLYR
     '''
+def p_np_start_main_(p):
+    '''
+        np_start_main_ :
+    '''
+    global current_scope, current_type
+    current_scope = 'global'
+    current_type = 'void'
+    main = inter_code.jumps_stack.pop()
+    inter_code.fill(main,len(inter_code.quadruples))
 
 def p_funcion(p):
     '''
-        funcion : FUNC tipo_func ID np_set_scope_ PARENTHESESL funcion_param np_add_func_to_directory_ PARENTHESESR SEMICOLON variables np_add_vars_to_table_ CURLYL estatuto_rep CURLYR
+        funcion : FUNC tipo_func ID np_set_scope_ PARENTHESESL funcion_param np_add_func_to_directory_ PARENTHESESR SEMICOLON variables np_add_vars_to_table_ CURLYL estatuto_rep CURLYR np_end_function_
     '''
+
+def p_np_end_function_(p):
+    '''
+        np_end_function_ :
+    '''
+    temps = inter_code.mem.temp_.count_content()
+    inter_code.mem.local_.reset_memory()
+    inter_code.mem.temp_.reset_memory()
+    inter_code.add_endfunc()
+    dir_func.functions[current_scope].space_needed += temps
 
 def p_np_set_scope_(p):
     '''
@@ -253,13 +270,17 @@ def p_np_add_func_to_directory_(p):
     '''
     global current_scope, current_type
     temp = []
+
+    # Add function to global variable table, and include the starting quadruple
+    dir_func.functions['global'].add_variable(current_scope,current_type,len(inter_code.quadruples))
+
     if p[-1] is not None:
         for i in p[-1]:
             temp.append(i[1])
     # Add function to functions directory
     dir_func.add_function(current_scope, current_type, temp)
 
-    # add parameters to variable table for current function
+    # Add parameters to variable table for current function
     if p[-1] is not None:
         for i in p[-1]:
             dir = inter_code.mem.local_.add_value(i[0],i[1])
@@ -364,6 +385,7 @@ def p_np_push_var_(p):
     print(inter_code.variable_stack)
     print(inter_code.type_stack)
     print(inter_code.operator_stack)
+    print(inter_code.jumps_stack)
     print('\n')
 
 def p_np_push_operator_(p):
@@ -374,6 +396,7 @@ def p_np_push_operator_(p):
     print(inter_code.variable_stack)
     print(inter_code.type_stack)
     print(inter_code.operator_stack)
+    print(inter_code.jumps_stack)
     print('\n')
 
 def p_np_pop_operator_(p):
@@ -399,8 +422,10 @@ def p_np_verify_dimensions_(p):
     '''
         np_verify_dimensions_ :
     '''
+    # Get variable and its type
     id_dir = inter_code.variable_stack.pop()
     type = inter_code.type_stack.pop()
+    # check if it's a local or global variable, and get the name. Then get the size from the correct variable table.
     if id_dir < inter_code.mem._BASE_LOCAL:
         id = inter_code.mem.global_.get_value(id_dir)
         size = dir_func.functions['global'].variables[str(id)].array_size
@@ -408,10 +433,16 @@ def p_np_verify_dimensions_(p):
         id = inter_code.mem.local_.get_value(id_dir)
         size = dir_func.functions[current_scope].variables[str(id)].array_size
 
+    # Verify if the variable has dimensions
     if size == 0:
-        raise Exception('The variable ' + id + ' is not an array.')
+        if p[-1] == '[':
+            raise Exception('Type mismatch: The variable ' + id + ' is not an array.')
     else:
+        if p[-1] != '[':
+            raise Exception('Type mismatch: The variable ' + id + ' is declared as an array.')
+        # add the virtual address as a constant in order to use it for quadruple operations
         initial_dir = inter_code.mem.constant_.add_value(int(id_dir),'int')
+        # adds the address as a constant and the limit of the array to the variable stack, as well as the variable type.
         inter_code.variable_stack.append(initial_dir)
         inter_code.type_stack.append(type)
         inter_code.variable_stack.append(size)
@@ -427,8 +458,33 @@ def p_np_manage_array_(p):
 
 def p_llamada(p):
     '''
-        llamada : ID PARENTHESESL expresion_rep PARENTHESESR
+        llamada : ID np_verify_function_ PARENTHESESL np_create_era_ llamada_param np_end_of_parameters_ PARENTHESESR np_create_gosub_
     '''
+
+def p_llamada_param(p):
+    '''
+        llamada_param : llamada_param_2
+        | empty
+    '''
+
+def p_llamada_param_2(p):
+    '''
+        llamada_param_2 : expresion np_verify_parameters_ COMMA np_next_parameter_check_ llamada_param_2
+        | expresion np_verify_parameters_
+    '''
+
+def p_np_verify_function_(p):
+    '''
+        np_verify_function_ :
+    '''
+    if not dir_func.function_exists(p[-1]):
+        raise Exception('Syntax error: function does not exist.')
+
+def p_np_create_era_(p):
+    '''
+        np_create_era_ :
+    '''
+    inter_code.add_era_quadruple(p[-3], dir_func.functions[p[-3]].space_needed)
 
 def p_lectura(p):
     '''
@@ -579,6 +635,9 @@ def p_np_quadruple_return_(p):
     '''
         np_quadruple_return_ :
     '''
+    global current_type
+    if current_type != inter_code.type_stack[-1]:
+        raise Exception('Type mismatch: The return value does not match the function type')
     inter_code.add_return_quadruple()
 
 def p_expresion(p):
@@ -711,6 +770,7 @@ def p_np_add_false_bottom_(p):
     print(inter_code.variable_stack)
     print(inter_code.type_stack)
     print(inter_code.operator_stack)
+    print(inter_code.jumps_stack)
     print('\n')
 
 def p_np_remove_false_bottom_(p):
@@ -724,6 +784,7 @@ def p_np_remove_false_bottom_(p):
     print(inter_code.variable_stack)
     print(inter_code.type_stack)
     print(inter_code.operator_stack)
+    print(inter_code.jumps_stack)
     print('\n')
 
 def p_const(p):
@@ -743,6 +804,7 @@ def p_np_push_const_int_(p):
     inter_code.type_stack.append('int')
     print(inter_code.type_stack)
     print(inter_code.operator_stack)
+    print(inter_code.jumps_stack)
     print('\n')
 
 def p_np_push_const_float_(p):
@@ -755,6 +817,7 @@ def p_np_push_const_float_(p):
     inter_code.type_stack.append('float')
     print(inter_code.type_stack)
     print(inter_code.operator_stack)
+    print(inter_code.jumps_stack)
     print('\n')
 
 def p_np_push_const_string_(p):
@@ -767,6 +830,7 @@ def p_np_push_const_string_(p):
     inter_code.type_stack.append('string')
     print(inter_code.type_stack)
     print(inter_code.operator_stack)
+    print(inter_code.jumps_stack)
     print('\n')
 
 def p_letrero(p):

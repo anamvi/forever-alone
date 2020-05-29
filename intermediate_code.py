@@ -15,6 +15,7 @@ class Quadruple:
 class InterCode:
     def __init__(self):
         self.temp_counter = 1
+        self.parameter_counter = 1
         self.quadruples = []
         self.operator_stack = []
         self.variable_stack = []
@@ -43,8 +44,8 @@ class InterCode:
             print(self.variable_stack)
             print(self.type_stack)
             print(self.operator_stack)
+            print(self.jumps_stack)
             print('\n')
-            # print(self.operator_stack)
         else:
             raise Exception('ERROR type mismatch' + '\n right: ' + r_var_type + "     left: " + l_var_type)
 
@@ -54,6 +55,7 @@ class InterCode:
         print(self.variable_stack)
         print(self.type_stack)
         print(self.operator_stack)
+        print(self.jumps_stack)
         print('\n')
         # ----------- check that the return value type is the same as the function type ------------------
         current_quad = Quadruple('return', None, None, val)
@@ -66,6 +68,7 @@ class InterCode:
         print(self.variable_stack)
         print(self.type_stack)
         print(self.operator_stack)
+        print(self.jumps_stack)
         print('\n')
         current_quad = Quadruple(op, None, None, val)
         self.quadruples.append(current_quad)
@@ -82,8 +85,8 @@ class InterCode:
         print(self.variable_stack)
         print(self.type_stack)
         print(self.operator_stack)
+        print(self.jumps_stack)
         print('\n')
-        # print(self.operator_stack)
         if self.semantic.cube[op][value_type][variable_type] != 'error' :
             current_quad = Quadruple(op, val, None, var)
             self.quadruples.append(current_quad)
@@ -113,6 +116,7 @@ class InterCode:
         print(self.variable_stack)
         print(self.type_stack)
         print(self.operator_stack)
+        print(self.jumps_stack)
         print('\n')
         res_type=self.semantic.cube[op][num_type][None]
         if res_type != 'error':
@@ -131,6 +135,7 @@ class InterCode:
         print(self.variable_stack)
         print(self.type_stack)
         print(self.operator_stack)
+        print(self.jumps_stack)
         print('\n')
         res = self.mem.temp_.add_value('t'+str(self.temp_counter),num_type)
         self.temp_counter+=1
@@ -146,8 +151,8 @@ class InterCode:
         print(self.variable_stack)
         print(self.type_stack)
         print(self.operator_stack)
+        print(self.jumps_stack)
         self.temp_counter+=1
-        # maybe make a += operator?
         current_quad = Quadruple('+',num,increment,res)
         self.quadruples.append(current_quad)
         current_quad = Quadruple('=',res,None,num)
@@ -161,6 +166,7 @@ class InterCode:
         print(self.variable_stack)
         print(self.type_stack)
         print(self.operator_stack)
+        print(self.jumps_stack)
         current_quad = Quadruple('ver',dim,None,limit) #create a function in virtual memory that will be called by the virtual machine
         self.quadruples.append(current_quad)
         self.variable_stack.append(dim)
@@ -172,9 +178,18 @@ class InterCode:
         print(self.variable_stack)
         print(self.type_stack)
         print(self.operator_stack)
+        print(self.jumps_stack)
         res = self.mem.temp_.add_value('t'+str(self.temp_counter),'ptr')
         self.temp_counter+=1
         current_quad = Quadruple('+',size,dir,res)
         self.quadruples.append(current_quad)
         self.variable_stack.append(res)
         self.type_stack.append(type)
+
+    def add_endfunc(self):
+        current_quad = Quadruple('ENDFunc',None,None,None)
+        self.quadruples.append(current_quad)
+
+    def add_era_quadruple(self, dir, space):
+        current_quad = Quadruple('ERA',space,None,dir)
+        self.quadruples.append(current_quad)

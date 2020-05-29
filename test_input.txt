@@ -27,10 +27,8 @@ principal() {
   i= 5+2;
   si(--5 == i & i >= y[0+5/2]) entonces {
     i = j[0]-1;
-    regresa(j);
   }
   sino {
     i = j[0+j[5]]--4;
-    regresa(i);
   }
 }
