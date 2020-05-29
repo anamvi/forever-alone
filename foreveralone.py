@@ -229,7 +229,7 @@ def p_tipo(p):
 
 def p_func_princ(p):
     '''
-        func_princ : PRINCIPAL np_start_main_ PARENTHESESL PARENTHESESR CURLYL estatuto_rep CURLYR
+        func_princ : PRINCIPAL np_start_main_ PARENTHESESL PARENTHESESR CURLYL estatuto_rep CURLYR np_end_program_
     '''
 def p_np_start_main_(p):
     '''
@@ -241,6 +241,12 @@ def p_np_start_main_(p):
     main = inter_code.jumps_stack.pop()
     inter_code.fill(main,len(inter_code.quadruples))
 
+def p_np_end_program_(p):
+    '''
+        np_end_program_ :
+    '''
+    inter_code.add_endprog_quad()
+
 def p_funcion(p):
     '''
         funcion : FUNC tipo_func ID np_set_scope_ PARENTHESESL funcion_param np_add_func_to_directory_ PARENTHESESR SEMICOLON variables np_add_vars_to_table_ CURLYL estatuto_rep CURLYR np_end_function_
@@ -250,9 +256,8 @@ def p_np_end_function_(p):
     '''
         np_end_function_ :
     '''
+    global current_scope
     temps = inter_code.mem.temp_.count_content()
-    inter_code.mem.local_.reset_memory()
-    inter_code.mem.temp_.reset_memory()
     inter_code.add_endfunc()
     dir_func.functions[current_scope].space_needed += temps
 
@@ -271,8 +276,12 @@ def p_np_add_func_to_directory_(p):
     global current_scope, current_type
     temp = []
 
-    # Add function to global variable table, and include the starting quadruple
-    dir_func.functions['global'].add_variable(current_scope,current_type,len(inter_code.quadruples))
+    # Add function to global variable table, and include the virtual address of the return value
+    if current_type == 'void':
+        faddr = None
+    else:
+        faddr = inter_code.mem.global_.add_value(current_scope,current_type)
+    dir_func.functions['global'].add_variable(current_scope,current_type,faddr)
 
     if p[-1] is not None:
         for i in p[-1]:
@@ -285,6 +294,9 @@ def p_np_add_func_to_directory_(p):
         for i in p[-1]:
             dir = inter_code.mem.local_.add_value(i[0],i[1])
             dir_func.functions[current_scope].add_variable(i[0], i[1], dir)
+
+    # Add start quadruple to function
+    dir_func.functions[current_scope].quad = len(inter_code.quadruples)
 
 def p_np_add_vars_to_table_(p):
     '''
@@ -343,7 +355,7 @@ def p_estatuto_rep(p):
 def p_estatuto(p):
     '''
         estatuto : asignacion SEMICOLON
-        | llamada SEMICOLON
+        | llamada SEMICOLON np_llamada_void_
         | retorno SEMICOLON
         | lectura SEMICOLON
         | escritura SEMICOLON
@@ -351,6 +363,13 @@ def p_estatuto(p):
         | rep_c
         | rep_nc
     '''
+
+def p_np_llamada_void_(p):
+    '''
+        np_llamada_void_ :
+    '''
+    inter_code.variable_stack.pop()
+    inter_code.type_stack.pop()
 
 def p_np_quadruple_assignment_(p):
     '''
@@ -372,6 +391,7 @@ def p_np_push_var_(p):
     '''
         np_push_var_ :
     '''
+    global current_scope
     if dir_func.functions[current_scope].variable_exists(p[-1]):
         var_type = dir_func.functions[current_scope].variables[p[-1]].type
         var = dir_func.functions[current_scope].variables[p[-1]].dir
@@ -379,7 +399,7 @@ def p_np_push_var_(p):
         var_type = dir_func.functions['global'].variables[p[-1]].type
         var = dir_func.functions['global'].variables[p[-1]].dir
     else:
-        raise Exception('Variable does not exist')
+        raise Exception('Variable "'+ str(p[-1]) +'" does not exist')
     inter_code.variable_stack.append(var)
     inter_code.type_stack.append(var_type)
     print(inter_code.variable_stack)
@@ -422,6 +442,7 @@ def p_np_verify_dimensions_(p):
     '''
         np_verify_dimensions_ :
     '''
+    global current_scope
     # Get variable and its type
     id_dir = inter_code.variable_stack.pop()
     type = inter_code.type_stack.pop()
@@ -458,18 +479,18 @@ def p_np_manage_array_(p):
 
 def p_llamada(p):
     '''
-        llamada : ID np_verify_function_ PARENTHESESL np_create_era_ llamada_param np_end_of_parameters_ PARENTHESESR np_create_gosub_
+        llamada : ID np_verify_function_ PARENTHESESL np_create_era_ expresion_rep np_end_of_parameters_ PARENTHESESR np_create_gosub_
     '''
 
-def p_llamada_param(p):
+def p_expresion_rep(p):
     '''
-        llamada_param : llamada_param_2
+        expresion_rep : expresion_rep_2
         | empty
     '''
 
-def p_llamada_param_2(p):
+def p_expresion_rep_2(p):
     '''
-        llamada_param_2 : expresion np_verify_parameters_ COMMA np_next_parameter_check_ llamada_param_2
+        expresion_rep_2 : expresion np_verify_parameters_ COMMA np_next_parameter_check_ expresion_rep_2
         | expresion np_verify_parameters_
     '''
 
@@ -479,12 +500,63 @@ def p_np_verify_function_(p):
     '''
     if not dir_func.function_exists(p[-1]):
         raise Exception('Syntax error: function does not exist.')
+    inter_code.variable_stack.append(p[-1])
+
+def p_np_verify_parameters_(p):
+    '''
+        np_verify_parameters_ :
+    '''
+    argument = inter_code.variable_stack.pop()
+    arg_type = inter_code.type_stack.pop()
+    if arg_type == dir_func.functions[inter_code.variable_stack[-1]].parameters[inter_code.parameter_counter-1]:
+        inter_code.add_parameter_quadruple(argument)
+    else:
+        raise Exception('Type mismatch: Argument type does not match function parameter')
+
+def p_np_next_parameter_check_(p):
+    '''
+        np_next_parameter_check_ :
+    '''
+    global current_scope
+    if len(dir_func.functions[inter_code.variable_stack[-1]].parameters) < inter_code.parameter_counter:
+        raise Exception('Number of arguments in call do not match parameters.')
+
+def p_np_end_of_parameters_(p):
+    '''
+        np_end_of_parameters_ :
+    '''
+    global current_scope
+    if len(dir_func.functions[inter_code.variable_stack[-1]].parameters) >= inter_code.parameter_counter:
+        raise Exception('Number of arguments in call do not match parameters.')
 
 def p_np_create_era_(p):
     '''
         np_create_era_ :
     '''
-    inter_code.add_era_quadruple(p[-3], dir_func.functions[p[-3]].space_needed)
+    inter_code.add_era_quadruple(inter_code.variable_stack[-1], dir_func.functions[inter_code.variable_stack[-1]].space_needed)
+
+def p_np_create_gosub_(p):
+    '''
+        np_create_gosub_ :
+    '''
+    func = inter_code.variable_stack.pop()
+    scope = dir_func.functions[func].quad
+    inter_code.add_gosub_quadruple(func, scope)
+    # si tiene direccion vas aaaaaaaaaaaaaaaaaa ir por la direccion a la tabla de variables global y asignarle ese valor a un temporal del mismo tipo
+    # asignar return value a un temporal
+    ret_dir = dir_func.functions['global'].variables[func].dir
+    if ret_dir is not None:
+        ret_type = inter_code.mem.global_.check_type(ret_dir)
+        inter_code.variable_stack.append(ret_dir)
+        inter_code.type_stack.append(ret_type)
+        inter_code.add_assign_temp_quadruple()
+    else:
+        inter_code.variable_stack.append(ret_dir)
+        inter_code.type_stack.append(None)
+    print(inter_code.variable_stack)
+    print(inter_code.type_stack)
+    print(inter_code.operator_stack)
+    print(inter_code.jumps_stack)
 
 def p_lectura(p):
     '''
@@ -614,18 +686,6 @@ def p_np_increment_temp_(p):
     '''
     inter_code.add_self_increment_quadruple(1)
 
-def p_expresion_rep(p):
-    '''
-        expresion_rep : expresion_rep_2
-        | empty
-    '''
-
-def p_expresion_rep_2(p):
-    '''
-        expresion_rep_2 : expresion COMMA expresion_rep_2
-        | expresion
-    '''
-
 def p_retorno(p):
     '''
         retorno : RETURN PARENTHESESL expresion PARENTHESESR np_quadruple_return_
@@ -635,10 +695,15 @@ def p_np_quadruple_return_(p):
     '''
         np_quadruple_return_ :
     '''
-    global current_type
-    if current_type != inter_code.type_stack[-1]:
-        raise Exception('Type mismatch: The return value does not match the function type')
+    global current_type, current_scope
+    # get the virtual address of the function in order to leave the return value there
+    func_addr = dir_func.functions['global'].variables[current_scope].dir
+    if func_addr is None:
+        raise Exception('Type mismatch: Void function cannot have a return value.')
+    inter_code.variable_stack.append(func_addr)
+    inter_code.type_stack.append(current_type)
     inter_code.add_return_quadruple()
+
 
 def p_expresion(p):
     '''

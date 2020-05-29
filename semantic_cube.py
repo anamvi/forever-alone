@@ -46,6 +46,14 @@ class SemanticCube:
                     'string': 'bool',
                     'ptr': 'bool',
                     None : 'error'
+                },
+                None: {
+                    'int': 'error',
+                    'float': 'error',
+                    'bool': 'error',
+                    'string': 'error',
+                    'ptr': 'error',
+                    None : 'error'
                 }
             }
         for x in aritmethic_ops:
@@ -78,7 +86,7 @@ class SemanticCube:
                     'int': 'error',
                     'float': 'error',
                     'bool': 'error',
-                    'string': 'error',
+                    'string': 'string',
                     'ptr': 'error',
                     None : 'error'
                 },
@@ -89,11 +97,21 @@ class SemanticCube:
                     'string': 'error',
                     'ptr': 'ptr',
                     None : 'error'
+                },
+                None: {
+                    'int': 'error',
+                    'float': 'error',
+                    'bool': 'error',
+                    'string': 'error',
+                    'ptr': 'error',
+                    None : 'error'
                 }
             }
         for x in aritmethic_ops_unary:
             self.cube[x]['int'][None] = 'int'
             self.cube[x]['float'][None] = 'float'
+            self.cube[x][None]['int'] = 'int'
+            self.cube[x][None]['float'] = 'float'
         for x in logic_ops:
             self.cube[x]={
                 'int': {
@@ -135,6 +153,14 @@ class SemanticCube:
                     'string': 'error',
                     'ptr': 'bool',
                     None : 'error'
+                },
+                None: {
+                    'int': 'error',
+                    'float': 'error',
+                    'bool': 'error',
+                    'string': 'error',
+                    'ptr': 'error',
+                    None : 'error'
                 }
             }
 
@@ -173,6 +199,14 @@ class SemanticCube:
                 'bool': 'bool',
                 'string': 'bool',
                 'ptr': 'bool',
+                None : 'error'
+            },
+            None: {
+                'int': 'error',
+                'float': 'error',
+                'bool': 'error',
+                'string': 'error',
+                'ptr': 'error',
                 None : 'error'
             }
         }
@@ -215,6 +249,14 @@ class SemanticCube:
                 'bool': 'bool',
                 'string': 'string',
                 'ptr': 'ptr',
+                None : 'error'
+            },
+            None: {
+                'int': 'error',
+                'float': 'error',
+                'bool': 'error',
+                'string': 'error',
+                'ptr': 'error',
                 None : 'error'
             }
         }

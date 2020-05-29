@@ -3,6 +3,7 @@ var
 int: i, j[6];
 float: y[4];
 string: x;
+
 funcion int uno(string c);
 var
 int: w, i;
@@ -23,9 +24,15 @@ funcion string dos(string hola, int ola, float crayola);
   }
   regresa(hola);
 }
+funcion void tres();
+{
+  i = i+1;
+}
 principal() {
   i= 5+2;
-  si(--5 == i & i >= y[0+5/2]) entonces {
+  tres();
+  dos('a', 5, 5+-4.2);
+  si(--5 == uno("Hello world") & i >= y[0+5/2]) entonces {
     i = j[0]-1;
   }
   sino {

@@ -34,9 +34,9 @@ class InterCode:
         # print('operation quadruple -- ' + op + ' ' +str(l_var) + ' ' + str(r_var) + ' '+ res)
 
         res_type = self.semantic.cube[op][r_var_type][l_var_type]
-        res = self.mem.temp_.add_value('t'+str(self.temp_counter),res_type)
-        self.temp_counter+=1
         if res_type != 'error' :
+            res = self.mem.temp_.add_value('t'+str(self.temp_counter),res_type)
+            self.temp_counter+=1
             current_quad = Quadruple(op, l_var, r_var, res)
             self.quadruples.append(current_quad)
             self.variable_stack.append(res)
@@ -47,9 +47,15 @@ class InterCode:
             print(self.jumps_stack)
             print('\n')
         else:
-            raise Exception('ERROR type mismatch' + '\n right: ' + r_var_type + "     left: " + l_var_type)
+            if r_var_type == None:
+                r_var_type = 'void'
+            if l_var_type == None:
+                l_var_type = 'void'
+            raise Exception('ERROR type mismatch. Cannot make operations between types '+ r_var_type + " and " + l_var_type)
 
     def add_return_quadruple(self):
+        faddr = self.variable_stack.pop()
+        func_type = self.type_stack.pop()
         val = self.variable_stack.pop()
         value_type = self.type_stack.pop()
         print(self.variable_stack)
@@ -57,8 +63,10 @@ class InterCode:
         print(self.operator_stack)
         print(self.jumps_stack)
         print('\n')
-        # ----------- check that the return value type is the same as the function type ------------------
-        current_quad = Quadruple('return', None, None, val)
+        # check that the return type is the same as the function type
+        if func_type != value_type:
+            raise Exception('Type mismatch: The return value does not match the function type.')
+        current_quad = Quadruple('return', val, None, faddr)
         self.quadruples.append(current_quad)
 
     def add_IO_quadruple(self):
@@ -81,7 +89,6 @@ class InterCode:
         var = self.variable_stack.pop()
         variable_type = self.type_stack.pop()
 
-        # print('assignment quadruple -- ' + op + ' ' +str(val) + ' ' + str(var))
         print(self.variable_stack)
         print(self.type_stack)
         print(self.operator_stack)
@@ -91,7 +98,11 @@ class InterCode:
             current_quad = Quadruple(op, val, None, var)
             self.quadruples.append(current_quad)
         else:
-            raise Exception('ERROR type mismatch'+ '\n value: '+ str(val) + " | "+ value_type + "     variable: " + str(var) + " | " +variable_type)
+            if value_type == None:
+                value_type = 'void'
+            if variable_type == None:
+                variable_type = 'void'
+            raise Exception('ERROR type mismatch. Cannot assign '+ value_type + " to " +variable_type)
 
     def add_gotof_quadruple(self, dest):
         result = self.variable_stack.pop()
@@ -127,7 +138,9 @@ class InterCode:
             self.variable_stack.append(res)
             self.type_stack.append(num_type)
         else:
-            raise Exception('ERROR type mismatch'+ '\n values of type '+ num_type + " cannot be made negative" )
+            if num_type == None:
+                num_type = 'void'
+            raise Exception('ERROR type mismatch. Values of type '+ num_type + " cannot be made negative" )
 
     def add_assign_temp_quadruple(self):
         num_type = self.type_stack.pop()
@@ -189,7 +202,27 @@ class InterCode:
     def add_endfunc(self):
         current_quad = Quadruple('ENDFunc',None,None,None)
         self.quadruples.append(current_quad)
+        self.temp_counter = 1
+        self.mem.local_.reset_memory()
+        self.mem.temp_.reset_memory()
 
     def add_era_quadruple(self, dir, space):
         current_quad = Quadruple('ERA',space,None,dir)
         self.quadruples.append(current_quad)
+
+    def add_parameter_quadruple(self, argument):
+        current_quad = Quadruple('PARAM',argument,None,'p'+str(self.parameter_counter))
+        self.quadruples.append(current_quad)
+        self.parameter_counter+=1
+
+    def add_gosub_quadruple(self, func, scope):
+        current_quad = Quadruple('GOSUB',func,None,scope)
+        self.quadruples.append(current_quad)
+        self.parameter_counter = 1
+
+    def add_endprog_quad(self):
+        current_quad = Quadruple('ENDProg',None,None,None)
+        self.quadruples.append(current_quad)
+        self.mem.global_.reset_memory()
+        self.mem.temp_.reset_memory()
+        self.mem.local_.reset_memory()

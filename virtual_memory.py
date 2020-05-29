@@ -44,7 +44,7 @@ class MemorySegment:
         output+= '\n\n'
         return output
 
-    def reset_memory():
+    def reset_memory(self):
         self.integers.clear()
         self.floats.clear()
         self.strings.clear()
@@ -87,6 +87,18 @@ class MemorySegment:
             return self.bools[dir-self.initial_dir-self._BASE_BOOL]
         elif self._BASE_PTR <= dir-self.initial_dir:
             return self.pointers[dir-self.initial_dir-self._BASE_PTR]
+
+    def check_type(self, dir):
+        if self._BASE_INT <= dir-self.initial_dir < self._BASE_FLOAT:
+            return 'int'
+        elif self._BASE_FLOAT <= dir-self.initial_dir < self._BASE_STRING:
+            return 'float'
+        elif self._BASE_STRING <= dir-self.initial_dir < self._BASE_BOOL:
+            return 'string'
+        elif self._BASE_BOOL <= dir-self.initial_dir < self._BASE_PTR:
+            return 'bool'
+        elif self._BASE_PTR <= dir-self.initial_dir:
+            return 'ptr'
 
     def count_content(self):
         counter = 0

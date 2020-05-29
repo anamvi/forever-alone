@@ -12,6 +12,7 @@ class Function:
         self.variables = {}
         self.parameters = parameters
         self.space_needed = 0
+        self.quad = None
 
     def add_variable(self, name, type, dir):
         if name in self.variables:
