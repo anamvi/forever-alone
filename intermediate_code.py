@@ -1,5 +1,6 @@
 from semantic_cube import SemanticCube
 from virtual_memory import VirtualMemory
+import json
 
 class Quadruple:
     def __init__(self, operator, left_operand, right_operand, result):
@@ -9,7 +10,7 @@ class Quadruple:
         self.result = result
 
     def __str__(self):
-        output = "--> " + str(self.operator) + " " + str(self.left_operand) + " "+ str(self.right_operand) + " "+ str(self.result) + "\n"
+        output = str(self.operator) + " " + str(self.left_operand) + " "+ str(self.right_operand) + " "+ str(self.result) + "\n"
         return output
 
 class InterCode:
@@ -226,3 +227,6 @@ class InterCode:
         self.mem.global_.reset_memory()
         self.mem.temp_.reset_memory()
         self.mem.local_.reset_memory()
+        with open("intermediate.cry","w+") as json_file:
+            for i in self.quadruples:
+                json.dump(i.__dict__, json_file)
