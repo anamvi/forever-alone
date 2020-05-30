@@ -1,0 +1,11 @@
+programa prueba;
+var
+int: i;
+principal() {
+  si(1<=2) entonces{
+    i=1+2;
+    escribe(i);
+  }
+  i=i+2;
+  escribe(i);
+}

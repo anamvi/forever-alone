@@ -1,5 +1,6 @@
 import ply.lex as lex
 import ply.yacc as yacc
+import sys
 from functions_table import FunctionsTable
 from intermediate_code import InterCode
 
@@ -88,7 +89,7 @@ t_ignore  = ' \t\n'
 
 # regla para manejar errores
 def t_error(t):
-    print("Illegal character '%s'" % t.value[0])
+    # print("Illegal character '%s'" % t.value[0])
     t.lexer.skip(1)
 
 def t_CTE_FLOAT(t):
@@ -114,15 +115,15 @@ lexer = lex.lex()
 
 def p_prog(p):
     '''
-        prog : PROGRAM ID np_goto_ SEMICOLON variables np_push_global_vars_ prog_funcs func_princ
+        prog : PROGRAM ID np_goto_ SEMICOLON variables np_push_global_vars_ prog_funcs func_princ np_end_program_
     '''
 
-    print(dir_func)
-    print(inter_code.mem)
-    counter = 0
-    for x in inter_code.quadruples:
-        print(counter, " ",x)
-        counter+=1
+    # print(dir_func)
+    # print(inter_code.mem)
+    # counter = 0
+    # for x in inter_code.quadruples:
+    #     print(counter, " ",x)
+    #     counter+=1
 
 def p_np_goto_(p):
     '''
@@ -229,7 +230,7 @@ def p_tipo(p):
 
 def p_func_princ(p):
     '''
-        func_princ : PRINCIPAL np_start_main_ PARENTHESESL PARENTHESESR CURLYL estatuto_rep CURLYR np_end_program_
+        func_princ : PRINCIPAL np_start_main_ PARENTHESESL PARENTHESESR CURLYL estatuto_rep CURLYR
     '''
 def p_np_start_main_(p):
     '''
@@ -402,22 +403,22 @@ def p_np_push_var_(p):
         raise Exception('Variable "'+ str(p[-1]) +'" does not exist')
     inter_code.variable_stack.append(var)
     inter_code.type_stack.append(var_type)
-    print(inter_code.variable_stack)
-    print(inter_code.type_stack)
-    print(inter_code.operator_stack)
-    print(inter_code.jumps_stack)
-    print('\n')
+    # print(inter_code.variable_stack)
+    # print(inter_code.type_stack)
+    # print(inter_code.operator_stack)
+    # print(inter_code.jumps_stack)
+    # print('\n')
 
 def p_np_push_operator_(p):
     '''
         np_push_operator_ :
     '''
     inter_code.operator_stack.append(p[-1])
-    print(inter_code.variable_stack)
-    print(inter_code.type_stack)
-    print(inter_code.operator_stack)
-    print(inter_code.jumps_stack)
-    print('\n')
+    # print(inter_code.variable_stack)
+    # print(inter_code.type_stack)
+    # print(inter_code.operator_stack)
+    # print(inter_code.jumps_stack)
+    # print('\n')
 
 def p_np_pop_operator_(p):
     '''
@@ -553,10 +554,10 @@ def p_np_create_gosub_(p):
     else:
         inter_code.variable_stack.append(ret_dir)
         inter_code.type_stack.append(None)
-    print(inter_code.variable_stack)
-    print(inter_code.type_stack)
-    print(inter_code.operator_stack)
-    print(inter_code.jumps_stack)
+    # print(inter_code.variable_stack)
+    # print(inter_code.type_stack)
+    # print(inter_code.operator_stack)
+    # print(inter_code.jumps_stack)
 
 def p_lectura(p):
     '''
@@ -832,11 +833,11 @@ def p_np_add_false_bottom_(p):
         np_add_false_bottom_ :
     '''
     inter_code.operator_stack.append('(')
-    print(inter_code.variable_stack)
-    print(inter_code.type_stack)
-    print(inter_code.operator_stack)
-    print(inter_code.jumps_stack)
-    print('\n')
+    # print(inter_code.variable_stack)
+    # print(inter_code.type_stack)
+    # print(inter_code.operator_stack)
+    # print(inter_code.jumps_stack)
+    # print('\n')
 
 def p_np_remove_false_bottom_(p):
     '''
@@ -846,11 +847,11 @@ def p_np_remove_false_bottom_(p):
     if fb != '(':
         raise Exception('el false bottom no jalo')
 
-    print(inter_code.variable_stack)
-    print(inter_code.type_stack)
-    print(inter_code.operator_stack)
-    print(inter_code.jumps_stack)
-    print('\n')
+    # print(inter_code.variable_stack)
+    # print(inter_code.type_stack)
+    # print(inter_code.operator_stack)
+    # print(inter_code.jumps_stack)
+    # print('\n')
 
 def p_const(p):
     '''
@@ -865,12 +866,12 @@ def p_np_push_const_int_(p):
     '''
     var = inter_code.mem.constant_.add_value(int(p[-1]),'int')
     inter_code.variable_stack.append(var)
-    print(inter_code.variable_stack)
+    # print(inter_code.variable_stack)
     inter_code.type_stack.append('int')
-    print(inter_code.type_stack)
-    print(inter_code.operator_stack)
-    print(inter_code.jumps_stack)
-    print('\n')
+    # print(inter_code.type_stack)
+    # print(inter_code.operator_stack)
+    # print(inter_code.jumps_stack)
+    # print('\n')
 
 def p_np_push_const_float_(p):
     '''
@@ -878,12 +879,12 @@ def p_np_push_const_float_(p):
     '''
     var = inter_code.mem.constant_.add_value(float(p[-1]),'float')
     inter_code.variable_stack.append(var)
-    print(inter_code.variable_stack)
+    # print(inter_code.variable_stack)
     inter_code.type_stack.append('float')
-    print(inter_code.type_stack)
-    print(inter_code.operator_stack)
-    print(inter_code.jumps_stack)
-    print('\n')
+    # print(inter_code.type_stack)
+    # print(inter_code.operator_stack)
+    # print(inter_code.jumps_stack)
+    # print('\n')
 
 def p_np_push_const_string_(p):
     '''
@@ -891,12 +892,12 @@ def p_np_push_const_string_(p):
     '''
     var = inter_code.mem.constant_.add_value(str(p[-1][1:-1]),'string')
     inter_code.variable_stack.append(var)
-    print(inter_code.variable_stack)
+    # print(inter_code.variable_stack)
     inter_code.type_stack.append('string')
-    print(inter_code.type_stack)
-    print(inter_code.operator_stack)
-    print(inter_code.jumps_stack)
-    print('\n')
+    # print(inter_code.type_stack)
+    # print(inter_code.operator_stack)
+    # print(inter_code.jumps_stack)
+    # print('\n')
 
 def p_letrero(p):
     '''
@@ -912,7 +913,7 @@ def p_np_check(p):
     '''
         np_check :
     '''
-    print('BEEP BEEP I AM HERE I AM CHECK')
+    # print('BEEP BEEP I AM HERE I AM CHECK')
 
 def p_error(p):
    print("Syntax error", p)
@@ -920,8 +921,8 @@ def p_error(p):
 parser = yacc.yacc()
 
 def main():
+    arch_name = sys.argv[1]
     try:
-        arch_name = 'test_input.txt'
         arch = open(arch_name,'r')
         info = arch.read()
         arch.close()

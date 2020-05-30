@@ -14,6 +14,25 @@ class MemorySegment:
         self._BASE_BOOL = 6000
         self._BASE_PTR = 8000
 
+    def output_please(self):
+        out = []
+        for index, val in enumerate(self.integers):
+            out.append({'address' : index+self._BASE_INT+self.initial_dir,
+            'value' : val})
+        for index, val in enumerate(self.floats):
+            out.append({'address' : index+self._BASE_FLOAT+self.initial_dir,
+            'value' : val})
+        for index, val in enumerate(self.strings):
+            out.append({'address' : index+self._BASE_STRING+self.initial_dir,
+            'value' : val})
+        for index, val in enumerate(self.bools):
+            out.append({'address' : index+self._BASE_BOOL+self.initial_dir,
+            'value' : val})
+        for index, val in enumerate(self.pointers):
+            out.append({'address' : index+self._BASE_PTR+self.initial_dir,
+            'value' : val})
+        return out
+
     def __str__(self):
         output = '-- Initial Direction: '+ str(self.initial_dir)
         output+= '\n        INTEGERS:'
@@ -88,6 +107,33 @@ class MemorySegment:
         elif self._BASE_PTR <= dir-self.initial_dir:
             return self.pointers[dir-self.initial_dir-self._BASE_PTR]
 
+    def load_value(self, value, dir):
+        if self._BASE_INT <= dir-self.initial_dir < self._BASE_FLOAT:
+            if dir-self.initial_dir-self._BASE_INT >= len(self.integers):
+                self.integers.append(value)
+            else:
+                self.integers[dir-self.initial_dir-self._BASE_INT] = value
+        elif self._BASE_FLOAT <= dir-self.initial_dir < self._BASE_STRING:
+            if dir-self.initial_dir-self._BASE_FLOAT >= len(self.floats):
+                self.floats.append(value)
+            else:
+                self.floats[dir-self.initial_dir-self._BASE_FLOAT] = value
+        elif self._BASE_STRING <= dir-self.initial_dir < self._BASE_BOOL:
+            if dir-self.initial_dir-self._BASE_STRING >= len(self.strings):
+                self.strings.append(value)
+            else:
+                self.strings[dir-self.initial_dir-self._BASE_STRING] = value
+        elif self._BASE_BOOL <= dir-self.initial_dir < self._BASE_PTR:
+            if dir-self.initial_dir-self._BASE_BOOL >= len(self.bools):
+                self.bools.append(value)
+            else:
+                self.bools[dir-self.initial_dir-self._BASE_BOOL] = value
+        elif self._BASE_PTR <= dir-self.initial_dir:
+            if dir-self.initial_dir-self._BASE_PTR >= len(self.pointers):
+                self.pointers.append(value)
+            else:
+                self.pointers[dir-self.initial_dir-self._BASE_PTR] = value
+
     def check_type(self, dir):
         if self._BASE_INT <= dir-self.initial_dir < self._BASE_FLOAT:
             return 'int'
@@ -109,7 +155,7 @@ class MemorySegment:
         counter+= len(self.pointers)
         return counter
 
-class VirtualMemory:
+class Memory:
     def __init__(self):
         # Declare initial directions of each memory segment.
         # Global and Local have 8000 spaces each (2000 for each data type).
@@ -134,10 +180,20 @@ class VirtualMemory:
 
     def get_value(self, dir):
         if self._BASE_GLOBAL <= dir < self._BASE_LOCAL:
-            self.global_.get_value(dir)
+            return self.global_.get_value(dir)
         elif self._BASE_LOCAL <= dir < self._BASE_TEMP:
-            self.local_.get_value(dir)
+            return self.local_.get_value(dir)
         elif self._BASE_TEMP <= dir < self._BASE_CONSTANT:
-            self.temp_.get_value(dir)
+            return self.temp_.get_value(dir)
         elif self._BASE_CONSTANT <= dir:
-            self.constant_.get_value(dir)
+            return self.constant_.get_value(dir)
+
+    def load_value(self, value, dir):
+        if self._BASE_GLOBAL <= dir < self._BASE_LOCAL:
+            self.global_.load_value(value, dir)
+        elif self._BASE_LOCAL <= dir < self._BASE_TEMP:
+            self.local_.load_value(value, dir)
+        elif self._BASE_TEMP <= dir < self._BASE_CONSTANT:
+            self.temp_.load_value(value, dir)
+        elif self._BASE_CONSTANT <= dir:
+            self.constant_.load_value(value, dir)

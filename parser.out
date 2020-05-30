@@ -3,7 +3,7 @@ Created by PLY version 3.11 (http://www.dabeaz.com/ply)
 Grammar
 
 Rule 0     S' -> prog
-Rule 1     prog -> PROGRAM ID np_goto_ SEMICOLON variables np_push_global_vars_ prog_funcs func_princ
+Rule 1     prog -> PROGRAM ID np_goto_ SEMICOLON variables np_push_global_vars_ prog_funcs func_princ np_end_program_
 Rule 2     np_goto_ -> <empty>
 Rule 3     np_push_global_vars_ -> <empty>
 Rule 4     prog_funcs -> funcion prog_funcs
@@ -21,7 +21,7 @@ Rule 15    dimension_var -> empty
 Rule 16    tipo -> INT
 Rule 17    tipo -> FLOAT
 Rule 18    tipo -> STRING
-Rule 19    func_princ -> PRINCIPAL np_start_main_ PARENTHESESL PARENTHESESR CURLYL estatuto_rep CURLYR np_end_program_
+Rule 19    func_princ -> PRINCIPAL np_start_main_ PARENTHESESL PARENTHESESR CURLYL estatuto_rep CURLYR
 Rule 20    np_start_main_ -> <empty>
 Rule 21    np_end_program_ -> <empty>
 Rule 22    funcion -> FUNC tipo_func ID np_set_scope_ PARENTHESESL funcion_param np_add_func_to_directory_ PARENTHESESR SEMICOLON variables np_add_vars_to_table_ CURLYL estatuto_rep CURLYR np_end_function_
@@ -230,7 +230,7 @@ np_end_for_actions   : 82
 np_end_function_     : 22
 np_end_if_actions    : 74 75
 np_end_of_parameters_ : 54
-np_end_program_      : 19
+np_end_program_      : 1
 np_end_while_actions_ : 79 85
 np_false_condition_  : 74
 np_gotoF_            : 73 79 82
@@ -280,7 +280,7 @@ Parsing method: LALR
 state 0
 
     (0) S' -> . prog
-    (1) prog -> . PROGRAM ID np_goto_ SEMICOLON variables np_push_global_vars_ prog_funcs func_princ
+    (1) prog -> . PROGRAM ID np_goto_ SEMICOLON variables np_push_global_vars_ prog_funcs func_princ np_end_program_
 
     PROGRAM         shift and go to state 2
 
@@ -294,14 +294,14 @@ state 1
 
 state 2
 
-    (1) prog -> PROGRAM . ID np_goto_ SEMICOLON variables np_push_global_vars_ prog_funcs func_princ
+    (1) prog -> PROGRAM . ID np_goto_ SEMICOLON variables np_push_global_vars_ prog_funcs func_princ np_end_program_
 
     ID              shift and go to state 3
 
 
 state 3
 
-    (1) prog -> PROGRAM ID . np_goto_ SEMICOLON variables np_push_global_vars_ prog_funcs func_princ
+    (1) prog -> PROGRAM ID . np_goto_ SEMICOLON variables np_push_global_vars_ prog_funcs func_princ np_end_program_
     (2) np_goto_ -> .
 
     SEMICOLON       reduce using rule 2 (np_goto_ -> .)
@@ -310,14 +310,14 @@ state 3
 
 state 4
 
-    (1) prog -> PROGRAM ID np_goto_ . SEMICOLON variables np_push_global_vars_ prog_funcs func_princ
+    (1) prog -> PROGRAM ID np_goto_ . SEMICOLON variables np_push_global_vars_ prog_funcs func_princ np_end_program_
 
     SEMICOLON       shift and go to state 5
 
 
 state 5
 
-    (1) prog -> PROGRAM ID np_goto_ SEMICOLON . variables np_push_global_vars_ prog_funcs func_princ
+    (1) prog -> PROGRAM ID np_goto_ SEMICOLON . variables np_push_global_vars_ prog_funcs func_princ np_end_program_
     (6) variables -> . VAR variables_2
     (7) variables -> . empty
     (131) empty -> .
@@ -331,7 +331,7 @@ state 5
 
 state 6
 
-    (1) prog -> PROGRAM ID np_goto_ SEMICOLON variables . np_push_global_vars_ prog_funcs func_princ
+    (1) prog -> PROGRAM ID np_goto_ SEMICOLON variables . np_push_global_vars_ prog_funcs func_princ np_end_program_
     (3) np_push_global_vars_ -> .
 
     FUNC            reduce using rule 3 (np_push_global_vars_ -> .)
@@ -365,7 +365,7 @@ state 8
 
 state 9
 
-    (1) prog -> PROGRAM ID np_goto_ SEMICOLON variables np_push_global_vars_ . prog_funcs func_princ
+    (1) prog -> PROGRAM ID np_goto_ SEMICOLON variables np_push_global_vars_ . prog_funcs func_princ np_end_program_
     (4) prog_funcs -> . funcion prog_funcs
     (5) prog_funcs -> . empty
     (22) funcion -> . FUNC tipo_func ID np_set_scope_ PARENTHESESL funcion_param np_add_func_to_directory_ PARENTHESESR SEMICOLON variables np_add_vars_to_table_ CURLYL estatuto_rep CURLYR np_end_function_
@@ -420,8 +420,8 @@ state 14
 
 state 15
 
-    (1) prog -> PROGRAM ID np_goto_ SEMICOLON variables np_push_global_vars_ prog_funcs . func_princ
-    (19) func_princ -> . PRINCIPAL np_start_main_ PARENTHESESL PARENTHESESR CURLYL estatuto_rep CURLYR np_end_program_
+    (1) prog -> PROGRAM ID np_goto_ SEMICOLON variables np_push_global_vars_ prog_funcs . func_princ np_end_program_
+    (19) func_princ -> . PRINCIPAL np_start_main_ PARENTHESESL PARENTHESESR CURLYL estatuto_rep CURLYR
 
     PRINCIPAL       shift and go to state 21
 
@@ -477,19 +477,21 @@ state 19
 
 state 20
 
-    (1) prog -> PROGRAM ID np_goto_ SEMICOLON variables np_push_global_vars_ prog_funcs func_princ .
+    (1) prog -> PROGRAM ID np_goto_ SEMICOLON variables np_push_global_vars_ prog_funcs func_princ . np_end_program_
+    (21) np_end_program_ -> .
 
-    $end            reduce using rule 1 (prog -> PROGRAM ID np_goto_ SEMICOLON variables np_push_global_vars_ prog_funcs func_princ .)
+    $end            reduce using rule 21 (np_end_program_ -> .)
 
+    np_end_program_                shift and go to state 28
 
 state 21
 
-    (19) func_princ -> PRINCIPAL . np_start_main_ PARENTHESESL PARENTHESESR CURLYL estatuto_rep CURLYR np_end_program_
+    (19) func_princ -> PRINCIPAL . np_start_main_ PARENTHESESL PARENTHESESR CURLYL estatuto_rep CURLYR
     (20) np_start_main_ -> .
 
     PARENTHESESL    reduce using rule 20 (np_start_main_ -> .)
 
-    np_start_main_                 shift and go to state 28
+    np_start_main_                 shift and go to state 29
 
 state 22
 
@@ -502,7 +504,7 @@ state 23
 
     (22) funcion -> FUNC tipo_func . ID np_set_scope_ PARENTHESESL funcion_param np_add_func_to_directory_ PARENTHESESR SEMICOLON variables np_add_vars_to_table_ CURLYL estatuto_rep CURLYR np_end_function_
 
-    ID              shift and go to state 29
+    ID              shift and go to state 30
 
 
 state 24
@@ -523,7 +525,7 @@ state 26
 
     (8) variables_2 -> tipo COLON lista_id . SEMICOLON variables_rep
 
-    SEMICOLON       shift and go to state 30
+    SEMICOLON       shift and go to state 31
 
 
 state 27
@@ -533,30 +535,37 @@ state 27
     (15) dimension_var -> . empty
     (131) empty -> .
 
-    SQUAREL         shift and go to state 32
+    SQUAREL         shift and go to state 33
     COMMA           reduce using rule 131 (empty -> .)
     SEMICOLON       reduce using rule 131 (empty -> .)
 
-    dimension_var                  shift and go to state 31
-    empty                          shift and go to state 33
+    dimension_var                  shift and go to state 32
+    empty                          shift and go to state 34
 
 state 28
 
-    (19) func_princ -> PRINCIPAL np_start_main_ . PARENTHESESL PARENTHESESR CURLYL estatuto_rep CURLYR np_end_program_
+    (1) prog -> PROGRAM ID np_goto_ SEMICOLON variables np_push_global_vars_ prog_funcs func_princ np_end_program_ .
 
-    PARENTHESESL    shift and go to state 34
+    $end            reduce using rule 1 (prog -> PROGRAM ID np_goto_ SEMICOLON variables np_push_global_vars_ prog_funcs func_princ np_end_program_ .)
 
 
 state 29
+
+    (19) func_princ -> PRINCIPAL np_start_main_ . PARENTHESESL PARENTHESESR CURLYL estatuto_rep CURLYR
+
+    PARENTHESESL    shift and go to state 35
+
+
+state 30
 
     (22) funcion -> FUNC tipo_func ID . np_set_scope_ PARENTHESESL funcion_param np_add_func_to_directory_ PARENTHESESR SEMICOLON variables np_add_vars_to_table_ CURLYL estatuto_rep CURLYR np_end_function_
     (24) np_set_scope_ -> .
 
     PARENTHESESL    reduce using rule 24 (np_set_scope_ -> .)
 
-    np_set_scope_                  shift and go to state 35
+    np_set_scope_                  shift and go to state 36
 
-state 30
+state 31
 
     (8) variables_2 -> tipo COLON lista_id SEMICOLON . variables_rep
     (9) variables_rep -> . variables_2
@@ -575,31 +584,31 @@ state 30
     STRING          shift and go to state 14
 
     tipo                           shift and go to state 11
-    variables_rep                  shift and go to state 36
-    variables_2                    shift and go to state 37
-    empty                          shift and go to state 38
+    variables_rep                  shift and go to state 37
+    variables_2                    shift and go to state 38
+    empty                          shift and go to state 39
 
-state 31
+state 32
 
     (11) lista_id -> ID dimension_var . lista_id_rep
     (12) lista_id_rep -> . COMMA lista_id
     (13) lista_id_rep -> . empty
     (131) empty -> .
 
-    COMMA           shift and go to state 40
+    COMMA           shift and go to state 41
     SEMICOLON       reduce using rule 131 (empty -> .)
 
-    lista_id_rep                   shift and go to state 39
-    empty                          shift and go to state 41
+    lista_id_rep                   shift and go to state 40
+    empty                          shift and go to state 42
 
-state 32
+state 33
 
     (14) dimension_var -> SQUAREL . CTE_INT SQUARER
 
-    CTE_INT         shift and go to state 42
+    CTE_INT         shift and go to state 43
 
 
-state 33
+state 34
 
     (15) dimension_var -> empty .
 
@@ -607,21 +616,21 @@ state 33
     SEMICOLON       reduce using rule 15 (dimension_var -> empty .)
 
 
-state 34
-
-    (19) func_princ -> PRINCIPAL np_start_main_ PARENTHESESL . PARENTHESESR CURLYL estatuto_rep CURLYR np_end_program_
-
-    PARENTHESESR    shift and go to state 43
-
-
 state 35
 
-    (22) funcion -> FUNC tipo_func ID np_set_scope_ . PARENTHESESL funcion_param np_add_func_to_directory_ PARENTHESESR SEMICOLON variables np_add_vars_to_table_ CURLYL estatuto_rep CURLYR np_end_function_
+    (19) func_princ -> PRINCIPAL np_start_main_ PARENTHESESL . PARENTHESESR CURLYL estatuto_rep CURLYR
 
-    PARENTHESESL    shift and go to state 44
+    PARENTHESESR    shift and go to state 44
 
 
 state 36
+
+    (22) funcion -> FUNC tipo_func ID np_set_scope_ . PARENTHESESL funcion_param np_add_func_to_directory_ PARENTHESESR SEMICOLON variables np_add_vars_to_table_ CURLYL estatuto_rep CURLYR np_end_function_
+
+    PARENTHESESL    shift and go to state 45
+
+
+state 37
 
     (8) variables_2 -> tipo COLON lista_id SEMICOLON variables_rep .
 
@@ -630,7 +639,7 @@ state 36
     CURLYL          reduce using rule 8 (variables_2 -> tipo COLON lista_id SEMICOLON variables_rep .)
 
 
-state 37
+state 38
 
     (9) variables_rep -> variables_2 .
 
@@ -639,7 +648,7 @@ state 37
     CURLYL          reduce using rule 9 (variables_rep -> variables_2 .)
 
 
-state 38
+state 39
 
     (10) variables_rep -> empty .
 
@@ -648,44 +657,44 @@ state 38
     CURLYL          reduce using rule 10 (variables_rep -> empty .)
 
 
-state 39
+state 40
 
     (11) lista_id -> ID dimension_var lista_id_rep .
 
     SEMICOLON       reduce using rule 11 (lista_id -> ID dimension_var lista_id_rep .)
 
 
-state 40
+state 41
 
     (12) lista_id_rep -> COMMA . lista_id
     (11) lista_id -> . ID dimension_var lista_id_rep
 
     ID              shift and go to state 27
 
-    lista_id                       shift and go to state 45
+    lista_id                       shift and go to state 46
 
-state 41
+state 42
 
     (13) lista_id_rep -> empty .
 
     SEMICOLON       reduce using rule 13 (lista_id_rep -> empty .)
 
 
-state 42
+state 43
 
     (14) dimension_var -> SQUAREL CTE_INT . SQUARER
 
-    SQUARER         shift and go to state 46
-
-
-state 43
-
-    (19) func_princ -> PRINCIPAL np_start_main_ PARENTHESESL PARENTHESESR . CURLYL estatuto_rep CURLYR np_end_program_
-
-    CURLYL          shift and go to state 47
+    SQUARER         shift and go to state 47
 
 
 state 44
+
+    (19) func_princ -> PRINCIPAL np_start_main_ PARENTHESESL PARENTHESESR . CURLYL estatuto_rep CURLYR
+
+    CURLYL          shift and go to state 48
+
+
+state 45
 
     (22) funcion -> FUNC tipo_func ID np_set_scope_ PARENTHESESL . funcion_param np_add_func_to_directory_ PARENTHESESR SEMICOLON variables np_add_vars_to_table_ CURLYL estatuto_rep CURLYR np_end_function_
     (29) funcion_param -> . tipo ID funcion_param_rep
@@ -700,18 +709,18 @@ state 44
     STRING          shift and go to state 14
     PARENTHESESR    reduce using rule 131 (empty -> .)
 
-    funcion_param                  shift and go to state 48
-    tipo                           shift and go to state 49
-    empty                          shift and go to state 50
+    funcion_param                  shift and go to state 49
+    tipo                           shift and go to state 50
+    empty                          shift and go to state 51
 
-state 45
+state 46
 
     (12) lista_id_rep -> COMMA lista_id .
 
     SEMICOLON       reduce using rule 12 (lista_id_rep -> COMMA lista_id .)
 
 
-state 46
+state 47
 
     (14) dimension_var -> SQUAREL CTE_INT SQUARER .
 
@@ -719,9 +728,9 @@ state 46
     SEMICOLON       reduce using rule 14 (dimension_var -> SQUAREL CTE_INT SQUARER .)
 
 
-state 47
+state 48
 
-    (19) func_princ -> PRINCIPAL np_start_main_ PARENTHESESL PARENTHESESR CURLYL . estatuto_rep CURLYR np_end_program_
+    (19) func_princ -> PRINCIPAL np_start_main_ PARENTHESESL PARENTHESESR CURLYL . estatuto_rep CURLYR
     (33) estatuto_rep -> . estatuto estatuto_rep
     (34) estatuto_rep -> . empty
     (35) estatuto -> . asignacion SEMICOLON
@@ -743,57 +752,57 @@ state 47
     (82) rep_nc -> . FROM expresion np_assign_temp_ UNTIL expresion np_quadruple_for_ np_gotoF_ DO CURLYL estatuto_rep CURLYR np_end_for_actions
 
     CURLYR          reduce using rule 131 (empty -> .)
-    ID              shift and go to state 62
-    RETURN          shift and go to state 63
-    READ            shift and go to state 64
-    PRINT           shift and go to state 65
-    IF              shift and go to state 66
-    WHILE           shift and go to state 67
-    FROM            shift and go to state 68
+    ID              shift and go to state 63
+    RETURN          shift and go to state 64
+    READ            shift and go to state 65
+    PRINT           shift and go to state 66
+    IF              shift and go to state 67
+    WHILE           shift and go to state 68
+    FROM            shift and go to state 69
 
-    estatuto_rep                   shift and go to state 51
-    estatuto                       shift and go to state 52
-    empty                          shift and go to state 53
-    asignacion                     shift and go to state 54
-    llamada                        shift and go to state 55
-    retorno                        shift and go to state 56
-    lectura                        shift and go to state 57
-    escritura                      shift and go to state 58
-    decision                       shift and go to state 59
-    rep_c                          shift and go to state 60
-    rep_nc                         shift and go to state 61
+    estatuto_rep                   shift and go to state 52
+    estatuto                       shift and go to state 53
+    empty                          shift and go to state 54
+    asignacion                     shift and go to state 55
+    llamada                        shift and go to state 56
+    retorno                        shift and go to state 57
+    lectura                        shift and go to state 58
+    escritura                      shift and go to state 59
+    decision                       shift and go to state 60
+    rep_c                          shift and go to state 61
+    rep_nc                         shift and go to state 62
 
-state 48
+state 49
 
     (22) funcion -> FUNC tipo_func ID np_set_scope_ PARENTHESESL funcion_param . np_add_func_to_directory_ PARENTHESESR SEMICOLON variables np_add_vars_to_table_ CURLYL estatuto_rep CURLYR np_end_function_
     (25) np_add_func_to_directory_ -> .
 
     PARENTHESESR    reduce using rule 25 (np_add_func_to_directory_ -> .)
 
-    np_add_func_to_directory_      shift and go to state 69
+    np_add_func_to_directory_      shift and go to state 70
 
-state 49
+state 50
 
     (29) funcion_param -> tipo . ID funcion_param_rep
 
-    ID              shift and go to state 70
+    ID              shift and go to state 71
 
 
-state 50
+state 51
 
     (30) funcion_param -> empty .
 
     PARENTHESESR    reduce using rule 30 (funcion_param -> empty .)
 
 
-state 51
-
-    (19) func_princ -> PRINCIPAL np_start_main_ PARENTHESESL PARENTHESESR CURLYL estatuto_rep . CURLYR np_end_program_
-
-    CURLYR          shift and go to state 71
-
-
 state 52
+
+    (19) func_princ -> PRINCIPAL np_start_main_ PARENTHESESL PARENTHESESR CURLYL estatuto_rep . CURLYR
+
+    CURLYR          shift and go to state 72
+
+
+state 53
 
     (33) estatuto_rep -> estatuto . estatuto_rep
     (33) estatuto_rep -> . estatuto estatuto_rep
@@ -817,69 +826,69 @@ state 52
     (82) rep_nc -> . FROM expresion np_assign_temp_ UNTIL expresion np_quadruple_for_ np_gotoF_ DO CURLYL estatuto_rep CURLYR np_end_for_actions
 
     CURLYR          reduce using rule 131 (empty -> .)
-    ID              shift and go to state 62
-    RETURN          shift and go to state 63
-    READ            shift and go to state 64
-    PRINT           shift and go to state 65
-    IF              shift and go to state 66
-    WHILE           shift and go to state 67
-    FROM            shift and go to state 68
+    ID              shift and go to state 63
+    RETURN          shift and go to state 64
+    READ            shift and go to state 65
+    PRINT           shift and go to state 66
+    IF              shift and go to state 67
+    WHILE           shift and go to state 68
+    FROM            shift and go to state 69
 
-    estatuto                       shift and go to state 52
-    estatuto_rep                   shift and go to state 72
-    empty                          shift and go to state 53
-    asignacion                     shift and go to state 54
-    llamada                        shift and go to state 55
-    retorno                        shift and go to state 56
-    lectura                        shift and go to state 57
-    escritura                      shift and go to state 58
-    decision                       shift and go to state 59
-    rep_c                          shift and go to state 60
-    rep_nc                         shift and go to state 61
+    estatuto                       shift and go to state 53
+    estatuto_rep                   shift and go to state 73
+    empty                          shift and go to state 54
+    asignacion                     shift and go to state 55
+    llamada                        shift and go to state 56
+    retorno                        shift and go to state 57
+    lectura                        shift and go to state 58
+    escritura                      shift and go to state 59
+    decision                       shift and go to state 60
+    rep_c                          shift and go to state 61
+    rep_nc                         shift and go to state 62
 
-state 53
+state 54
 
     (34) estatuto_rep -> empty .
 
     CURLYR          reduce using rule 34 (estatuto_rep -> empty .)
 
 
-state 54
-
-    (35) estatuto -> asignacion . SEMICOLON
-
-    SEMICOLON       shift and go to state 73
-
-
 state 55
 
-    (36) estatuto -> llamada . SEMICOLON np_llamada_void_
+    (35) estatuto -> asignacion . SEMICOLON
 
     SEMICOLON       shift and go to state 74
 
 
 state 56
 
-    (37) estatuto -> retorno . SEMICOLON
+    (36) estatuto -> llamada . SEMICOLON np_llamada_void_
 
     SEMICOLON       shift and go to state 75
 
 
 state 57
 
-    (38) estatuto -> lectura . SEMICOLON
+    (37) estatuto -> retorno . SEMICOLON
 
     SEMICOLON       shift and go to state 76
 
 
 state 58
 
-    (39) estatuto -> escritura . SEMICOLON
+    (38) estatuto -> lectura . SEMICOLON
 
     SEMICOLON       shift and go to state 77
 
 
 state 59
+
+    (39) estatuto -> escritura . SEMICOLON
+
+    SEMICOLON       shift and go to state 78
+
+
+state 60
 
     (40) estatuto -> decision .
 
@@ -893,7 +902,7 @@ state 59
     CURLYR          reduce using rule 40 (estatuto -> decision .)
 
 
-state 60
+state 61
 
     (41) estatuto -> rep_c .
 
@@ -907,7 +916,7 @@ state 60
     CURLYR          reduce using rule 41 (estatuto -> rep_c .)
 
 
-state 61
+state 62
 
     (42) estatuto -> rep_nc .
 
@@ -921,7 +930,7 @@ state 61
     CURLYR          reduce using rule 42 (estatuto -> rep_nc .)
 
 
-state 62
+state 63
 
     (49) asignacion -> ID . np_push_var_ dimension ASSIGN np_push_operator_ expresion np_quadruple_assignment_
     (54) llamada -> ID . np_verify_function_ PARENTHESESL np_create_era_ expresion_rep np_end_of_parameters_ PARENTHESESR np_create_gosub_
@@ -932,28 +941,19 @@ state 62
     ASSIGN          reduce using rule 46 (np_push_var_ -> .)
     PARENTHESESL    reduce using rule 59 (np_verify_function_ -> .)
 
-    np_push_var_                   shift and go to state 78
-    np_verify_function_            shift and go to state 79
-
-state 63
-
-    (87) retorno -> RETURN . PARENTHESESL expresion PARENTHESESR np_quadruple_return_
-
-    PARENTHESESL    shift and go to state 80
-
+    np_push_var_                   shift and go to state 79
+    np_verify_function_            shift and go to state 80
 
 state 64
 
-    (65) lectura -> READ . np_push_operator_ PARENTHESESL lista_lectura PARENTHESESR np_pop_operator_
-    (47) np_push_operator_ -> .
+    (87) retorno -> RETURN . PARENTHESESL expresion PARENTHESESR np_quadruple_return_
 
-    PARENTHESESL    reduce using rule 47 (np_push_operator_ -> .)
+    PARENTHESESL    shift and go to state 81
 
-    np_push_operator_              shift and go to state 81
 
 state 65
 
-    (68) escritura -> PRINT . np_push_operator_ PARENTHESESL lista_escritura PARENTHESESR np_pop_operator_
+    (65) lectura -> READ . np_push_operator_ PARENTHESESL lista_lectura PARENTHESESR np_pop_operator_
     (47) np_push_operator_ -> .
 
     PARENTHESESL    reduce using rule 47 (np_push_operator_ -> .)
@@ -962,21 +962,30 @@ state 65
 
 state 66
 
-    (73) decision -> IF . PARENTHESESL expresion PARENTHESESR np_gotoF_ THEN CURLYL estatuto_rep CURLYR decision_alt
+    (68) escritura -> PRINT . np_push_operator_ PARENTHESESL lista_escritura PARENTHESESR np_pop_operator_
+    (47) np_push_operator_ -> .
 
-    PARENTHESESL    shift and go to state 83
+    PARENTHESESL    reduce using rule 47 (np_push_operator_ -> .)
 
+    np_push_operator_              shift and go to state 83
 
 state 67
+
+    (73) decision -> IF . PARENTHESESL expresion PARENTHESESR np_gotoF_ THEN CURLYL estatuto_rep CURLYR decision_alt
+
+    PARENTHESESL    shift and go to state 84
+
+
+state 68
 
     (79) rep_c -> WHILE . np_push_jump_ PARENTHESESL expresion PARENTHESESR np_gotoF_ DO CURLYL estatuto_rep CURLYR np_end_while_actions_
     (80) np_push_jump_ -> .
 
     PARENTHESESL    reduce using rule 80 (np_push_jump_ -> .)
 
-    np_push_jump_                  shift and go to state 84
+    np_push_jump_                  shift and go to state 85
 
-state 68
+state 69
 
     (82) rep_nc -> FROM . expresion np_assign_temp_ UNTIL expresion np_quadruple_for_ np_gotoF_ DO CURLYL estatuto_rep CURLYR np_end_for_actions
     (89) expresion -> . exp_comp np_quadruple_logic_ expresion_2
@@ -996,61 +1005,59 @@ state 68
     (54) llamada -> . ID np_verify_function_ PARENTHESESL np_create_era_ expresion_rep np_end_of_parameters_ PARENTHESESR np_create_gosub_
     (130) letrero -> . CTE_STR np_push_const_string_
 
-    MINUS           shift and go to state 91
-    PLUS            shift and go to state 92
-    ID              shift and go to state 94
-    PARENTHESESL    shift and go to state 95
-    CTE_INT         shift and go to state 97
-    CTE_FLOAT       shift and go to state 99
-    CTE_STR         shift and go to state 100
+    MINUS           shift and go to state 92
+    PLUS            shift and go to state 93
+    ID              shift and go to state 95
+    PARENTHESESL    shift and go to state 96
+    CTE_INT         shift and go to state 98
+    CTE_FLOAT       shift and go to state 100
+    CTE_STR         shift and go to state 101
 
-    expresion                      shift and go to state 85
-    exp_comp                       shift and go to state 86
-    exp_ar                         shift and go to state 87
-    termino                        shift and go to state 88
-    unary                          shift and go to state 89
-    factor                         shift and go to state 90
-    const                          shift and go to state 93
-    llamada                        shift and go to state 96
-    letrero                        shift and go to state 98
+    expresion                      shift and go to state 86
+    exp_comp                       shift and go to state 87
+    exp_ar                         shift and go to state 88
+    termino                        shift and go to state 89
+    unary                          shift and go to state 90
+    factor                         shift and go to state 91
+    const                          shift and go to state 94
+    llamada                        shift and go to state 97
+    letrero                        shift and go to state 99
 
-state 69
+state 70
 
     (22) funcion -> FUNC tipo_func ID np_set_scope_ PARENTHESESL funcion_param np_add_func_to_directory_ . PARENTHESESR SEMICOLON variables np_add_vars_to_table_ CURLYL estatuto_rep CURLYR np_end_function_
 
-    PARENTHESESR    shift and go to state 101
+    PARENTHESESR    shift and go to state 102
 
 
-state 70
+state 71
 
     (29) funcion_param -> tipo ID . funcion_param_rep
     (31) funcion_param_rep -> . COMMA funcion_param
     (32) funcion_param_rep -> . empty
     (131) empty -> .
 
-    COMMA           shift and go to state 103
+    COMMA           shift and go to state 104
     PARENTHESESR    reduce using rule 131 (empty -> .)
 
-    funcion_param_rep              shift and go to state 102
-    empty                          shift and go to state 104
-
-state 71
-
-    (19) func_princ -> PRINCIPAL np_start_main_ PARENTHESESL PARENTHESESR CURLYL estatuto_rep CURLYR . np_end_program_
-    (21) np_end_program_ -> .
-
-    $end            reduce using rule 21 (np_end_program_ -> .)
-
-    np_end_program_                shift and go to state 105
+    funcion_param_rep              shift and go to state 103
+    empty                          shift and go to state 105
 
 state 72
+
+    (19) func_princ -> PRINCIPAL np_start_main_ PARENTHESESL PARENTHESESR CURLYL estatuto_rep CURLYR .
+
+    $end            reduce using rule 19 (func_princ -> PRINCIPAL np_start_main_ PARENTHESESL PARENTHESESR CURLYL estatuto_rep CURLYR .)
+
+
+state 73
 
     (33) estatuto_rep -> estatuto estatuto_rep .
 
     CURLYR          reduce using rule 33 (estatuto_rep -> estatuto estatuto_rep .)
 
 
-state 73
+state 74
 
     (35) estatuto -> asignacion SEMICOLON .
 
@@ -1064,7 +1071,7 @@ state 73
     CURLYR          reduce using rule 35 (estatuto -> asignacion SEMICOLON .)
 
 
-state 74
+state 75
 
     (36) estatuto -> llamada SEMICOLON . np_llamada_void_
     (43) np_llamada_void_ -> .
@@ -1080,7 +1087,7 @@ state 74
 
     np_llamada_void_               shift and go to state 106
 
-state 75
+state 76
 
     (37) estatuto -> retorno SEMICOLON .
 
@@ -1094,7 +1101,7 @@ state 75
     CURLYR          reduce using rule 37 (estatuto -> retorno SEMICOLON .)
 
 
-state 76
+state 77
 
     (38) estatuto -> lectura SEMICOLON .
 
@@ -1108,7 +1115,7 @@ state 76
     CURLYR          reduce using rule 38 (estatuto -> lectura SEMICOLON .)
 
 
-state 77
+state 78
 
     (39) estatuto -> escritura SEMICOLON .
 
@@ -1122,7 +1129,7 @@ state 77
     CURLYR          reduce using rule 39 (estatuto -> escritura SEMICOLON .)
 
 
-state 78
+state 79
 
     (49) asignacion -> ID np_push_var_ . dimension ASSIGN np_push_operator_ expresion np_quadruple_assignment_
     (50) dimension -> . SQUAREL np_verify_dimensions_ np_add_false_bottom_ expresion np_manage_array_ np_remove_false_bottom_ SQUARER
@@ -1135,14 +1142,14 @@ state 78
     dimension                      shift and go to state 107
     empty                          shift and go to state 109
 
-state 79
+state 80
 
     (54) llamada -> ID np_verify_function_ . PARENTHESESL np_create_era_ expresion_rep np_end_of_parameters_ PARENTHESESR np_create_gosub_
 
     PARENTHESESL    shift and go to state 110
 
 
-state 80
+state 81
 
     (87) retorno -> RETURN PARENTHESESL . expresion PARENTHESESR np_quadruple_return_
     (89) expresion -> . exp_comp np_quadruple_logic_ expresion_2
@@ -1162,39 +1169,39 @@ state 80
     (54) llamada -> . ID np_verify_function_ PARENTHESESL np_create_era_ expresion_rep np_end_of_parameters_ PARENTHESESR np_create_gosub_
     (130) letrero -> . CTE_STR np_push_const_string_
 
-    MINUS           shift and go to state 91
-    PLUS            shift and go to state 92
-    ID              shift and go to state 94
-    PARENTHESESL    shift and go to state 95
-    CTE_INT         shift and go to state 97
-    CTE_FLOAT       shift and go to state 99
-    CTE_STR         shift and go to state 100
+    MINUS           shift and go to state 92
+    PLUS            shift and go to state 93
+    ID              shift and go to state 95
+    PARENTHESESL    shift and go to state 96
+    CTE_INT         shift and go to state 98
+    CTE_FLOAT       shift and go to state 100
+    CTE_STR         shift and go to state 101
 
     expresion                      shift and go to state 111
-    exp_comp                       shift and go to state 86
-    exp_ar                         shift and go to state 87
-    termino                        shift and go to state 88
-    unary                          shift and go to state 89
-    factor                         shift and go to state 90
-    const                          shift and go to state 93
-    llamada                        shift and go to state 96
-    letrero                        shift and go to state 98
+    exp_comp                       shift and go to state 87
+    exp_ar                         shift and go to state 88
+    termino                        shift and go to state 89
+    unary                          shift and go to state 90
+    factor                         shift and go to state 91
+    const                          shift and go to state 94
+    llamada                        shift and go to state 97
+    letrero                        shift and go to state 99
 
-state 81
+state 82
 
     (65) lectura -> READ np_push_operator_ . PARENTHESESL lista_lectura PARENTHESESR np_pop_operator_
 
     PARENTHESESL    shift and go to state 112
 
 
-state 82
+state 83
 
     (68) escritura -> PRINT np_push_operator_ . PARENTHESESL lista_escritura PARENTHESESR np_pop_operator_
 
     PARENTHESESL    shift and go to state 113
 
 
-state 83
+state 84
 
     (73) decision -> IF PARENTHESESL . expresion PARENTHESESR np_gotoF_ THEN CURLYL estatuto_rep CURLYR decision_alt
     (89) expresion -> . exp_comp np_quadruple_logic_ expresion_2
@@ -1214,32 +1221,32 @@ state 83
     (54) llamada -> . ID np_verify_function_ PARENTHESESL np_create_era_ expresion_rep np_end_of_parameters_ PARENTHESESR np_create_gosub_
     (130) letrero -> . CTE_STR np_push_const_string_
 
-    MINUS           shift and go to state 91
-    PLUS            shift and go to state 92
-    ID              shift and go to state 94
-    PARENTHESESL    shift and go to state 95
-    CTE_INT         shift and go to state 97
-    CTE_FLOAT       shift and go to state 99
-    CTE_STR         shift and go to state 100
+    MINUS           shift and go to state 92
+    PLUS            shift and go to state 93
+    ID              shift and go to state 95
+    PARENTHESESL    shift and go to state 96
+    CTE_INT         shift and go to state 98
+    CTE_FLOAT       shift and go to state 100
+    CTE_STR         shift and go to state 101
 
     expresion                      shift and go to state 114
-    exp_comp                       shift and go to state 86
-    exp_ar                         shift and go to state 87
-    termino                        shift and go to state 88
-    unary                          shift and go to state 89
-    factor                         shift and go to state 90
-    const                          shift and go to state 93
-    llamada                        shift and go to state 96
-    letrero                        shift and go to state 98
+    exp_comp                       shift and go to state 87
+    exp_ar                         shift and go to state 88
+    termino                        shift and go to state 89
+    unary                          shift and go to state 90
+    factor                         shift and go to state 91
+    const                          shift and go to state 94
+    llamada                        shift and go to state 97
+    letrero                        shift and go to state 99
 
-state 84
+state 85
 
     (79) rep_c -> WHILE np_push_jump_ . PARENTHESESL expresion PARENTHESESR np_gotoF_ DO CURLYL estatuto_rep CURLYR np_end_while_actions_
 
     PARENTHESESL    shift and go to state 115
 
 
-state 85
+state 86
 
     (82) rep_nc -> FROM expresion . np_assign_temp_ UNTIL expresion np_quadruple_for_ np_gotoF_ DO CURLYL estatuto_rep CURLYR np_end_for_actions
     (83) np_assign_temp_ -> .
@@ -1248,7 +1255,7 @@ state 85
 
     np_assign_temp_                shift and go to state 116
 
-state 86
+state 87
 
     (89) expresion -> exp_comp . np_quadruple_logic_ expresion_2
     (93) np_quadruple_logic_ -> .
@@ -1264,7 +1271,7 @@ state 86
 
     np_quadruple_logic_            shift and go to state 117
 
-state 87
+state 88
 
     (94) exp_comp -> exp_ar . exp_comp_2
     (95) exp_comp_2 -> . comp_sym np_push_operator_ exp_ar np_quadruple_compare_
@@ -1296,7 +1303,7 @@ state 87
     comp_sym                       shift and go to state 119
     empty                          shift and go to state 120
 
-state 88
+state 89
 
     (104) exp_ar -> termino . np_quadruple_term exp_ar_2
     (108) np_quadruple_term -> .
@@ -1320,7 +1327,7 @@ state 88
 
     np_quadruple_term              shift and go to state 127
 
-state 89
+state 90
 
     (109) termino -> unary . np_quadruple_factor_ termino_2
     (113) np_quadruple_factor_ -> .
@@ -1346,7 +1353,7 @@ state 89
 
     np_quadruple_factor_           shift and go to state 128
 
-state 90
+state 91
 
     (114) unary -> factor .
 
@@ -1370,7 +1377,7 @@ state 90
     SQUARER         reduce using rule 114 (unary -> factor .)
 
 
-state 91
+state 92
 
     (115) unary -> MINUS . np_push_operator_ unary change_sign
     (47) np_push_operator_ -> .
@@ -1385,7 +1392,7 @@ state 91
 
     np_push_operator_              shift and go to state 129
 
-state 92
+state 93
 
     (116) unary -> PLUS . unary
     (114) unary -> . factor
@@ -1401,21 +1408,21 @@ state 92
     (54) llamada -> . ID np_verify_function_ PARENTHESESL np_create_era_ expresion_rep np_end_of_parameters_ PARENTHESESR np_create_gosub_
     (130) letrero -> . CTE_STR np_push_const_string_
 
-    MINUS           shift and go to state 91
-    PLUS            shift and go to state 92
-    ID              shift and go to state 94
-    PARENTHESESL    shift and go to state 95
-    CTE_INT         shift and go to state 97
-    CTE_FLOAT       shift and go to state 99
-    CTE_STR         shift and go to state 100
+    MINUS           shift and go to state 92
+    PLUS            shift and go to state 93
+    ID              shift and go to state 95
+    PARENTHESESL    shift and go to state 96
+    CTE_INT         shift and go to state 98
+    CTE_FLOAT       shift and go to state 100
+    CTE_STR         shift and go to state 101
 
     unary                          shift and go to state 130
-    factor                         shift and go to state 90
-    const                          shift and go to state 93
-    llamada                        shift and go to state 96
-    letrero                        shift and go to state 98
+    factor                         shift and go to state 91
+    const                          shift and go to state 94
+    llamada                        shift and go to state 97
+    letrero                        shift and go to state 99
 
-state 93
+state 94
 
     (118) factor -> const .
 
@@ -1439,7 +1446,7 @@ state 93
     SQUARER         reduce using rule 118 (factor -> const .)
 
 
-state 94
+state 95
 
     (119) factor -> ID . np_push_var_ dimension
     (54) llamada -> ID . np_verify_function_ PARENTHESESL np_create_era_ expresion_rep np_end_of_parameters_ PARENTHESESR np_create_gosub_
@@ -1468,9 +1475,9 @@ state 94
     PARENTHESESL    reduce using rule 59 (np_verify_function_ -> .)
 
     np_push_var_                   shift and go to state 131
-    np_verify_function_            shift and go to state 79
+    np_verify_function_            shift and go to state 80
 
-state 95
+state 96
 
     (120) factor -> PARENTHESESL . np_add_false_bottom_ expresion PARENTHESESR np_remove_false_bottom_
     (122) np_add_false_bottom_ -> .
@@ -1485,7 +1492,7 @@ state 95
 
     np_add_false_bottom_           shift and go to state 132
 
-state 96
+state 97
 
     (121) factor -> llamada .
 
@@ -1509,7 +1516,7 @@ state 96
     SQUARER         reduce using rule 121 (factor -> llamada .)
 
 
-state 97
+state 98
 
     (124) const -> CTE_INT . np_push_const_int_
     (127) np_push_const_int_ -> .
@@ -1535,7 +1542,7 @@ state 97
 
     np_push_const_int_             shift and go to state 133
 
-state 98
+state 99
 
     (125) const -> letrero .
 
@@ -1559,7 +1566,7 @@ state 98
     SQUARER         reduce using rule 125 (const -> letrero .)
 
 
-state 99
+state 100
 
     (126) const -> CTE_FLOAT . np_push_const_float_
     (128) np_push_const_float_ -> .
@@ -1585,7 +1592,7 @@ state 99
 
     np_push_const_float_           shift and go to state 134
 
-state 100
+state 101
 
     (130) letrero -> CTE_STR . np_push_const_string_
     (129) np_push_const_string_ -> .
@@ -1611,21 +1618,21 @@ state 100
 
     np_push_const_string_          shift and go to state 135
 
-state 101
+state 102
 
     (22) funcion -> FUNC tipo_func ID np_set_scope_ PARENTHESESL funcion_param np_add_func_to_directory_ PARENTHESESR . SEMICOLON variables np_add_vars_to_table_ CURLYL estatuto_rep CURLYR np_end_function_
 
     SEMICOLON       shift and go to state 136
 
 
-state 102
+state 103
 
     (29) funcion_param -> tipo ID funcion_param_rep .
 
     PARENTHESESR    reduce using rule 29 (funcion_param -> tipo ID funcion_param_rep .)
 
 
-state 103
+state 104
 
     (31) funcion_param_rep -> COMMA . funcion_param
     (29) funcion_param -> . tipo ID funcion_param_rep
@@ -1641,21 +1648,14 @@ state 103
     PARENTHESESR    reduce using rule 131 (empty -> .)
 
     funcion_param                  shift and go to state 137
-    tipo                           shift and go to state 49
-    empty                          shift and go to state 50
+    tipo                           shift and go to state 50
+    empty                          shift and go to state 51
 
-state 104
+state 105
 
     (32) funcion_param_rep -> empty .
 
     PARENTHESESR    reduce using rule 32 (funcion_param_rep -> empty .)
-
-
-state 105
-
-    (19) func_princ -> PRINCIPAL np_start_main_ PARENTHESESL PARENTHESESR CURLYL estatuto_rep CURLYR np_end_program_ .
-
-    $end            reduce using rule 19 (func_princ -> PRINCIPAL np_start_main_ PARENTHESESL PARENTHESESR CURLYL estatuto_rep CURLYR np_end_program_ .)
 
 
 state 106
@@ -1774,24 +1774,24 @@ state 113
     (126) const -> . CTE_FLOAT np_push_const_float_
     (54) llamada -> . ID np_verify_function_ PARENTHESESL np_create_era_ expresion_rep np_end_of_parameters_ PARENTHESESR np_create_gosub_
 
-    CTE_STR         shift and go to state 100
-    MINUS           shift and go to state 91
-    PLUS            shift and go to state 92
-    ID              shift and go to state 94
-    PARENTHESESL    shift and go to state 95
-    CTE_INT         shift and go to state 97
-    CTE_FLOAT       shift and go to state 99
+    CTE_STR         shift and go to state 101
+    MINUS           shift and go to state 92
+    PLUS            shift and go to state 93
+    ID              shift and go to state 95
+    PARENTHESESL    shift and go to state 96
+    CTE_INT         shift and go to state 98
+    CTE_FLOAT       shift and go to state 100
 
     lista_escritura                shift and go to state 144
     letrero                        shift and go to state 145
     expresion                      shift and go to state 146
-    exp_comp                       shift and go to state 86
-    exp_ar                         shift and go to state 87
-    termino                        shift and go to state 88
-    unary                          shift and go to state 89
-    factor                         shift and go to state 90
-    const                          shift and go to state 93
-    llamada                        shift and go to state 96
+    exp_comp                       shift and go to state 87
+    exp_ar                         shift and go to state 88
+    termino                        shift and go to state 89
+    unary                          shift and go to state 90
+    factor                         shift and go to state 91
+    const                          shift and go to state 94
+    llamada                        shift and go to state 97
 
 state 114
 
@@ -1820,23 +1820,23 @@ state 115
     (54) llamada -> . ID np_verify_function_ PARENTHESESL np_create_era_ expresion_rep np_end_of_parameters_ PARENTHESESR np_create_gosub_
     (130) letrero -> . CTE_STR np_push_const_string_
 
-    MINUS           shift and go to state 91
-    PLUS            shift and go to state 92
-    ID              shift and go to state 94
-    PARENTHESESL    shift and go to state 95
-    CTE_INT         shift and go to state 97
-    CTE_FLOAT       shift and go to state 99
-    CTE_STR         shift and go to state 100
+    MINUS           shift and go to state 92
+    PLUS            shift and go to state 93
+    ID              shift and go to state 95
+    PARENTHESESL    shift and go to state 96
+    CTE_INT         shift and go to state 98
+    CTE_FLOAT       shift and go to state 100
+    CTE_STR         shift and go to state 101
 
     expresion                      shift and go to state 148
-    exp_comp                       shift and go to state 86
-    exp_ar                         shift and go to state 87
-    termino                        shift and go to state 88
-    unary                          shift and go to state 89
-    factor                         shift and go to state 90
-    const                          shift and go to state 93
-    llamada                        shift and go to state 96
-    letrero                        shift and go to state 98
+    exp_comp                       shift and go to state 87
+    exp_ar                         shift and go to state 88
+    termino                        shift and go to state 89
+    unary                          shift and go to state 90
+    factor                         shift and go to state 91
+    const                          shift and go to state 94
+    llamada                        shift and go to state 97
+    letrero                        shift and go to state 99
 
 state 116
 
@@ -2060,19 +2060,19 @@ state 129
     (54) llamada -> . ID np_verify_function_ PARENTHESESL np_create_era_ expresion_rep np_end_of_parameters_ PARENTHESESR np_create_gosub_
     (130) letrero -> . CTE_STR np_push_const_string_
 
-    MINUS           shift and go to state 91
-    PLUS            shift and go to state 92
-    ID              shift and go to state 94
-    PARENTHESESL    shift and go to state 95
-    CTE_INT         shift and go to state 97
-    CTE_FLOAT       shift and go to state 99
-    CTE_STR         shift and go to state 100
+    MINUS           shift and go to state 92
+    PLUS            shift and go to state 93
+    ID              shift and go to state 95
+    PARENTHESESL    shift and go to state 96
+    CTE_INT         shift and go to state 98
+    CTE_FLOAT       shift and go to state 100
+    CTE_STR         shift and go to state 101
 
     unary                          shift and go to state 163
-    factor                         shift and go to state 90
-    const                          shift and go to state 93
-    llamada                        shift and go to state 96
-    letrero                        shift and go to state 98
+    factor                         shift and go to state 91
+    const                          shift and go to state 94
+    llamada                        shift and go to state 97
+    letrero                        shift and go to state 99
 
 state 130
 
@@ -2148,23 +2148,23 @@ state 132
     (54) llamada -> . ID np_verify_function_ PARENTHESESL np_create_era_ expresion_rep np_end_of_parameters_ PARENTHESESR np_create_gosub_
     (130) letrero -> . CTE_STR np_push_const_string_
 
-    MINUS           shift and go to state 91
-    PLUS            shift and go to state 92
-    ID              shift and go to state 94
-    PARENTHESESL    shift and go to state 95
-    CTE_INT         shift and go to state 97
-    CTE_FLOAT       shift and go to state 99
-    CTE_STR         shift and go to state 100
+    MINUS           shift and go to state 92
+    PLUS            shift and go to state 93
+    ID              shift and go to state 95
+    PARENTHESESL    shift and go to state 96
+    CTE_INT         shift and go to state 98
+    CTE_FLOAT       shift and go to state 100
+    CTE_STR         shift and go to state 101
 
     expresion                      shift and go to state 165
-    exp_comp                       shift and go to state 86
-    exp_ar                         shift and go to state 87
-    termino                        shift and go to state 88
-    unary                          shift and go to state 89
-    factor                         shift and go to state 90
-    const                          shift and go to state 93
-    llamada                        shift and go to state 96
-    letrero                        shift and go to state 98
+    exp_comp                       shift and go to state 87
+    exp_ar                         shift and go to state 88
+    termino                        shift and go to state 89
+    unary                          shift and go to state 90
+    factor                         shift and go to state 91
+    const                          shift and go to state 94
+    llamada                        shift and go to state 97
+    letrero                        shift and go to state 99
 
 state 133
 
@@ -2314,26 +2314,26 @@ state 140
     (130) letrero -> . CTE_STR np_push_const_string_
 
     PARENTHESESR    reduce using rule 131 (empty -> .)
-    MINUS           shift and go to state 91
-    PLUS            shift and go to state 92
-    ID              shift and go to state 94
-    PARENTHESESL    shift and go to state 95
-    CTE_INT         shift and go to state 97
-    CTE_FLOAT       shift and go to state 99
-    CTE_STR         shift and go to state 100
+    MINUS           shift and go to state 92
+    PLUS            shift and go to state 93
+    ID              shift and go to state 95
+    PARENTHESESL    shift and go to state 96
+    CTE_INT         shift and go to state 98
+    CTE_FLOAT       shift and go to state 100
+    CTE_STR         shift and go to state 101
 
     expresion_rep                  shift and go to state 169
     expresion_rep_2                shift and go to state 170
     empty                          shift and go to state 171
     expresion                      shift and go to state 172
-    exp_comp                       shift and go to state 86
-    exp_ar                         shift and go to state 87
-    termino                        shift and go to state 88
-    unary                          shift and go to state 89
-    factor                         shift and go to state 90
-    const                          shift and go to state 93
-    llamada                        shift and go to state 96
-    letrero                        shift and go to state 98
+    exp_comp                       shift and go to state 87
+    exp_ar                         shift and go to state 88
+    termino                        shift and go to state 89
+    unary                          shift and go to state 90
+    factor                         shift and go to state 91
+    const                          shift and go to state 94
+    llamada                        shift and go to state 97
+    letrero                        shift and go to state 99
 
 state 141
 
@@ -2444,23 +2444,23 @@ state 149
     (54) llamada -> . ID np_verify_function_ PARENTHESESL np_create_era_ expresion_rep np_end_of_parameters_ PARENTHESESR np_create_gosub_
     (130) letrero -> . CTE_STR np_push_const_string_
 
-    MINUS           shift and go to state 91
-    PLUS            shift and go to state 92
-    ID              shift and go to state 94
-    PARENTHESESL    shift and go to state 95
-    CTE_INT         shift and go to state 97
-    CTE_FLOAT       shift and go to state 99
-    CTE_STR         shift and go to state 100
+    MINUS           shift and go to state 92
+    PLUS            shift and go to state 93
+    ID              shift and go to state 95
+    PARENTHESESL    shift and go to state 96
+    CTE_INT         shift and go to state 98
+    CTE_FLOAT       shift and go to state 100
+    CTE_STR         shift and go to state 101
 
     expresion                      shift and go to state 181
-    exp_comp                       shift and go to state 86
-    exp_ar                         shift and go to state 87
-    termino                        shift and go to state 88
-    unary                          shift and go to state 89
-    factor                         shift and go to state 90
-    const                          shift and go to state 93
-    llamada                        shift and go to state 96
-    letrero                        shift and go to state 98
+    exp_comp                       shift and go to state 87
+    exp_ar                         shift and go to state 88
+    termino                        shift and go to state 89
+    unary                          shift and go to state 90
+    factor                         shift and go to state 91
+    const                          shift and go to state 94
+    llamada                        shift and go to state 97
+    letrero                        shift and go to state 99
 
 state 150
 
@@ -2534,21 +2534,21 @@ state 154
     (54) llamada -> . ID np_verify_function_ PARENTHESESL np_create_era_ expresion_rep np_end_of_parameters_ PARENTHESESR np_create_gosub_
     (130) letrero -> . CTE_STR np_push_const_string_
 
-    MINUS           shift and go to state 91
-    PLUS            shift and go to state 92
-    ID              shift and go to state 94
-    PARENTHESESL    shift and go to state 95
-    CTE_INT         shift and go to state 97
-    CTE_FLOAT       shift and go to state 99
-    CTE_STR         shift and go to state 100
+    MINUS           shift and go to state 92
+    PLUS            shift and go to state 93
+    ID              shift and go to state 95
+    PARENTHESESL    shift and go to state 96
+    CTE_INT         shift and go to state 98
+    CTE_FLOAT       shift and go to state 100
+    CTE_STR         shift and go to state 101
 
     exp_ar                         shift and go to state 184
-    termino                        shift and go to state 88
-    unary                          shift and go to state 89
-    factor                         shift and go to state 90
-    const                          shift and go to state 93
-    llamada                        shift and go to state 96
-    letrero                        shift and go to state 98
+    termino                        shift and go to state 89
+    unary                          shift and go to state 90
+    factor                         shift and go to state 91
+    const                          shift and go to state 94
+    llamada                        shift and go to state 97
+    letrero                        shift and go to state 99
 
 state 155
 
@@ -2780,23 +2780,23 @@ state 167
     (54) llamada -> . ID np_verify_function_ PARENTHESESL np_create_era_ expresion_rep np_end_of_parameters_ PARENTHESESR np_create_gosub_
     (130) letrero -> . CTE_STR np_push_const_string_
 
-    MINUS           shift and go to state 91
-    PLUS            shift and go to state 92
-    ID              shift and go to state 94
-    PARENTHESESL    shift and go to state 95
-    CTE_INT         shift and go to state 97
-    CTE_FLOAT       shift and go to state 99
-    CTE_STR         shift and go to state 100
+    MINUS           shift and go to state 92
+    PLUS            shift and go to state 93
+    ID              shift and go to state 95
+    PARENTHESESL    shift and go to state 96
+    CTE_INT         shift and go to state 98
+    CTE_FLOAT       shift and go to state 100
+    CTE_STR         shift and go to state 101
 
     expresion                      shift and go to state 192
-    exp_comp                       shift and go to state 86
-    exp_ar                         shift and go to state 87
-    termino                        shift and go to state 88
-    unary                          shift and go to state 89
-    factor                         shift and go to state 90
-    const                          shift and go to state 93
-    llamada                        shift and go to state 96
-    letrero                        shift and go to state 98
+    exp_comp                       shift and go to state 87
+    exp_ar                         shift and go to state 88
+    termino                        shift and go to state 89
+    unary                          shift and go to state 90
+    factor                         shift and go to state 91
+    const                          shift and go to state 94
+    llamada                        shift and go to state 97
+    letrero                        shift and go to state 99
 
 state 168
 
@@ -2818,23 +2818,23 @@ state 168
     (54) llamada -> . ID np_verify_function_ PARENTHESESL np_create_era_ expresion_rep np_end_of_parameters_ PARENTHESESR np_create_gosub_
     (130) letrero -> . CTE_STR np_push_const_string_
 
-    MINUS           shift and go to state 91
-    PLUS            shift and go to state 92
-    ID              shift and go to state 94
-    PARENTHESESL    shift and go to state 95
-    CTE_INT         shift and go to state 97
-    CTE_FLOAT       shift and go to state 99
-    CTE_STR         shift and go to state 100
+    MINUS           shift and go to state 92
+    PLUS            shift and go to state 93
+    ID              shift and go to state 95
+    PARENTHESESL    shift and go to state 96
+    CTE_INT         shift and go to state 98
+    CTE_FLOAT       shift and go to state 100
+    CTE_STR         shift and go to state 101
 
     expresion                      shift and go to state 193
-    exp_comp                       shift and go to state 86
-    exp_ar                         shift and go to state 87
-    termino                        shift and go to state 88
-    unary                          shift and go to state 89
-    factor                         shift and go to state 90
-    const                          shift and go to state 93
-    llamada                        shift and go to state 96
-    letrero                        shift and go to state 98
+    exp_comp                       shift and go to state 87
+    exp_ar                         shift and go to state 88
+    termino                        shift and go to state 89
+    unary                          shift and go to state 90
+    factor                         shift and go to state 91
+    const                          shift and go to state 94
+    llamada                        shift and go to state 97
+    letrero                        shift and go to state 99
 
 state 169
 
@@ -2983,23 +2983,23 @@ state 182
     (54) llamada -> . ID np_verify_function_ PARENTHESESL np_create_era_ expresion_rep np_end_of_parameters_ PARENTHESESR np_create_gosub_
     (130) letrero -> . CTE_STR np_push_const_string_
 
-    MINUS           shift and go to state 91
-    PLUS            shift and go to state 92
-    ID              shift and go to state 94
-    PARENTHESESL    shift and go to state 95
-    CTE_INT         shift and go to state 97
-    CTE_FLOAT       shift and go to state 99
-    CTE_STR         shift and go to state 100
+    MINUS           shift and go to state 92
+    PLUS            shift and go to state 93
+    ID              shift and go to state 95
+    PARENTHESESL    shift and go to state 96
+    CTE_INT         shift and go to state 98
+    CTE_FLOAT       shift and go to state 100
+    CTE_STR         shift and go to state 101
 
     expresion                      shift and go to state 207
-    exp_comp                       shift and go to state 86
-    exp_ar                         shift and go to state 87
-    termino                        shift and go to state 88
-    unary                          shift and go to state 89
-    factor                         shift and go to state 90
-    const                          shift and go to state 93
-    llamada                        shift and go to state 96
-    letrero                        shift and go to state 98
+    exp_comp                       shift and go to state 87
+    exp_ar                         shift and go to state 88
+    termino                        shift and go to state 89
+    unary                          shift and go to state 90
+    factor                         shift and go to state 91
+    const                          shift and go to state 94
+    llamada                        shift and go to state 97
+    letrero                        shift and go to state 99
 
 state 183
 
@@ -3021,23 +3021,23 @@ state 183
     (54) llamada -> . ID np_verify_function_ PARENTHESESL np_create_era_ expresion_rep np_end_of_parameters_ PARENTHESESR np_create_gosub_
     (130) letrero -> . CTE_STR np_push_const_string_
 
-    MINUS           shift and go to state 91
-    PLUS            shift and go to state 92
-    ID              shift and go to state 94
-    PARENTHESESL    shift and go to state 95
-    CTE_INT         shift and go to state 97
-    CTE_FLOAT       shift and go to state 99
-    CTE_STR         shift and go to state 100
+    MINUS           shift and go to state 92
+    PLUS            shift and go to state 93
+    ID              shift and go to state 95
+    PARENTHESESL    shift and go to state 96
+    CTE_INT         shift and go to state 98
+    CTE_FLOAT       shift and go to state 100
+    CTE_STR         shift and go to state 101
 
     expresion                      shift and go to state 208
-    exp_comp                       shift and go to state 86
-    exp_ar                         shift and go to state 87
-    termino                        shift and go to state 88
-    unary                          shift and go to state 89
-    factor                         shift and go to state 90
-    const                          shift and go to state 93
-    llamada                        shift and go to state 96
-    letrero                        shift and go to state 98
+    exp_comp                       shift and go to state 87
+    exp_ar                         shift and go to state 88
+    termino                        shift and go to state 89
+    unary                          shift and go to state 90
+    factor                         shift and go to state 91
+    const                          shift and go to state 94
+    llamada                        shift and go to state 97
+    letrero                        shift and go to state 99
 
 state 184
 
@@ -3073,21 +3073,21 @@ state 185
     (54) llamada -> . ID np_verify_function_ PARENTHESESL np_create_era_ expresion_rep np_end_of_parameters_ PARENTHESESR np_create_gosub_
     (130) letrero -> . CTE_STR np_push_const_string_
 
-    MINUS           shift and go to state 91
-    PLUS            shift and go to state 92
-    ID              shift and go to state 94
-    PARENTHESESL    shift and go to state 95
-    CTE_INT         shift and go to state 97
-    CTE_FLOAT       shift and go to state 99
-    CTE_STR         shift and go to state 100
+    MINUS           shift and go to state 92
+    PLUS            shift and go to state 93
+    ID              shift and go to state 95
+    PARENTHESESL    shift and go to state 96
+    CTE_INT         shift and go to state 98
+    CTE_FLOAT       shift and go to state 100
+    CTE_STR         shift and go to state 101
 
     exp_ar                         shift and go to state 210
-    termino                        shift and go to state 88
-    unary                          shift and go to state 89
-    factor                         shift and go to state 90
-    const                          shift and go to state 93
-    llamada                        shift and go to state 96
-    letrero                        shift and go to state 98
+    termino                        shift and go to state 89
+    unary                          shift and go to state 90
+    factor                         shift and go to state 91
+    const                          shift and go to state 94
+    llamada                        shift and go to state 97
+    letrero                        shift and go to state 99
 
 state 186
 
@@ -3107,21 +3107,21 @@ state 186
     (54) llamada -> . ID np_verify_function_ PARENTHESESL np_create_era_ expresion_rep np_end_of_parameters_ PARENTHESESR np_create_gosub_
     (130) letrero -> . CTE_STR np_push_const_string_
 
-    MINUS           shift and go to state 91
-    PLUS            shift and go to state 92
-    ID              shift and go to state 94
-    PARENTHESESL    shift and go to state 95
-    CTE_INT         shift and go to state 97
-    CTE_FLOAT       shift and go to state 99
-    CTE_STR         shift and go to state 100
+    MINUS           shift and go to state 92
+    PLUS            shift and go to state 93
+    ID              shift and go to state 95
+    PARENTHESESL    shift and go to state 96
+    CTE_INT         shift and go to state 98
+    CTE_FLOAT       shift and go to state 100
+    CTE_STR         shift and go to state 101
 
     exp_ar                         shift and go to state 211
-    termino                        shift and go to state 88
-    unary                          shift and go to state 89
-    factor                         shift and go to state 90
-    const                          shift and go to state 93
-    llamada                        shift and go to state 96
-    letrero                        shift and go to state 98
+    termino                        shift and go to state 89
+    unary                          shift and go to state 90
+    factor                         shift and go to state 91
+    const                          shift and go to state 94
+    llamada                        shift and go to state 97
+    letrero                        shift and go to state 99
 
 state 187
 
@@ -3140,20 +3140,20 @@ state 187
     (54) llamada -> . ID np_verify_function_ PARENTHESESL np_create_era_ expresion_rep np_end_of_parameters_ PARENTHESESR np_create_gosub_
     (130) letrero -> . CTE_STR np_push_const_string_
 
-    MINUS           shift and go to state 91
-    PLUS            shift and go to state 92
-    ID              shift and go to state 94
-    PARENTHESESL    shift and go to state 95
-    CTE_INT         shift and go to state 97
-    CTE_FLOAT       shift and go to state 99
-    CTE_STR         shift and go to state 100
+    MINUS           shift and go to state 92
+    PLUS            shift and go to state 93
+    ID              shift and go to state 95
+    PARENTHESESL    shift and go to state 96
+    CTE_INT         shift and go to state 98
+    CTE_FLOAT       shift and go to state 100
+    CTE_STR         shift and go to state 101
 
     termino                        shift and go to state 212
-    unary                          shift and go to state 89
-    factor                         shift and go to state 90
-    const                          shift and go to state 93
-    llamada                        shift and go to state 96
-    letrero                        shift and go to state 98
+    unary                          shift and go to state 90
+    factor                         shift and go to state 91
+    const                          shift and go to state 94
+    llamada                        shift and go to state 97
+    letrero                        shift and go to state 99
 
 state 188
 
@@ -3172,20 +3172,20 @@ state 188
     (54) llamada -> . ID np_verify_function_ PARENTHESESL np_create_era_ expresion_rep np_end_of_parameters_ PARENTHESESR np_create_gosub_
     (130) letrero -> . CTE_STR np_push_const_string_
 
-    MINUS           shift and go to state 91
-    PLUS            shift and go to state 92
-    ID              shift and go to state 94
-    PARENTHESESL    shift and go to state 95
-    CTE_INT         shift and go to state 97
-    CTE_FLOAT       shift and go to state 99
-    CTE_STR         shift and go to state 100
+    MINUS           shift and go to state 92
+    PLUS            shift and go to state 93
+    ID              shift and go to state 95
+    PARENTHESESL    shift and go to state 96
+    CTE_INT         shift and go to state 98
+    CTE_FLOAT       shift and go to state 100
+    CTE_STR         shift and go to state 101
 
     termino                        shift and go to state 213
-    unary                          shift and go to state 89
-    factor                         shift and go to state 90
-    const                          shift and go to state 93
-    llamada                        shift and go to state 96
-    letrero                        shift and go to state 98
+    unary                          shift and go to state 90
+    factor                         shift and go to state 91
+    const                          shift and go to state 94
+    llamada                        shift and go to state 97
+    letrero                        shift and go to state 99
 
 state 189
 
@@ -3332,24 +3332,24 @@ state 200
     (126) const -> . CTE_FLOAT np_push_const_float_
     (54) llamada -> . ID np_verify_function_ PARENTHESESL np_create_era_ expresion_rep np_end_of_parameters_ PARENTHESESR np_create_gosub_
 
-    CTE_STR         shift and go to state 100
-    MINUS           shift and go to state 91
-    PLUS            shift and go to state 92
-    ID              shift and go to state 94
-    PARENTHESESL    shift and go to state 95
-    CTE_INT         shift and go to state 97
-    CTE_FLOAT       shift and go to state 99
+    CTE_STR         shift and go to state 101
+    MINUS           shift and go to state 92
+    PLUS            shift and go to state 93
+    ID              shift and go to state 95
+    PARENTHESESL    shift and go to state 96
+    CTE_INT         shift and go to state 98
+    CTE_FLOAT       shift and go to state 100
 
     lista_escritura                shift and go to state 221
     letrero                        shift and go to state 145
     expresion                      shift and go to state 146
-    exp_comp                       shift and go to state 86
-    exp_ar                         shift and go to state 87
-    termino                        shift and go to state 88
-    unary                          shift and go to state 89
-    factor                         shift and go to state 90
-    const                          shift and go to state 93
-    llamada                        shift and go to state 96
+    exp_comp                       shift and go to state 87
+    exp_ar                         shift and go to state 88
+    termino                        shift and go to state 89
+    unary                          shift and go to state 90
+    factor                         shift and go to state 91
+    const                          shift and go to state 94
+    llamada                        shift and go to state 97
 
 state 201
 
@@ -3565,25 +3565,25 @@ state 215
     (82) rep_nc -> . FROM expresion np_assign_temp_ UNTIL expresion np_quadruple_for_ np_gotoF_ DO CURLYL estatuto_rep CURLYR np_end_for_actions
 
     CURLYR          reduce using rule 131 (empty -> .)
-    ID              shift and go to state 62
-    RETURN          shift and go to state 63
-    READ            shift and go to state 64
-    PRINT           shift and go to state 65
-    IF              shift and go to state 66
-    WHILE           shift and go to state 67
-    FROM            shift and go to state 68
+    ID              shift and go to state 63
+    RETURN          shift and go to state 64
+    READ            shift and go to state 65
+    PRINT           shift and go to state 66
+    IF              shift and go to state 67
+    WHILE           shift and go to state 68
+    FROM            shift and go to state 69
 
     estatuto_rep                   shift and go to state 225
-    estatuto                       shift and go to state 52
-    empty                          shift and go to state 53
-    asignacion                     shift and go to state 54
-    llamada                        shift and go to state 55
-    retorno                        shift and go to state 56
-    lectura                        shift and go to state 57
-    escritura                      shift and go to state 58
-    decision                       shift and go to state 59
-    rep_c                          shift and go to state 60
-    rep_nc                         shift and go to state 61
+    estatuto                       shift and go to state 53
+    empty                          shift and go to state 54
+    asignacion                     shift and go to state 55
+    llamada                        shift and go to state 56
+    retorno                        shift and go to state 57
+    lectura                        shift and go to state 58
+    escritura                      shift and go to state 59
+    decision                       shift and go to state 60
+    rep_c                          shift and go to state 61
+    rep_nc                         shift and go to state 62
 
 state 216
 
@@ -3682,25 +3682,25 @@ state 222
     (82) rep_nc -> . FROM expresion np_assign_temp_ UNTIL expresion np_quadruple_for_ np_gotoF_ DO CURLYL estatuto_rep CURLYR np_end_for_actions
 
     CURLYR          reduce using rule 131 (empty -> .)
-    ID              shift and go to state 62
-    RETURN          shift and go to state 63
-    READ            shift and go to state 64
-    PRINT           shift and go to state 65
-    IF              shift and go to state 66
-    WHILE           shift and go to state 67
-    FROM            shift and go to state 68
+    ID              shift and go to state 63
+    RETURN          shift and go to state 64
+    READ            shift and go to state 65
+    PRINT           shift and go to state 66
+    IF              shift and go to state 67
+    WHILE           shift and go to state 68
+    FROM            shift and go to state 69
 
     estatuto_rep                   shift and go to state 230
-    estatuto                       shift and go to state 52
-    empty                          shift and go to state 53
-    asignacion                     shift and go to state 54
-    llamada                        shift and go to state 55
-    retorno                        shift and go to state 56
-    lectura                        shift and go to state 57
-    escritura                      shift and go to state 58
-    decision                       shift and go to state 59
-    rep_c                          shift and go to state 60
-    rep_nc                         shift and go to state 61
+    estatuto                       shift and go to state 53
+    empty                          shift and go to state 54
+    asignacion                     shift and go to state 55
+    llamada                        shift and go to state 56
+    retorno                        shift and go to state 57
+    lectura                        shift and go to state 58
+    escritura                      shift and go to state 59
+    decision                       shift and go to state 60
+    rep_c                          shift and go to state 61
+    rep_nc                         shift and go to state 62
 
 state 223
 
@@ -3776,24 +3776,24 @@ state 228
     (54) llamada -> . ID np_verify_function_ PARENTHESESL np_create_era_ expresion_rep np_end_of_parameters_ PARENTHESESR np_create_gosub_
     (130) letrero -> . CTE_STR np_push_const_string_
 
-    MINUS           shift and go to state 91
-    PLUS            shift and go to state 92
-    ID              shift and go to state 94
-    PARENTHESESL    shift and go to state 95
-    CTE_INT         shift and go to state 97
-    CTE_FLOAT       shift and go to state 99
-    CTE_STR         shift and go to state 100
+    MINUS           shift and go to state 92
+    PLUS            shift and go to state 93
+    ID              shift and go to state 95
+    PARENTHESESL    shift and go to state 96
+    CTE_INT         shift and go to state 98
+    CTE_FLOAT       shift and go to state 100
+    CTE_STR         shift and go to state 101
 
     expresion                      shift and go to state 172
     expresion_rep_2                shift and go to state 235
-    exp_comp                       shift and go to state 86
-    exp_ar                         shift and go to state 87
-    termino                        shift and go to state 88
-    unary                          shift and go to state 89
-    factor                         shift and go to state 90
-    const                          shift and go to state 93
-    llamada                        shift and go to state 96
-    letrero                        shift and go to state 98
+    exp_comp                       shift and go to state 87
+    exp_ar                         shift and go to state 88
+    termino                        shift and go to state 89
+    unary                          shift and go to state 90
+    factor                         shift and go to state 91
+    const                          shift and go to state 94
+    llamada                        shift and go to state 97
+    letrero                        shift and go to state 99
 
 state 229
 
@@ -3836,25 +3836,25 @@ state 231
     (82) rep_nc -> . FROM expresion np_assign_temp_ UNTIL expresion np_quadruple_for_ np_gotoF_ DO CURLYL estatuto_rep CURLYR np_end_for_actions
 
     CURLYR          reduce using rule 131 (empty -> .)
-    ID              shift and go to state 62
-    RETURN          shift and go to state 63
-    READ            shift and go to state 64
-    PRINT           shift and go to state 65
-    IF              shift and go to state 66
-    WHILE           shift and go to state 67
-    FROM            shift and go to state 68
+    ID              shift and go to state 63
+    RETURN          shift and go to state 64
+    READ            shift and go to state 65
+    PRINT           shift and go to state 66
+    IF              shift and go to state 67
+    WHILE           shift and go to state 68
+    FROM            shift and go to state 69
 
     estatuto_rep                   shift and go to state 238
-    estatuto                       shift and go to state 52
-    empty                          shift and go to state 53
-    asignacion                     shift and go to state 54
-    llamada                        shift and go to state 55
-    retorno                        shift and go to state 56
-    lectura                        shift and go to state 57
-    escritura                      shift and go to state 58
-    decision                       shift and go to state 59
-    rep_c                          shift and go to state 60
-    rep_nc                         shift and go to state 61
+    estatuto                       shift and go to state 53
+    empty                          shift and go to state 54
+    asignacion                     shift and go to state 55
+    llamada                        shift and go to state 56
+    retorno                        shift and go to state 57
+    lectura                        shift and go to state 58
+    escritura                      shift and go to state 59
+    decision                       shift and go to state 60
+    rep_c                          shift and go to state 61
+    rep_nc                         shift and go to state 62
 
 state 232
 
@@ -3963,25 +3963,25 @@ state 239
     (82) rep_nc -> . FROM expresion np_assign_temp_ UNTIL expresion np_quadruple_for_ np_gotoF_ DO CURLYL estatuto_rep CURLYR np_end_for_actions
 
     CURLYR          reduce using rule 131 (empty -> .)
-    ID              shift and go to state 62
-    RETURN          shift and go to state 63
-    READ            shift and go to state 64
-    PRINT           shift and go to state 65
-    IF              shift and go to state 66
-    WHILE           shift and go to state 67
-    FROM            shift and go to state 68
+    ID              shift and go to state 63
+    RETURN          shift and go to state 64
+    READ            shift and go to state 65
+    PRINT           shift and go to state 66
+    IF              shift and go to state 67
+    WHILE           shift and go to state 68
+    FROM            shift and go to state 69
 
     estatuto_rep                   shift and go to state 245
-    estatuto                       shift and go to state 52
-    empty                          shift and go to state 53
-    asignacion                     shift and go to state 54
-    llamada                        shift and go to state 55
-    retorno                        shift and go to state 56
-    lectura                        shift and go to state 57
-    escritura                      shift and go to state 58
-    decision                       shift and go to state 59
-    rep_c                          shift and go to state 60
-    rep_nc                         shift and go to state 61
+    estatuto                       shift and go to state 53
+    empty                          shift and go to state 54
+    asignacion                     shift and go to state 55
+    llamada                        shift and go to state 56
+    retorno                        shift and go to state 57
+    lectura                        shift and go to state 58
+    escritura                      shift and go to state 59
+    decision                       shift and go to state 60
+    rep_c                          shift and go to state 61
+    rep_nc                         shift and go to state 62
 
 state 240
 
@@ -4130,25 +4130,25 @@ state 250
     (82) rep_nc -> . FROM expresion np_assign_temp_ UNTIL expresion np_quadruple_for_ np_gotoF_ DO CURLYL estatuto_rep CURLYR np_end_for_actions
 
     CURLYR          reduce using rule 131 (empty -> .)
-    ID              shift and go to state 62
-    RETURN          shift and go to state 63
-    READ            shift and go to state 64
-    PRINT           shift and go to state 65
-    IF              shift and go to state 66
-    WHILE           shift and go to state 67
-    FROM            shift and go to state 68
+    ID              shift and go to state 63
+    RETURN          shift and go to state 64
+    READ            shift and go to state 65
+    PRINT           shift and go to state 66
+    IF              shift and go to state 67
+    WHILE           shift and go to state 68
+    FROM            shift and go to state 69
 
     estatuto_rep                   shift and go to state 253
-    estatuto                       shift and go to state 52
-    empty                          shift and go to state 53
-    asignacion                     shift and go to state 54
-    llamada                        shift and go to state 55
-    retorno                        shift and go to state 56
-    lectura                        shift and go to state 57
-    escritura                      shift and go to state 58
-    decision                       shift and go to state 59
-    rep_c                          shift and go to state 60
-    rep_nc                         shift and go to state 61
+    estatuto                       shift and go to state 53
+    empty                          shift and go to state 54
+    asignacion                     shift and go to state 55
+    llamada                        shift and go to state 56
+    retorno                        shift and go to state 57
+    lectura                        shift and go to state 58
+    escritura                      shift and go to state 59
+    decision                       shift and go to state 60
+    rep_c                          shift and go to state 61
+    rep_nc                         shift and go to state 62
 
 state 251
 
