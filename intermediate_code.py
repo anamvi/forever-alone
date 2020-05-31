@@ -1,7 +1,5 @@
 from semantic_cube import SemanticCube
 from memory import Memory
-from virtual_machine import VirtualMachine
-import json
 
 class Quadruple:
     def __init__(self, operator, left_operand, right_operand, result):
@@ -24,7 +22,7 @@ class InterCode:
         self.type_stack = []
         self.jumps_stack = []
         self.semantic = SemanticCube()
-        self.mem = Memory()
+        self.mem = Memory('virtual')
 
     def add_operation_quadruple(self):
         op = self.operator_stack.pop()
@@ -182,7 +180,7 @@ class InterCode:
         # print(self.type_stack)
         # print(self.operator_stack)
         # print(self.jumps_stack)
-        current_quad = Quadruple('ver',dim,None,limit) #create a function in virtual memory that will be called by the virtual machine
+        current_quad = Quadruple('ver',dim,None,limit)
         self.quadruples.append(current_quad.__dict__)
         self.variable_stack.append(dim)
 
@@ -213,7 +211,7 @@ class InterCode:
         self.quadruples.append(current_quad.__dict__)
 
     def add_parameter_quadruple(self, argument):
-        current_quad = Quadruple('PARAM',argument,None,'p'+str(self.parameter_counter))
+        current_quad = Quadruple('PARAM',argument,None,self.parameter_counter)
         self.quadruples.append(current_quad.__dict__)
         self.parameter_counter+=1
 
@@ -231,12 +229,3 @@ class InterCode:
         self.mem.global_.reset_memory()
         self.mem.temp_.reset_memory()
         self.mem.local_.reset_memory()
-        output = {
-            'Constants': self.mem.constant_.output_please(),
-            'Quadruples': self.quadruples
-        }
-        self.mem.constant_.reset_memory()
-        with open("inter.cry","w+") as json_file:
-            json.dump(output, json_file)
-
-        vm = VirtualMachine()

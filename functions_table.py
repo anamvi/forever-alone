@@ -57,3 +57,14 @@ class FunctionsTable:
         if name in self.functions:
             return True
         return False
+
+    def output(self):
+        out = {}
+        for i in self.functions:
+            func = self.functions[i]
+            out[i]={
+            'type' : func.type,
+            'parameters': func.parameters,
+            'space_needed': func.space_needed,
+            }
+        return out

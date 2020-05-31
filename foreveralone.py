@@ -1,6 +1,8 @@
 import ply.lex as lex
 import ply.yacc as yacc
 import sys
+import json
+from virtual_machine import VirtualMachine
 from functions_table import FunctionsTable
 from intermediate_code import InterCode
 
@@ -8,6 +10,7 @@ dir_func = FunctionsTable()
 inter_code = InterCode()
 current_scope = 'global'
 current_type = ''
+func_to_call = ''
 
 # PALABRAS RESERVADAS
 reserved = {
@@ -247,6 +250,16 @@ def p_np_end_program_(p):
         np_end_program_ :
     '''
     inter_code.add_endprog_quad()
+    output = {
+        'Constants': inter_code.mem.constant_.output(),
+        'Quadruples': inter_code.quadruples,
+        'DirFunc': dir_func.output()
+    }
+    inter_code.mem.constant_.reset_memory()
+    with open("inter.cry","w+") as json_file:
+        json.dump(output, json_file)
+
+    vm = VirtualMachine()
 
 def p_funcion(p):
     '''
@@ -480,7 +493,7 @@ def p_np_manage_array_(p):
 
 def p_llamada(p):
     '''
-        llamada : ID np_verify_function_ PARENTHESESL np_create_era_ expresion_rep np_end_of_parameters_ PARENTHESESR np_create_gosub_
+        llamada : ID np_verify_function_ PARENTHESESL np_add_false_bottom_ np_create_era_ expresion_rep np_end_of_parameters_ PARENTHESESR np_remove_false_bottom_ np_create_gosub_
     '''
 
 def p_expresion_rep(p):
@@ -499,17 +512,21 @@ def p_np_verify_function_(p):
     '''
         np_verify_function_ :
     '''
+    global func_to_call
     if not dir_func.function_exists(p[-1]):
         raise Exception('Syntax error: function does not exist.')
-    inter_code.variable_stack.append(p[-1])
+    func_to_call = p[-1]
+    # inter_code.variable_stack.append(p[-1])
 
 def p_np_verify_parameters_(p):
     '''
         np_verify_parameters_ :
     '''
+    global func_to_call
     argument = inter_code.variable_stack.pop()
     arg_type = inter_code.type_stack.pop()
-    if arg_type == dir_func.functions[inter_code.variable_stack[-1]].parameters[inter_code.parameter_counter-1]:
+    # print('lo que esta en el varstack es '+ str(inter_code.variable_stack[-1]) + " osea " + str(inter_code.mem.get_value(inter_code.variable_stack[-1])))
+    if arg_type == dir_func.functions[func_to_call].parameters[inter_code.parameter_counter-1]:
         inter_code.add_parameter_quadruple(argument)
     else:
         raise Exception('Type mismatch: Argument type does not match function parameter')
@@ -518,34 +535,37 @@ def p_np_next_parameter_check_(p):
     '''
         np_next_parameter_check_ :
     '''
+    global func_to_call
     global current_scope
-    if len(dir_func.functions[inter_code.variable_stack[-1]].parameters) < inter_code.parameter_counter:
+    if len(dir_func.functions[func_to_call].parameters) < inter_code.parameter_counter:
         raise Exception('Number of arguments in call do not match parameters.')
 
 def p_np_end_of_parameters_(p):
     '''
         np_end_of_parameters_ :
     '''
+    global func_to_call
     global current_scope
-    if len(dir_func.functions[inter_code.variable_stack[-1]].parameters) >= inter_code.parameter_counter:
+    if len(dir_func.functions[func_to_call].parameters) >= inter_code.parameter_counter:
         raise Exception('Number of arguments in call do not match parameters.')
 
 def p_np_create_era_(p):
     '''
         np_create_era_ :
     '''
-    inter_code.add_era_quadruple(inter_code.variable_stack[-1], dir_func.functions[inter_code.variable_stack[-1]].space_needed)
+    global func_to_call
+    inter_code.add_era_quadruple(func_to_call, dir_func.functions[func_to_call].space_needed)
 
 def p_np_create_gosub_(p):
     '''
         np_create_gosub_ :
     '''
-    func = inter_code.variable_stack.pop()
-    scope = dir_func.functions[func].quad
-    inter_code.add_gosub_quadruple(func, scope)
+    global func_to_call
+    scope = dir_func.functions[func_to_call].quad
+    inter_code.add_gosub_quadruple(func_to_call, scope)
     # si tiene direccion vas aaaaaaaaaaaaaaaaaa ir por la direccion a la tabla de variables global y asignarle ese valor a un temporal del mismo tipo
     # asignar return value a un temporal
-    ret_dir = dir_func.functions['global'].variables[func].dir
+    ret_dir = dir_func.functions['global'].variables[func_to_call].dir
     if ret_dir is not None:
         ret_type = inter_code.mem.global_.check_type(ret_dir)
         inter_code.variable_stack.append(ret_dir)
@@ -558,6 +578,7 @@ def p_np_create_gosub_(p):
     # print(inter_code.type_stack)
     # print(inter_code.operator_stack)
     # print(inter_code.jumps_stack)
+    func_to_call = ''
 
 def p_lectura(p):
     '''
@@ -577,8 +598,7 @@ def p_escritura(p):
 
 def p_lista_escritura(p):
     '''
-        lista_escritura : letrero np_quadruple_IO_ lista_escritura_rep
-        | expresion np_quadruple_IO_ lista_escritura_rep
+        lista_escritura : expresion np_quadruple_IO_ lista_escritura_rep
     '''
 
 def p_lista_escritura_rep(p):

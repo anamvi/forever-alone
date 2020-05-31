@@ -1,6 +1,7 @@
 class SemanticCube:
     def __init__(self):
-        comparison_ops = ['>', '<', '>=', '<=']
+        comparison_ops = ['>', '<', '>=', '<=', '==', '!=']
+        equality_ops = ['==', '!=']
         logic_ops = ['&', '|']
         aritmethic_ops_unary = ['+', '-']
         aritmethic_ops = ['+', '-','*', '/']
@@ -28,7 +29,7 @@ class SemanticCube:
                     'float': 'error',
                     'bool': 'error',
                     'string': 'error',
-                    'ptr': 'bool',
+                    'ptr': 'error',
                     None : 'error'
                 },
                 'string': {
@@ -42,7 +43,7 @@ class SemanticCube:
                 'ptr': {
                     'int': 'bool',
                     'float': 'bool',
-                    'bool': 'bool',
+                    'bool': 'error',
                     'string': 'bool',
                     'ptr': 'bool',
                     None : 'error'
@@ -56,6 +57,10 @@ class SemanticCube:
                     None : 'error'
                 }
             }
+        for x in equality_ops:
+            self.cube[x]['bool']['bool'] = 'bool'
+            self.cube[x]['ptr']['bool'] = 'bool'
+            self.cube[x]['bool']['ptr'] = 'bool'
         for x in aritmethic_ops:
             self.cube[x]={
                 'int': {
@@ -163,53 +168,6 @@ class SemanticCube:
                     None : 'error'
                 }
             }
-
-        self.cube['==']={
-            'int': {
-                'int': 'bool',
-                'float': 'error',
-                'bool': 'error',
-                'string': 'error',
-                None : 'error'
-            },
-            'float': {
-                'int': 'error',
-                'float': 'bool',
-                'bool': 'error',
-                'string': 'error',
-                None : 'error'
-            },
-            'bool': {
-                'int': 'error',
-                'float': 'error',
-                'bool': 'bool',
-                'string': 'error',
-                None : 'error'
-            },
-            'string': {
-                'int': 'error',
-                'float': 'error',
-                'bool': 'error',
-                'string': 'bool',
-                None : 'error'
-            },
-            'ptr': {
-                'int': 'bool',
-                'float': 'bool',
-                'bool': 'bool',
-                'string': 'bool',
-                'ptr': 'bool',
-                None : 'error'
-            },
-            None: {
-                'int': 'error',
-                'float': 'error',
-                'bool': 'error',
-                'string': 'error',
-                'ptr': 'error',
-                None : 'error'
-            }
-        }
         self.cube['=']={
             'int': {
                 'int': 'int',
