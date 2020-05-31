@@ -1,0 +1,17 @@
+programa fibonacci;
+var
+int: i;
+
+funcion int fibonacci(int num);
+{
+  si(num<=1) entonces{
+    regresa(num);
+  }
+  regresa(fibonacci(num-1)+fibonacci(num-2));
+}
+
+principal() {
+  escribe('Escribe un número para sacar el número fibonacci correspondiente: ');
+  lee(i);
+  escribe('El fibonacci de ',i," es ", fibonacci(i));
+}
