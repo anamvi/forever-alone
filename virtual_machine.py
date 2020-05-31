@@ -136,7 +136,7 @@ class VirtualMachine():
                 self.mem.load_value(self.check_exists(left),res)
                 IP+=1
             elif quad['operator'] == 'escribe':
-                print(self.check_exists(res))
+                print(self.check_exists(res), end = '')
                 IP+=1
             elif quad['operator'] == 'lee':
                 val = input()

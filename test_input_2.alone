@@ -7,16 +7,10 @@ var
 int: w, i;
 float: a, b;
 {
-  j[0] = 1;
-  escribe('dame un valor ');
-
-  si((-5+10) < 10) entonces {
-    escribe(c);
+  si(c==0 | c==1) entonces{
+    regresa(1);
   }
-  si(c==0) entonces{
-    regresa(0);
-  }
-  regresa(1+uno(c-1));
+  regresa(uno(c-1)*c);
 }
 
 principal() {
@@ -26,10 +20,9 @@ principal() {
     i=1+2+j[3];
     escribe(i,j[3],j[j[j[4]]-1]);
   }
-  i=1;
-  si(--5 == 5 & i <= j[1+5/2]) entonces {
-    i = j[3]-1;
-    escribe('pues si mi ciela el valor es ', uno(5));
+  lee(i);
+  si(--5 == 5 & j[3] <= j[1+5/2]) entonces {
+    escribe('pues si mi ciela el valor es ', uno(i));
   }
   i=i+2;
   escribe(i);

@@ -1,0 +1,17 @@
+programa factorial;
+var
+int: i;
+
+funcion int fact(int num);
+{
+  si(num==0 | num==1) entonces{
+    regresa(1);
+  }
+  regresa(num*fact(num-1));
+}
+
+principal() {
+  escribe('Escribe un número para sacar el factorial: ');
+  lee(i);
+  escribe('El factorial de ',i," es ", fact(i));
+}

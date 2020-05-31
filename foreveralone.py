@@ -106,7 +106,7 @@ def t_CTE_INT(t):
     return t
 
 def t_CTE_STR(t):
-    r'[\'|"][\w\d\s.]*[\'|"]'
+    r'[\'][^\']*[\']|["][^"]*["]'
     return t
 
 def t_ID(t):
@@ -514,7 +514,7 @@ def p_np_verify_function_(p):
     '''
     global func_to_call
     if not dir_func.function_exists(p[-1]):
-        raise Exception('Syntax error: function does not exist.')
+        raise Exception('Syntax error: function '+ func_to_call +' does not exist.')
     func_to_call = p[-1]
     # inter_code.variable_stack.append(p[-1])
 
