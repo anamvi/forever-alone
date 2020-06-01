@@ -37,7 +37,8 @@ principal() {
   tres();
   j[1] = 5;
   si(--5 == uno("Hello world") & i >= y[0+5/2]) entonces {
-    i = j[1]-1;
+    i = j-1;
+    escribe(j);
   }
   sino {
     i = j[0+j[5]]--4;

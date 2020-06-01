@@ -73,27 +73,37 @@ class VirtualMemorySegment:
     # -------------------------- ACCESS VALUES IN MEMORY --------------------------
     def add_value(self, value, type):
         if type == 'int':
+            if len(self.integers) == 2000:
+                raise Exception('StackOverflow: too many values of type integer')
             if value not in self.integers:
                 self.integers.append(value)
             return self.integers.index(value)+self._BASE_INT+self.initial_dir
         elif type == 'float':
+            if len(self.floats) == 2000:
+                raise Exception('StackOverflow: too many values of type float')
             if value not in self.floats:
                 self.floats.append(value)
             return self.floats.index(value)+self._BASE_FLOAT+self.initial_dir
         elif type == 'string':
+            if len(self.strings) == 2000:
+                raise Exception('StackOverflow: too many values of type string')
             if value not in self.strings:
                 self.strings.append(value)
             return self.strings.index(value)+self._BASE_STRING+self.initial_dir
         elif type == 'bool':
+            if len(self.bools) == 2000:
+                raise Exception('StackOverflow: too many values of type bool')
             if value not in self.bools:
                 self.bools.append(value)
             return self.bools.index(value)+self._BASE_BOOL+self.initial_dir
         elif type == 'ptr':
+            if len(self.pointers) == 2000:
+                raise Exception('StackOverflow: too many values of type pointer')
             if value not in self.pointers:
                 self.pointers.append(value)
             return self.pointers.index(value)+self._BASE_PTR+self.initial_dir
         else:
-            raise Exception("Type not supported")
+            raise TypeError("Type not supported")
 
     def get_value(self, dir):
         if self._BASE_INT <= dir-self.initial_dir < self._BASE_FLOAT:
