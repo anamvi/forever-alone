@@ -166,6 +166,7 @@ class InterCode:
         # print(self.operator_stack)
         # print(self.jumps_stack)
         self.temp_counter+=1
+        increment = self.mem.constant_.add_value(increment,'int')
         current_quad = Quadruple('+',num,increment,res)
         self.quadruples.append(current_quad.__dict__)
         current_quad = Quadruple('=',res,None,num)

@@ -60,7 +60,7 @@ Rule 54    llamada -> ID np_verify_function_ PARENTHESESL np_add_false_bottom_ n
 Rule 55    expresion_rep -> expresion_rep_2
 Rule 56    expresion_rep -> empty
 Rule 57    expresion_rep_2 -> expresion np_verify_parameters_ COMMA np_next_parameter_check_ expresion_rep_2
-Rule 58    expresion_rep_2 -> expresion np_verify_parameters_
+Rule 58    expresion_rep_2 -> expresion np_check np_verify_parameters_
 Rule 59    np_verify_function_ -> <empty>
 Rule 60    np_verify_parameters_ -> <empty>
 Rule 61    np_next_parameter_check_ -> <empty>
@@ -222,7 +222,7 @@ np_add_false_bottom_ : 50 54 119
 np_add_func_to_directory_ : 22
 np_add_vars_to_table_ : 22
 np_assign_temp_      : 81
-np_check             : 
+np_check             : 58
 np_create_era_       : 54
 np_create_gosub_     : 54
 np_end_for_actions   : 81
@@ -2781,7 +2781,7 @@ state 168
     (55) expresion_rep -> . expresion_rep_2
     (56) expresion_rep -> . empty
     (57) expresion_rep_2 -> . expresion np_verify_parameters_ COMMA np_next_parameter_check_ expresion_rep_2
-    (58) expresion_rep_2 -> . expresion np_verify_parameters_
+    (58) expresion_rep_2 -> . expresion np_check np_verify_parameters_
     (130) empty -> .
     (88) expresion -> . exp_comp np_quadruple_logic_ expresion_2
     (93) exp_comp -> . exp_ar exp_comp_2
@@ -3227,13 +3227,15 @@ state 191
 state 192
 
     (57) expresion_rep_2 -> expresion . np_verify_parameters_ COMMA np_next_parameter_check_ expresion_rep_2
-    (58) expresion_rep_2 -> expresion . np_verify_parameters_
+    (58) expresion_rep_2 -> expresion . np_check np_verify_parameters_
     (60) np_verify_parameters_ -> .
+    (131) np_check -> .
 
     COMMA           reduce using rule 60 (np_verify_parameters_ -> .)
-    PARENTHESESR    reduce using rule 60 (np_verify_parameters_ -> .)
+    PARENTHESESR    reduce using rule 131 (np_check -> .)
 
     np_verify_parameters_          shift and go to state 215
+    np_check                       shift and go to state 216
 
 state 193
 
@@ -3251,7 +3253,7 @@ state 194
     COMMA           reduce using rule 45 (np_quadruple_IO_ -> .)
     PARENTHESESR    reduce using rule 45 (np_quadruple_IO_ -> .)
 
-    np_quadruple_IO_               shift and go to state 216
+    np_quadruple_IO_               shift and go to state 217
 
 state 195
 
@@ -3296,7 +3298,7 @@ state 197
     CTE_FLOAT       shift and go to state 100
     CTE_STR         shift and go to state 101
 
-    lista_escritura                shift and go to state 217
+    lista_escritura                shift and go to state 218
     expresion                      shift and go to state 145
     exp_comp                       shift and go to state 87
     exp_ar                         shift and go to state 88
@@ -3318,14 +3320,14 @@ state 199
 
     (72) decision -> IF PARENTHESESL expresion PARENTHESESR np_gotoF_ THEN . CURLYL estatuto_rep CURLYR decision_alt
 
-    CURLYL          shift and go to state 218
+    CURLYL          shift and go to state 219
 
 
 state 200
 
     (78) rep_c -> WHILE np_push_jump_ PARENTHESESL expresion PARENTHESESR np_gotoF_ . DO CURLYL estatuto_rep CURLYR np_end_while_actions_
 
-    DO              shift and go to state 219
+    DO              shift and go to state 220
 
 
 state 201
@@ -3335,7 +3337,7 @@ state 201
 
     DO              reduce using rule 75 (np_gotoF_ -> .)
 
-    np_gotoF_                      shift and go to state 220
+    np_gotoF_                      shift and go to state 221
 
 state 202
 
@@ -3522,7 +3524,7 @@ state 211
     WHILE           shift and go to state 68
     FROM            shift and go to state 69
 
-    estatuto_rep                   shift and go to state 221
+    estatuto_rep                   shift and go to state 222
     estatuto                       shift and go to state 53
     empty                          shift and go to state 54
     asignacion                     shift and go to state 55
@@ -3548,41 +3550,48 @@ state 213
 
     SQUARER         reduce using rule 122 (np_remove_false_bottom_ -> .)
 
-    np_remove_false_bottom_        shift and go to state 222
+    np_remove_false_bottom_        shift and go to state 223
 
 state 214
 
     (54) llamada -> ID np_verify_function_ PARENTHESESL np_add_false_bottom_ np_create_era_ expresion_rep np_end_of_parameters_ . PARENTHESESR np_remove_false_bottom_ np_create_gosub_
 
-    PARENTHESESR    shift and go to state 223
+    PARENTHESESR    shift and go to state 224
 
 
 state 215
 
     (57) expresion_rep_2 -> expresion np_verify_parameters_ . COMMA np_next_parameter_check_ expresion_rep_2
-    (58) expresion_rep_2 -> expresion np_verify_parameters_ .
 
-    COMMA           shift and go to state 224
-    PARENTHESESR    reduce using rule 58 (expresion_rep_2 -> expresion np_verify_parameters_ .)
+    COMMA           shift and go to state 225
 
 
 state 216
 
+    (58) expresion_rep_2 -> expresion np_check . np_verify_parameters_
+    (60) np_verify_parameters_ -> .
+
+    PARENTHESESR    reduce using rule 60 (np_verify_parameters_ -> .)
+
+    np_verify_parameters_          shift and go to state 226
+
+state 217
+
     (66) lista_lectura -> ID np_push_var_ dimension np_quadruple_IO_ . COMMA lista_lectura
     (67) lista_lectura -> ID np_push_var_ dimension np_quadruple_IO_ .
 
-    COMMA           shift and go to state 225
+    COMMA           shift and go to state 227
     PARENTHESESR    reduce using rule 67 (lista_lectura -> ID np_push_var_ dimension np_quadruple_IO_ .)
 
 
-state 217
+state 218
 
     (70) lista_escritura_rep -> COMMA lista_escritura .
 
     PARENTHESESR    reduce using rule 70 (lista_escritura_rep -> COMMA lista_escritura .)
 
 
-state 218
+state 219
 
     (72) decision -> IF PARENTHESESL expresion PARENTHESESR np_gotoF_ THEN CURLYL . estatuto_rep CURLYR decision_alt
     (33) estatuto_rep -> . estatuto estatuto_rep
@@ -3614,7 +3623,7 @@ state 218
     WHILE           shift and go to state 68
     FROM            shift and go to state 69
 
-    estatuto_rep                   shift and go to state 226
+    estatuto_rep                   shift and go to state 228
     estatuto                       shift and go to state 53
     empty                          shift and go to state 54
     asignacion                     shift and go to state 55
@@ -3626,35 +3635,35 @@ state 218
     rep_c                          shift and go to state 61
     rep_nc                         shift and go to state 62
 
-state 219
+state 220
 
     (78) rep_c -> WHILE np_push_jump_ PARENTHESESL expresion PARENTHESESR np_gotoF_ DO . CURLYL estatuto_rep CURLYR np_end_while_actions_
 
-    CURLYL          shift and go to state 227
-
-
-state 220
-
-    (81) rep_nc -> FROM expresion np_assign_temp_ UNTIL expresion np_quadruple_for_ np_gotoF_ . DO CURLYL estatuto_rep CURLYR np_end_for_actions
-
-    DO              shift and go to state 228
+    CURLYL          shift and go to state 229
 
 
 state 221
 
-    (22) funcion -> FUNC tipo_func ID np_set_scope_ PARENTHESESL funcion_param np_add_func_to_directory_ PARENTHESESR SEMICOLON variables np_add_vars_to_table_ CURLYL estatuto_rep . CURLYR np_end_function_
+    (81) rep_nc -> FROM expresion np_assign_temp_ UNTIL expresion np_quadruple_for_ np_gotoF_ . DO CURLYL estatuto_rep CURLYR np_end_for_actions
 
-    CURLYR          shift and go to state 229
+    DO              shift and go to state 230
 
 
 state 222
 
-    (50) dimension -> SQUAREL np_verify_dimensions_ np_add_false_bottom_ expresion np_manage_array_ np_remove_false_bottom_ . SQUARER
+    (22) funcion -> FUNC tipo_func ID np_set_scope_ PARENTHESESL funcion_param np_add_func_to_directory_ PARENTHESESR SEMICOLON variables np_add_vars_to_table_ CURLYL estatuto_rep . CURLYR np_end_function_
 
-    SQUARER         shift and go to state 230
+    CURLYR          shift and go to state 231
 
 
 state 223
+
+    (50) dimension -> SQUAREL np_verify_dimensions_ np_add_false_bottom_ expresion np_manage_array_ np_remove_false_bottom_ . SQUARER
+
+    SQUARER         shift and go to state 232
+
+
+state 224
 
     (54) llamada -> ID np_verify_function_ PARENTHESESL np_add_false_bottom_ np_create_era_ expresion_rep np_end_of_parameters_ PARENTHESESR . np_remove_false_bottom_ np_create_gosub_
     (122) np_remove_false_bottom_ -> .
@@ -3678,9 +3687,9 @@ state 223
     DO              reduce using rule 122 (np_remove_false_bottom_ -> .)
     SQUARER         reduce using rule 122 (np_remove_false_bottom_ -> .)
 
-    np_remove_false_bottom_        shift and go to state 231
+    np_remove_false_bottom_        shift and go to state 233
 
-state 224
+state 225
 
     (57) expresion_rep_2 -> expresion np_verify_parameters_ COMMA . np_next_parameter_check_ expresion_rep_2
     (61) np_next_parameter_check_ -> .
@@ -3693,9 +3702,16 @@ state 224
     CTE_FLOAT       reduce using rule 61 (np_next_parameter_check_ -> .)
     CTE_STR         reduce using rule 61 (np_next_parameter_check_ -> .)
 
-    np_next_parameter_check_       shift and go to state 232
+    np_next_parameter_check_       shift and go to state 234
 
-state 225
+state 226
+
+    (58) expresion_rep_2 -> expresion np_check np_verify_parameters_ .
+
+    PARENTHESESR    reduce using rule 58 (expresion_rep_2 -> expresion np_check np_verify_parameters_ .)
+
+
+state 227
 
     (66) lista_lectura -> ID np_push_var_ dimension np_quadruple_IO_ COMMA . lista_lectura
     (66) lista_lectura -> . ID np_push_var_ dimension np_quadruple_IO_ COMMA lista_lectura
@@ -3703,16 +3719,16 @@ state 225
 
     ID              shift and go to state 143
 
-    lista_lectura                  shift and go to state 233
+    lista_lectura                  shift and go to state 235
 
-state 226
+state 228
 
     (72) decision -> IF PARENTHESESL expresion PARENTHESESR np_gotoF_ THEN CURLYL estatuto_rep . CURLYR decision_alt
 
-    CURLYR          shift and go to state 234
+    CURLYR          shift and go to state 236
 
 
-state 227
+state 229
 
     (78) rep_c -> WHILE np_push_jump_ PARENTHESESL expresion PARENTHESESR np_gotoF_ DO CURLYL . estatuto_rep CURLYR np_end_while_actions_
     (33) estatuto_rep -> . estatuto estatuto_rep
@@ -3744,7 +3760,7 @@ state 227
     WHILE           shift and go to state 68
     FROM            shift and go to state 69
 
-    estatuto_rep                   shift and go to state 235
+    estatuto_rep                   shift and go to state 237
     estatuto                       shift and go to state 53
     empty                          shift and go to state 54
     asignacion                     shift and go to state 55
@@ -3756,14 +3772,14 @@ state 227
     rep_c                          shift and go to state 61
     rep_nc                         shift and go to state 62
 
-state 228
+state 230
 
     (81) rep_nc -> FROM expresion np_assign_temp_ UNTIL expresion np_quadruple_for_ np_gotoF_ DO . CURLYL estatuto_rep CURLYR np_end_for_actions
 
-    CURLYL          shift and go to state 236
+    CURLYL          shift and go to state 238
 
 
-state 229
+state 231
 
     (22) funcion -> FUNC tipo_func ID np_set_scope_ PARENTHESESL funcion_param np_add_func_to_directory_ PARENTHESESR SEMICOLON variables np_add_vars_to_table_ CURLYL estatuto_rep CURLYR . np_end_function_
     (23) np_end_function_ -> .
@@ -3771,9 +3787,9 @@ state 229
     FUNC            reduce using rule 23 (np_end_function_ -> .)
     PRINCIPAL       reduce using rule 23 (np_end_function_ -> .)
 
-    np_end_function_               shift and go to state 237
+    np_end_function_               shift and go to state 239
 
-state 230
+state 232
 
     (50) dimension -> SQUAREL np_verify_dimensions_ np_add_false_bottom_ expresion np_manage_array_ np_remove_false_bottom_ SQUARER .
 
@@ -3798,7 +3814,7 @@ state 230
     SQUARER         reduce using rule 50 (dimension -> SQUAREL np_verify_dimensions_ np_add_false_bottom_ expresion np_manage_array_ np_remove_false_bottom_ SQUARER .)
 
 
-state 231
+state 233
 
     (54) llamada -> ID np_verify_function_ PARENTHESESL np_add_false_bottom_ np_create_era_ expresion_rep np_end_of_parameters_ PARENTHESESR np_remove_false_bottom_ . np_create_gosub_
     (64) np_create_gosub_ -> .
@@ -3822,13 +3838,13 @@ state 231
     DO              reduce using rule 64 (np_create_gosub_ -> .)
     SQUARER         reduce using rule 64 (np_create_gosub_ -> .)
 
-    np_create_gosub_               shift and go to state 238
+    np_create_gosub_               shift and go to state 240
 
-state 232
+state 234
 
     (57) expresion_rep_2 -> expresion np_verify_parameters_ COMMA np_next_parameter_check_ . expresion_rep_2
     (57) expresion_rep_2 -> . expresion np_verify_parameters_ COMMA np_next_parameter_check_ expresion_rep_2
-    (58) expresion_rep_2 -> . expresion np_verify_parameters_
+    (58) expresion_rep_2 -> . expresion np_check np_verify_parameters_
     (88) expresion -> . exp_comp np_quadruple_logic_ expresion_2
     (93) exp_comp -> . exp_ar exp_comp_2
     (103) exp_ar -> . termino np_quadruple_term exp_ar_2
@@ -3855,7 +3871,7 @@ state 232
     CTE_STR         shift and go to state 101
 
     expresion                      shift and go to state 192
-    expresion_rep_2                shift and go to state 239
+    expresion_rep_2                shift and go to state 241
     exp_comp                       shift and go to state 87
     exp_ar                         shift and go to state 88
     termino                        shift and go to state 89
@@ -3865,21 +3881,21 @@ state 232
     llamada                        shift and go to state 97
     letrero                        shift and go to state 99
 
-state 233
+state 235
 
     (66) lista_lectura -> ID np_push_var_ dimension np_quadruple_IO_ COMMA lista_lectura .
 
     PARENTHESESR    reduce using rule 66 (lista_lectura -> ID np_push_var_ dimension np_quadruple_IO_ COMMA lista_lectura .)
 
 
-state 234
+state 236
 
     (72) decision -> IF PARENTHESESL expresion PARENTHESESR np_gotoF_ THEN CURLYL estatuto_rep CURLYR . decision_alt
     (73) decision_alt -> . ELSE np_false_condition_ CURLYL estatuto_rep CURLYR np_end_if_actions
     (74) decision_alt -> . empty np_end_if_actions
     (130) empty -> .
 
-    ELSE            shift and go to state 241
+    ELSE            shift and go to state 243
     ID              reduce using rule 130 (empty -> .)
     RETURN          reduce using rule 130 (empty -> .)
     READ            reduce using rule 130 (empty -> .)
@@ -3889,17 +3905,17 @@ state 234
     FROM            reduce using rule 130 (empty -> .)
     CURLYR          reduce using rule 130 (empty -> .)
 
-    decision_alt                   shift and go to state 240
-    empty                          shift and go to state 242
+    decision_alt                   shift and go to state 242
+    empty                          shift and go to state 244
 
-state 235
+state 237
 
     (78) rep_c -> WHILE np_push_jump_ PARENTHESESL expresion PARENTHESESR np_gotoF_ DO CURLYL estatuto_rep . CURLYR np_end_while_actions_
 
-    CURLYR          shift and go to state 243
+    CURLYR          shift and go to state 245
 
 
-state 236
+state 238
 
     (81) rep_nc -> FROM expresion np_assign_temp_ UNTIL expresion np_quadruple_for_ np_gotoF_ DO CURLYL . estatuto_rep CURLYR np_end_for_actions
     (33) estatuto_rep -> . estatuto estatuto_rep
@@ -3931,7 +3947,7 @@ state 236
     WHILE           shift and go to state 68
     FROM            shift and go to state 69
 
-    estatuto_rep                   shift and go to state 244
+    estatuto_rep                   shift and go to state 246
     estatuto                       shift and go to state 53
     empty                          shift and go to state 54
     asignacion                     shift and go to state 55
@@ -3943,7 +3959,7 @@ state 236
     rep_c                          shift and go to state 61
     rep_nc                         shift and go to state 62
 
-state 237
+state 239
 
     (22) funcion -> FUNC tipo_func ID np_set_scope_ PARENTHESESL funcion_param np_add_func_to_directory_ PARENTHESESR SEMICOLON variables np_add_vars_to_table_ CURLYL estatuto_rep CURLYR np_end_function_ .
 
@@ -3951,7 +3967,7 @@ state 237
     PRINCIPAL       reduce using rule 22 (funcion -> FUNC tipo_func ID np_set_scope_ PARENTHESESL funcion_param np_add_func_to_directory_ PARENTHESESR SEMICOLON variables np_add_vars_to_table_ CURLYL estatuto_rep CURLYR np_end_function_ .)
 
 
-state 238
+state 240
 
     (54) llamada -> ID np_verify_function_ PARENTHESESL np_add_false_bottom_ np_create_era_ expresion_rep np_end_of_parameters_ PARENTHESESR np_remove_false_bottom_ np_create_gosub_ .
 
@@ -3975,14 +3991,14 @@ state 238
     SQUARER         reduce using rule 54 (llamada -> ID np_verify_function_ PARENTHESESL np_add_false_bottom_ np_create_era_ expresion_rep np_end_of_parameters_ PARENTHESESR np_remove_false_bottom_ np_create_gosub_ .)
 
 
-state 239
+state 241
 
     (57) expresion_rep_2 -> expresion np_verify_parameters_ COMMA np_next_parameter_check_ expresion_rep_2 .
 
     PARENTHESESR    reduce using rule 57 (expresion_rep_2 -> expresion np_verify_parameters_ COMMA np_next_parameter_check_ expresion_rep_2 .)
 
 
-state 240
+state 242
 
     (72) decision -> IF PARENTHESESL expresion PARENTHESESR np_gotoF_ THEN CURLYL estatuto_rep CURLYR decision_alt .
 
@@ -3996,16 +4012,16 @@ state 240
     CURLYR          reduce using rule 72 (decision -> IF PARENTHESESL expresion PARENTHESESR np_gotoF_ THEN CURLYL estatuto_rep CURLYR decision_alt .)
 
 
-state 241
+state 243
 
     (73) decision_alt -> ELSE . np_false_condition_ CURLYL estatuto_rep CURLYR np_end_if_actions
     (76) np_false_condition_ -> .
 
     CURLYL          reduce using rule 76 (np_false_condition_ -> .)
 
-    np_false_condition_            shift and go to state 245
+    np_false_condition_            shift and go to state 247
 
-state 242
+state 244
 
     (74) decision_alt -> empty . np_end_if_actions
     (77) np_end_if_actions -> .
@@ -4019,9 +4035,9 @@ state 242
     FROM            reduce using rule 77 (np_end_if_actions -> .)
     CURLYR          reduce using rule 77 (np_end_if_actions -> .)
 
-    np_end_if_actions              shift and go to state 246
+    np_end_if_actions              shift and go to state 248
 
-state 243
+state 245
 
     (78) rep_c -> WHILE np_push_jump_ PARENTHESESL expresion PARENTHESESR np_gotoF_ DO CURLYL estatuto_rep CURLYR . np_end_while_actions_
     (80) np_end_while_actions_ -> .
@@ -4035,23 +4051,23 @@ state 243
     FROM            reduce using rule 80 (np_end_while_actions_ -> .)
     CURLYR          reduce using rule 80 (np_end_while_actions_ -> .)
 
-    np_end_while_actions_          shift and go to state 247
+    np_end_while_actions_          shift and go to state 249
 
-state 244
+state 246
 
     (81) rep_nc -> FROM expresion np_assign_temp_ UNTIL expresion np_quadruple_for_ np_gotoF_ DO CURLYL estatuto_rep . CURLYR np_end_for_actions
 
-    CURLYR          shift and go to state 248
+    CURLYR          shift and go to state 250
 
 
-state 245
+state 247
 
     (73) decision_alt -> ELSE np_false_condition_ . CURLYL estatuto_rep CURLYR np_end_if_actions
 
-    CURLYL          shift and go to state 249
+    CURLYL          shift and go to state 251
 
 
-state 246
+state 248
 
     (74) decision_alt -> empty np_end_if_actions .
 
@@ -4065,7 +4081,7 @@ state 246
     CURLYR          reduce using rule 74 (decision_alt -> empty np_end_if_actions .)
 
 
-state 247
+state 249
 
     (78) rep_c -> WHILE np_push_jump_ PARENTHESESL expresion PARENTHESESR np_gotoF_ DO CURLYL estatuto_rep CURLYR np_end_while_actions_ .
 
@@ -4079,7 +4095,7 @@ state 247
     CURLYR          reduce using rule 78 (rep_c -> WHILE np_push_jump_ PARENTHESESL expresion PARENTHESESR np_gotoF_ DO CURLYL estatuto_rep CURLYR np_end_while_actions_ .)
 
 
-state 248
+state 250
 
     (81) rep_nc -> FROM expresion np_assign_temp_ UNTIL expresion np_quadruple_for_ np_gotoF_ DO CURLYL estatuto_rep CURLYR . np_end_for_actions
     (84) np_end_for_actions -> . np_increment_temp_ np_end_while_actions_
@@ -4094,10 +4110,10 @@ state 248
     FROM            reduce using rule 85 (np_increment_temp_ -> .)
     CURLYR          reduce using rule 85 (np_increment_temp_ -> .)
 
-    np_end_for_actions             shift and go to state 250
-    np_increment_temp_             shift and go to state 251
+    np_end_for_actions             shift and go to state 252
+    np_increment_temp_             shift and go to state 253
 
-state 249
+state 251
 
     (73) decision_alt -> ELSE np_false_condition_ CURLYL . estatuto_rep CURLYR np_end_if_actions
     (33) estatuto_rep -> . estatuto estatuto_rep
@@ -4129,7 +4145,7 @@ state 249
     WHILE           shift and go to state 68
     FROM            shift and go to state 69
 
-    estatuto_rep                   shift and go to state 252
+    estatuto_rep                   shift and go to state 254
     estatuto                       shift and go to state 53
     empty                          shift and go to state 54
     asignacion                     shift and go to state 55
@@ -4141,7 +4157,7 @@ state 249
     rep_c                          shift and go to state 61
     rep_nc                         shift and go to state 62
 
-state 250
+state 252
 
     (81) rep_nc -> FROM expresion np_assign_temp_ UNTIL expresion np_quadruple_for_ np_gotoF_ DO CURLYL estatuto_rep CURLYR np_end_for_actions .
 
@@ -4155,7 +4171,7 @@ state 250
     CURLYR          reduce using rule 81 (rep_nc -> FROM expresion np_assign_temp_ UNTIL expresion np_quadruple_for_ np_gotoF_ DO CURLYL estatuto_rep CURLYR np_end_for_actions .)
 
 
-state 251
+state 253
 
     (84) np_end_for_actions -> np_increment_temp_ . np_end_while_actions_
     (80) np_end_while_actions_ -> .
@@ -4169,16 +4185,16 @@ state 251
     FROM            reduce using rule 80 (np_end_while_actions_ -> .)
     CURLYR          reduce using rule 80 (np_end_while_actions_ -> .)
 
-    np_end_while_actions_          shift and go to state 253
+    np_end_while_actions_          shift and go to state 255
 
-state 252
+state 254
 
     (73) decision_alt -> ELSE np_false_condition_ CURLYL estatuto_rep . CURLYR np_end_if_actions
 
-    CURLYR          shift and go to state 254
+    CURLYR          shift and go to state 256
 
 
-state 253
+state 255
 
     (84) np_end_for_actions -> np_increment_temp_ np_end_while_actions_ .
 
@@ -4192,7 +4208,7 @@ state 253
     CURLYR          reduce using rule 84 (np_end_for_actions -> np_increment_temp_ np_end_while_actions_ .)
 
 
-state 254
+state 256
 
     (73) decision_alt -> ELSE np_false_condition_ CURLYL estatuto_rep CURLYR . np_end_if_actions
     (77) np_end_if_actions -> .
@@ -4206,9 +4222,9 @@ state 254
     FROM            reduce using rule 77 (np_end_if_actions -> .)
     CURLYR          reduce using rule 77 (np_end_if_actions -> .)
 
-    np_end_if_actions              shift and go to state 255
+    np_end_if_actions              shift and go to state 257
 
-state 255
+state 257
 
     (73) decision_alt -> ELSE np_false_condition_ CURLYL estatuto_rep CURLYR np_end_if_actions .
 

@@ -4,7 +4,7 @@ from execution_memory import ExecutionMemorySegment
 
 class VirtualMachine():
     def __init__(self):
-        with open("inter.cry", 'r') as json_file:
+        with open("pleasedont.cry", 'r') as json_file:
             self.inter_code = json.load(json_file)
         self.mem = Memory('execution')
         self.add_constants()
@@ -136,7 +136,10 @@ class VirtualMachine():
                 self.mem.load_value(self.check_exists(left),res)
                 IP+=1
             elif quad['operator'] == 'escribe':
-                print(self.check_exists(res), end = '')
+                if "/endl" == str(self.check_exists(res)) :
+                    print("")
+                else:
+                    print(self.check_exists(res), end = '')
                 IP+=1
             elif quad['operator'] == 'lee':
                 val = input()

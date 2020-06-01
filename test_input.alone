@@ -10,14 +10,15 @@ int: w, i;
 float: a, b;
 {
   lee(i,j[1*5]);
-  j[0] = w+j[1];
-  desde -(-5+8) hasta 10 hacer {
-    escribe(j[2], 'funciona');
+  j[0] = 1+j[1];
+  desde (-5+10) hasta 10 hacer {
+    escribe(j[5], 'funciona');
   }
   regresa(i);
 }
 funcion string dos(string hola, int ola, float crayola);
 {
+  escribe(ola);
   mientras (ola > (5+i)) hacer {
     crayola = ola * 5.5;
     ola = ola + 1;
@@ -31,7 +32,7 @@ funcion void tres();
 principal() {
   i= 5+2;
   tres();
-  dos('a', 5, 5+-4.2);
+  j[1] = 5;
   si(--5 == uno("Hello world") & i >= y[0+5/2]) entonces {
     i = j[0]-1;
   }

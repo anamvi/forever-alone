@@ -13,5 +13,5 @@ funcion int fibonacci(int num);
 principal() {
   escribe('Escribe un número para sacar el número fibonacci correspondiente: ');
   lee(i);
-  escribe('El fibonacci de ',i," es ", fibonacci(i));
+  escribe('El fibonacci de ',i," es ","/endl", fibonacci(i));
 }

@@ -256,7 +256,7 @@ def p_np_end_program_(p):
         'DirFunc': dir_func.output()
     }
     inter_code.mem.constant_.reset_memory()
-    with open("inter.cry","w+") as json_file:
+    with open("pleasedont.cry","w+") as json_file:
         json.dump(output, json_file)
 
     vm = VirtualMachine()
@@ -505,7 +505,7 @@ def p_expresion_rep(p):
 def p_expresion_rep_2(p):
     '''
         expresion_rep_2 : expresion np_verify_parameters_ COMMA np_next_parameter_check_ expresion_rep_2
-        | expresion np_verify_parameters_
+        | expresion np_check np_verify_parameters_
     '''
 
 def p_np_verify_function_(p):
@@ -547,7 +547,7 @@ def p_np_end_of_parameters_(p):
     global func_to_call
     global current_scope
     if len(dir_func.functions[func_to_call].parameters) >= inter_code.parameter_counter:
-        raise Exception('Number of arguments in call do not match parameters.')
+        raise Exception('Number of arguments in call do not match parameters ('+str(len(dir_func.functions[func_to_call].parameters))+') vs ('+str(inter_code.parameter_counter)+').')
 
 def p_np_create_era_(p):
     '''
