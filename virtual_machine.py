@@ -16,6 +16,78 @@ class VirtualMachine():
         parameters = []
         self.read_obj_code()
 
+    def check_overflow(self):
+        local_size = []
+        local_size.append(len(self.mem.local_.integers))
+        local_size.append(len(self.mem.local_.floats))
+        local_size.append(len(self.mem.local_.strings))
+        local_size.append(len(self.mem.local_.bools))
+        if self.local_memory_stack:
+            for i in self.local_memory_stack:
+                local_size[0]+= len(i.integers)
+                local_size[1]+= len(i.floats)
+                local_size[2]+= len(i.strings)
+                local_size[3]+= len(i.bools)
+        if any(local_size)>=2000:
+            raise Exception('StackOverflow: local variable stack exceded.')
+        temp_size = []
+        temp_size.append(len(self.mem.temp_.integers))
+        temp_size.append(len(self.mem.temp_.floats))
+        temp_size.append(len(self.mem.temp_.strings))
+        temp_size.append(len(self.mem.temp_.bools))
+        if self.temp_memory_stack:
+            for i in self.temp_memory_stack:
+                temp_size[0]+= len(i.integers)
+                temp_size[1]+= len(i.floats)
+                temp_size[2]+= len(i.strings)
+                temp_size[3]+= len(i.bools)
+        if any(temp_size)>=2000:
+            raise Exception('StackOverflow: temporal values stack exceded.')
+
+        # if self.mem._BASE_LOCAL<= dir < self.mem._BASE_TEMP:
+        #     if self.mem.local_._BASE_INT <= dir-self.mem._BASE_LOCAL < self.mem.local_._BASE_FLOAT:
+        #         if self.mem_used_local[0]>=2000:
+        #             raise Exception("StackOverflow: too many stored values of type int")
+        #         self.mem_used_local[0]+=1
+        #     elif self.mem.local_._BASE_FLOAT <= dir-self.mem._BASE_LOCAL < self.mem.local_._BASE_STRING:
+        #         if self.mem_used_local[1]>=2000:
+        #             raise Exception("StackOverflow: too many stored values of type float")
+        #         self.mem_used_local[1]+=1
+        #     elif self.mem.local_._BASE_STRING <= dir-self.mem._BASE_LOCAL < self.mem.local_._BASE_BOOL:
+        #         if self.mem_used_local[2]>=2000:
+        #             raise Exception("StackOverflow: too many stored values of type string")
+        #         self.mem_used_local[2]+=1
+        #     elif self.mem.local_._BASE_BOOL <= dir-self.mem._BASE_LOCAL < self.mem.local_._BASE_PTR:
+        #         if self.mem_used_local[3]>=2000:
+        #             raise Exception("StackOverflow: too many stored values of type bool")
+        #         self.mem_used_local[3]+=1
+        #     elif self.mem.local_._BASE_PTR <= dir-self.mem._BASE_LOCAL:
+        #         if self.mem_used_local[4]>=2000:
+        #             raise Exception("StackOverflow: too many stored values of type pointer")
+        #         self.mem_used_local[4]+=1
+        # elif self.mem._BASE_TEMP<= dir < self.mem._BASE_CONSTANT:
+        #     if self.mem.temp_._BASE_INT <= dir-self.mem._BASE_TEMP < self.mem.temp_._BASE_FLOAT:
+        #         if self.mem_used_temp[0]>=2000:
+        #             raise Exception("StackOverflow: too many stored values of type int")
+        #         self.mem_used_temp[0]+=1
+        #     elif self.mem.temp_._BASE_FLOAT <= dir-self.mem._BASE_TEMP < self.mem.temp_._BASE_STRING:
+        #         if self.mem_used_temp[1]>=2000:
+        #             raise Exception("StackOverflow: too many stored values of type float")
+        #         self.mem_used_temp[1]+=1
+        #     elif self.mem.temp_._BASE_STRING <= dir-self.mem._BASE_TEMP < self.mem.temp_._BASE_BOOL:
+        #         if self.mem_used_temp[2]>=2000:
+        #             raise Exception("StackOverflow: too many stored values of type string")
+        #         self.mem_used_temp[2]+=1
+        #     elif self.mem.temp_._BASE_BOOL <= dir-self.mem._BASE_TEMP < self.mem.temp_._BASE_PTR:
+        #         if self.mem_used_temp[3]>=2000:
+        #             raise Exception("StackOverflow: too many stored values of type bool")
+        #         self.mem_used_temp[3]+=1
+        #     elif self.mem.temp_._BASE_PTR <= dir-self.mem._BASE_TEMP:
+        #         if self.mem_used_temp[4]>=2000:
+        #             raise Exception("StackOverflow: too many stored values of type pointer")
+        #         self.mem_used_temp[4]+=1
+
+
     def add_constants(self):
         for i in self.inter_code['Constants']:
             self.mem.constant_.load_value(i["value"], i["address"])
@@ -65,7 +137,6 @@ class VirtualMachine():
             quad = x[IP]
             left = self.handle_pointer(quad['left_operand'])
             right = self.handle_pointer(quad['right_operand'])
-            res = self.handle_pointer(quad['result'])
             if quad['operator'] == 'GOTO':
                 IP = quad['result']
             elif quad['operator'] == 'GOTOF':
@@ -133,21 +204,25 @@ class VirtualMachine():
                 self.mem.load_value(op, quad['result'])
                 IP+=1
             elif quad['operator'] == '=':
+                res = self.handle_pointer(quad['result'])
                 self.mem.load_value(self.check_exists(left),res)
                 IP+=1
             elif quad['operator'] == 'escribe':
+                res = self.handle_pointer(quad['result'])
                 if "/endl" == str(self.check_exists(res)) :
                     print("")
                 else:
                     print(self.check_exists(res), end = '')
                 IP+=1
             elif quad['operator'] == 'lee':
+                res = self.handle_pointer(quad['result'])
                 val = input()
                 self.mem.load_value(self.compare_input_type(val,res),res) #CHECAR SI ESTO ESTA BIEN???????
                 IP+=1
             elif quad['operator'] == 'return':
                 # go to the next function (endfunc)
                 if quad['result'] is not None:
+                    res = self.handle_pointer(quad['result'])
                     self.mem.load_value(self.check_exists(left),res)
                 self.mem.local_.reset_memory()
                 self.mem.temp_.reset_memory()
@@ -155,8 +230,9 @@ class VirtualMachine():
                 self.mem.temp_ = self.temp_memory_stack.pop()
                 IP = self.context_stack.pop()
             elif quad['operator'] == 'ver':
+                res = self.handle_pointer(quad['result'])
                 if self.check_exists(left) >= self.check_exists(res):
-                    raise Exception("Limits of array out of bounds.")
+                    raise Exception("Limits of array out of bounds."+str(left)+str(res))
                 IP+=1
             elif quad['operator'] == 'ERA':
                 self.current_func = quad['result']
@@ -186,3 +262,4 @@ class VirtualMachine():
                 break
             else:
                 IP+=1
+            self.check_overflow()
