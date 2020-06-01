@@ -147,7 +147,8 @@ class VirtualMachine():
                 IP+=1
             elif quad['operator'] == 'return':
                 # go to the next function (endfunc)
-                self.mem.load_value(self.check_exists(left),res)
+                if quad['result'] is not None:
+                    self.mem.load_value(self.check_exists(left),res)
                 self.mem.local_.reset_memory()
                 self.mem.temp_.reset_memory()
                 self.mem.local_ = self.local_memory_stack.pop()

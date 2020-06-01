@@ -270,7 +270,9 @@ def p_np_end_function_(p):
     '''
         np_end_function_ :
     '''
-    global current_scope
+    global current_scope, current_type
+    if str(current_type) != 'void' and not inter_code.does_return:
+        raise Exception('Function "'+str(current_scope)+'" should have a return value.')
     temps = inter_code.mem.temp_.count_content()
     inter_code.add_endfunc()
     dir_func.functions[current_scope].space_needed += temps
@@ -710,6 +712,7 @@ def p_np_increment_temp_(p):
 def p_retorno(p):
     '''
         retorno : RETURN PARENTHESESL expresion PARENTHESESR np_quadruple_return_
+        | RETURN PARENTHESESL PARENTHESESR np_quadruple_empty_return_
     '''
 
 def p_np_quadruple_return_(p):
@@ -725,6 +728,16 @@ def p_np_quadruple_return_(p):
     inter_code.type_stack.append(current_type)
     inter_code.add_return_quadruple()
 
+def p_np_quadruple_empty_return_(p):
+    '''
+        np_quadruple_empty_return_ :
+    '''
+    global current_type, current_scope
+    # get the virtual address of the function in order to leave the return value there
+    func_addr = dir_func.functions['global'].variables[current_scope].dir
+    if func_addr is not None:
+        raise Exception('Type mismatch: non-void function has to have a return value.')
+    inter_code.add_empty_return_quadruple()
 
 def p_expresion(p):
     '''

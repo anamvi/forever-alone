@@ -16,6 +16,7 @@ class InterCode:
     def __init__(self):
         self.temp_counter = 1
         self.parameter_counter = 1
+        self.does_return = False
         self.quadruples = []
         self.operator_stack = []
         self.variable_stack = []
@@ -58,6 +59,7 @@ class InterCode:
         func_type = self.type_stack.pop()
         val = self.variable_stack.pop()
         value_type = self.type_stack.pop()
+        self.does_return = True
         # print(self.variable_stack)
         # print(self.type_stack)
         # print(self.operator_stack)
@@ -67,6 +69,10 @@ class InterCode:
         if func_type != value_type:
             raise Exception('Type mismatch: The return value does not match the function type.')
         current_quad = Quadruple('return', val, None, faddr)
+        self.quadruples.append(current_quad.__dict__)
+
+    def add_empty_return_quadruple(self):
+        current_quad = Quadruple('return', None, None, None)
         self.quadruples.append(current_quad.__dict__)
 
     def add_IO_quadruple(self):
@@ -206,6 +212,7 @@ class InterCode:
         self.temp_counter = 1
         self.mem.local_.reset_memory()
         self.mem.temp_.reset_memory()
+        self.does_return = False
 
     def add_era_quadruple(self, dir, space):
         current_quad = Quadruple('ERA',space,None,dir)
