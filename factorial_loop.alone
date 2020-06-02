@@ -1,0 +1,18 @@
+programa factorial_loop;
+var
+int: i,n,fact;
+
+principal() {
+  escribe("Escribe un número para obtener el factorial: ");
+  lee(n);
+  fact = 1;
+  si(n<0)entonces {
+    escribe("Error: el factorial de un número negativo no existe.");
+  }
+  sino {
+    desde i=1 hasta n hacer {
+      fact = i*fact;
+    }
+    escribe("El factorial es: ", fact, "/endl");
+  }
+}

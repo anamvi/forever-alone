@@ -1,10 +1,11 @@
 import json
+import copy
 from memory import Memory
 from execution_memory import ExecutionMemorySegment
 
 class VirtualMachine():
-    def __init__(self):
-        with open("pleasedont.cry", 'r') as json_file:
+    def __init__(self, file_name):
+        with open(file_name, 'r') as json_file:
             self.inter_code = json.load(json_file)
         self.mem = Memory('execution')
         self.add_constants()
@@ -16,77 +17,15 @@ class VirtualMachine():
         parameters = []
         self.read_obj_code()
 
-    def check_overflow(self):
-        local_size = []
-        local_size.append(len(self.mem.local_.integers))
-        local_size.append(len(self.mem.local_.floats))
-        local_size.append(len(self.mem.local_.strings))
-        local_size.append(len(self.mem.local_.bools))
-        if self.local_memory_stack:
-            for i in self.local_memory_stack:
-                local_size[0]+= len(i.integers)
-                local_size[1]+= len(i.floats)
-                local_size[2]+= len(i.strings)
-                local_size[3]+= len(i.bools)
-        if any(local_size)>=2000:
+    def allocate_memory(self,locals,temps):
+        if self.mem.local_.prev_size+locals >= 8000:
             raise Exception('StackOverflow: local variable stack exceded.')
-        temp_size = []
-        temp_size.append(len(self.mem.temp_.integers))
-        temp_size.append(len(self.mem.temp_.floats))
-        temp_size.append(len(self.mem.temp_.strings))
-        temp_size.append(len(self.mem.temp_.bools))
-        if self.temp_memory_stack:
-            for i in self.temp_memory_stack:
-                temp_size[0]+= len(i.integers)
-                temp_size[1]+= len(i.floats)
-                temp_size[2]+= len(i.strings)
-                temp_size[3]+= len(i.bools)
-        if any(temp_size)>=2000:
+        else:
+            self.local_size = self.mem.local_.prev_size+locals
+        if self.mem.temp_.prev_size+temps >= 10000:
             raise Exception('StackOverflow: temporal values stack exceded.')
-
-        # if self.mem._BASE_LOCAL<= dir < self.mem._BASE_TEMP:
-        #     if self.mem.local_._BASE_INT <= dir-self.mem._BASE_LOCAL < self.mem.local_._BASE_FLOAT:
-        #         if self.mem_used_local[0]>=2000:
-        #             raise Exception("StackOverflow: too many stored values of type int")
-        #         self.mem_used_local[0]+=1
-        #     elif self.mem.local_._BASE_FLOAT <= dir-self.mem._BASE_LOCAL < self.mem.local_._BASE_STRING:
-        #         if self.mem_used_local[1]>=2000:
-        #             raise Exception("StackOverflow: too many stored values of type float")
-        #         self.mem_used_local[1]+=1
-        #     elif self.mem.local_._BASE_STRING <= dir-self.mem._BASE_LOCAL < self.mem.local_._BASE_BOOL:
-        #         if self.mem_used_local[2]>=2000:
-        #             raise Exception("StackOverflow: too many stored values of type string")
-        #         self.mem_used_local[2]+=1
-        #     elif self.mem.local_._BASE_BOOL <= dir-self.mem._BASE_LOCAL < self.mem.local_._BASE_PTR:
-        #         if self.mem_used_local[3]>=2000:
-        #             raise Exception("StackOverflow: too many stored values of type bool")
-        #         self.mem_used_local[3]+=1
-        #     elif self.mem.local_._BASE_PTR <= dir-self.mem._BASE_LOCAL:
-        #         if self.mem_used_local[4]>=2000:
-        #             raise Exception("StackOverflow: too many stored values of type pointer")
-        #         self.mem_used_local[4]+=1
-        # elif self.mem._BASE_TEMP<= dir < self.mem._BASE_CONSTANT:
-        #     if self.mem.temp_._BASE_INT <= dir-self.mem._BASE_TEMP < self.mem.temp_._BASE_FLOAT:
-        #         if self.mem_used_temp[0]>=2000:
-        #             raise Exception("StackOverflow: too many stored values of type int")
-        #         self.mem_used_temp[0]+=1
-        #     elif self.mem.temp_._BASE_FLOAT <= dir-self.mem._BASE_TEMP < self.mem.temp_._BASE_STRING:
-        #         if self.mem_used_temp[1]>=2000:
-        #             raise Exception("StackOverflow: too many stored values of type float")
-        #         self.mem_used_temp[1]+=1
-        #     elif self.mem.temp_._BASE_STRING <= dir-self.mem._BASE_TEMP < self.mem.temp_._BASE_BOOL:
-        #         if self.mem_used_temp[2]>=2000:
-        #             raise Exception("StackOverflow: too many stored values of type string")
-        #         self.mem_used_temp[2]+=1
-        #     elif self.mem.temp_._BASE_BOOL <= dir-self.mem._BASE_TEMP < self.mem.temp_._BASE_PTR:
-        #         if self.mem_used_temp[3]>=2000:
-        #             raise Exception("StackOverflow: too many stored values of type bool")
-        #         self.mem_used_temp[3]+=1
-        #     elif self.mem.temp_._BASE_PTR <= dir-self.mem._BASE_TEMP:
-        #         if self.mem_used_temp[4]>=2000:
-        #             raise Exception("StackOverflow: too many stored values of type pointer")
-        #         self.mem_used_temp[4]+=1
-
+        else:
+            self.temp_size = self.mem.temp_.prev_size+temps
 
     def add_constants(self):
         for i in self.inter_code['Constants']:
@@ -135,8 +74,10 @@ class VirtualMachine():
         IP = 0
         while True:
             quad = x[IP]
-            left = self.handle_pointer(quad['left_operand'])
-            right = self.handle_pointer(quad['right_operand'])
+            if quad['result'] != 'ERA':
+                left = self.handle_pointer(quad['left_operand'])
+                right = self.handle_pointer(quad['right_operand'])
+
             if quad['operator'] == 'GOTO':
                 IP = quad['result']
             elif quad['operator'] == 'GOTOF':
@@ -226,6 +167,8 @@ class VirtualMachine():
                     self.mem.load_value(self.check_exists(left),res)
                 self.mem.local_.reset_memory()
                 self.mem.temp_.reset_memory()
+                del self.mem.local_
+                del self.mem.temp_
                 self.mem.local_ = self.local_memory_stack.pop()
                 self.mem.temp_ = self.temp_memory_stack.pop()
                 IP = self.context_stack.pop()
@@ -235,7 +178,9 @@ class VirtualMachine():
                     raise Exception("Limits of array out of bounds."+str(left)+str(res))
                 IP+=1
             elif quad['operator'] == 'ERA':
+                self.allocate_memory(quad['left_operand'],quad['right_operand'])
                 self.current_func = quad['result']
+
                 IP+=1
             elif quad['operator'] == 'PARAM':
                 if self.mem.check_type(left) != self.inter_code['DirFunc'][self.current_func]['parameters'][int(quad['result'])-1]:
@@ -244,10 +189,12 @@ class VirtualMachine():
                 IP+=1
             elif quad['operator'] == 'GOSUB':
                 self.context_stack.append(IP+1)
-                self.local_memory_stack.append(self.mem.local_)
-                self.temp_memory_stack.append(self.mem.temp_)
-                self.mem.local_ = ExecutionMemorySegment(self.mem._BASE_LOCAL)
-                self.mem.temp_ = ExecutionMemorySegment(self.mem._BASE_TEMP)
+                self.local_memory_stack.append(copy.copy(self.mem.local_))
+                self.temp_memory_stack.append(copy.copy(self.mem.temp_))
+                del self.mem.local_
+                del self.mem.temp_
+                self.mem.local_ = ExecutionMemorySegment(self.mem._BASE_LOCAL, self.local_size)
+                self.mem.temp_ = ExecutionMemorySegment(self.mem._BASE_TEMP, self.temp_size)
                 self.assign_parameters(self.inter_code['DirFunc'][self.current_func]['parameters'])
                 self.parameters.clear()
                 IP = quad['result']
@@ -255,6 +202,8 @@ class VirtualMachine():
                 # hacer salto con pila de contextos
                 self.mem.local_.reset_memory()
                 self.mem.temp_.reset_memory()
+                del self.mem.local_
+                del self.mem.temp_
                 self.mem.local_ = self.local_memory_stack.pop()
                 self.mem.temp_ = self.temp_memory_stack.pop()
                 IP = self.context_stack.pop()
@@ -262,4 +211,4 @@ class VirtualMachine():
                 break
             else:
                 IP+=1
-            self.check_overflow()
+            # self.check_overflow()

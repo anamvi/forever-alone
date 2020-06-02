@@ -11,14 +11,22 @@ class Function:
         self.type = type
         self.variables = {}
         self.parameters = parameters
-        self.space_needed = 0
+        self.space_local = 0
+        self.space_temp = 0
         self.quad = None
+
+    def increment_space(self, scope):
+        if scope == 'local':
+            self.space_local +=1
+        elif scope == 'temp':
+            self.space_temp +=1
 
     def add_variable(self, name, type, dir):
         if name in self.variables:
             raise Exception("La variable '"+name+"' ya existe en este contexto.")
         self.variables[name] = Variable(name, type, dir)
-        self.space_needed += 1
+        self.increment_space('local')
+        # self.space_needed += 1
 
     def variable_exists(self, name):
         if name in self.variables:
@@ -65,6 +73,7 @@ class FunctionsTable:
             out[i]={
             'type' : func.type,
             'parameters': func.parameters,
-            'space_needed': func.space_needed,
+            'space_local': func.space_local,
+            'space_temp': func.space_temp
             }
         return out

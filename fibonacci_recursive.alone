@@ -1,0 +1,20 @@
+programa fibonacci_recursive;
+var
+int: i,n;
+
+funcion int fibonacci(int num);
+{
+  si(num<=1) entonces{
+    regresa(num);
+  }
+  regresa(fibonacci(num-1)+fibonacci(num-2));
+}
+
+principal() {
+  escribe('Escribe un número para sacar el número fibonacci correspondiente: ');
+  lee(n);
+  escribe("La serie de Fibonacci es: ","/endl");
+  desde i=0 hasta n-1 hacer {
+    escribe(fibonacci(i), " ");
+  }
+}

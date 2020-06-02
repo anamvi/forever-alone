@@ -17,10 +17,10 @@ class Memory:
             self.temp_ = VirtualMemorySegment(self._BASE_TEMP)
             self.constant_ = VirtualMemorySegment(self._BASE_CONSTANT)
         elif mem_type == 'execution':
-            self.global_ = ExecutionMemorySegment(self._BASE_GLOBAL)
-            self.local_ = ExecutionMemorySegment(self._BASE_LOCAL)
-            self.temp_ = ExecutionMemorySegment(self._BASE_TEMP)
-            self.constant_ = ExecutionMemorySegment(self._BASE_CONSTANT)
+            self.global_ = ExecutionMemorySegment(self._BASE_GLOBAL,0)
+            self.local_ = ExecutionMemorySegment(self._BASE_LOCAL,0)
+            self.temp_ = ExecutionMemorySegment(self._BASE_TEMP,0)
+            self.constant_ = ExecutionMemorySegment(self._BASE_CONSTANT,0)
 
     def __str__(self):
         output = '---------- GLOBAL MEMORY ---------- \n' + str(self.global_)

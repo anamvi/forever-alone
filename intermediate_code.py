@@ -14,7 +14,7 @@ class Quadruple:
 
 class InterCode:
     def __init__(self):
-        self.temp_counter = 1
+        self.temp_count = 0
         self.parameter_counter = 1
         self.does_return = False
         self.quadruples = []
@@ -31,13 +31,14 @@ class InterCode:
         r_var_type = self.type_stack.pop()
         l_var = self.variable_stack.pop()
         l_var_type = self.type_stack.pop()
-        # res = 't'+str(self.temp_counter)
+        # res = 't'+str(self.temp_count)
         # print('operation quadruple -- ' + op + ' ' +str(l_var) + ' ' + str(r_var) + ' '+ res)
 
         res_type = self.semantic.cube[op][r_var_type][l_var_type]
         if res_type != 'error' :
-            res = self.mem.temp_.add_value('t'+str(self.temp_counter),res_type)
-            self.temp_counter+=1
+            self.temp_count+=1
+            res = self.mem.temp_.add_value('t'+str(self.temp_count),res_type)
+
             current_quad = Quadruple(op, l_var, r_var, res)
             self.quadruples.append(current_quad.__dict__)
             self.variable_stack.append(res)
@@ -137,8 +138,9 @@ class InterCode:
         # print('\n')
         res_type=self.semantic.cube[op][num_type][None]
         if res_type != 'error':
-            res = self.mem.temp_.add_value('t'+str(self.temp_counter),res_type)
-            self.temp_counter+=1
+            self.temp_count+=1
+            res = self.mem.temp_.add_value('t'+str(self.temp_count),res_type)
+
             current_quad = Quadruple(op,num,None,res)
             self.quadruples.append(current_quad.__dict__)
             self.variable_stack.append(res)
@@ -146,7 +148,7 @@ class InterCode:
         else:
             if num_type == None:
                 num_type = 'void'
-            raise Exception('ERROR type mismatch. Values of type '+ num_type + " cannot be made negative" )
+            raise Exception('Type mismatch: Values of type '+ num_type + " cannot be made negative" )
 
     def add_assign_temp_quadruple(self):
         num_type = self.type_stack.pop()
@@ -156,22 +158,42 @@ class InterCode:
         # print(self.operator_stack)
         # print(self.jumps_stack)
         # print('\n')
-        res = self.mem.temp_.add_value('t'+str(self.temp_counter),num_type)
-        self.temp_counter+=1
+        self.temp_count+=1
+        res = self.mem.temp_.add_value('t'+str(self.temp_count),num_type)
         current_quad = Quadruple('=',num,None,res)
         self.quadruples.append(current_quad.__dict__)
         self.variable_stack.append(res)
         self.type_stack.append(num_type)
 
-    def add_self_increment_quadruple(self, increment):
+    def add_assign_loop_quadruple(self):
         num_type = self.type_stack.pop()
         num = self.variable_stack.pop()
-        res = self.mem.temp_.add_value('t'+str(self.temp_counter),num_type)
+        res_type = self.type_stack.pop()
+        res = self.variable_stack.pop()
         # print(self.variable_stack)
         # print(self.type_stack)
         # print(self.operator_stack)
         # print(self.jumps_stack)
-        self.temp_counter+=1
+        # print('\n')
+        # self.temp_count+=1
+        # res = self.mem.temp_.add_value('t'+str(self.temp_count),num_type)
+        if num_type == 'int' and res_type == 'int':
+            current_quad = Quadruple('=',num,None,res)
+            self.quadruples.append(current_quad.__dict__)
+            self.variable_stack.append(res)
+            self.type_stack.append(num_type)
+        else:
+            raise Exception('Type mismatch: Values in non conditional repetiton statements must be of type int.')
+
+    def add_self_increment_quadruple(self, increment):
+        num_type = self.type_stack.pop()
+        num = self.variable_stack.pop()
+        self.temp_count+=1
+        res = self.mem.temp_.add_value('t'+str(self.temp_count),num_type)
+        # print(self.variable_stack)
+        # print(self.type_stack)
+        # print(self.operator_stack)
+        # print(self.jumps_stack)
         increment = self.mem.constant_.add_value(increment,'int')
         current_quad = Quadruple('+',num,increment,res)
         self.quadruples.append(current_quad.__dict__)
@@ -199,8 +221,8 @@ class InterCode:
         # print(self.type_stack)
         # print(self.operator_stack)
         # print(self.jumps_stack)
-        res = self.mem.temp_.add_value('t'+str(self.temp_counter),'ptr')
-        self.temp_counter+=1
+        self.temp_count+=1
+        res = self.mem.temp_.add_value('t'+str(self.temp_count),'ptr')
         current_quad = Quadruple('+',size,dir,res)
         self.quadruples.append(current_quad.__dict__)
         self.variable_stack.append(res)
@@ -209,13 +231,14 @@ class InterCode:
     def add_endfunc(self):
         current_quad = Quadruple('ENDFunc',None,None,None)
         self.quadruples.append(current_quad.__dict__)
-        self.temp_counter = 1
+        self.temp_count = 1
         self.mem.local_.reset_memory()
         self.mem.temp_.reset_memory()
+        self.temp_count = 0
         self.does_return = False
 
-    def add_era_quadruple(self, dir, space):
-        current_quad = Quadruple('ERA',space,None,dir)
+    def add_era_quadruple(self, dir, space_local):
+        current_quad = Quadruple('ERA',space_local,self.temp_count,dir)#checar como se manda esto --------------------
         self.quadruples.append(current_quad.__dict__)
 
     def add_parameter_quadruple(self, argument):
@@ -236,4 +259,5 @@ class InterCode:
     def end_compilation(self):
         self.mem.global_.reset_memory()
         self.mem.temp_.reset_memory()
+        self.temp_count = 0
         self.mem.local_.reset_memory()

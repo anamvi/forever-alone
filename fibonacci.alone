@@ -1,17 +1,21 @@
-programa fibonacci;
+programa fibonacci_loop;
 var
-int: i;
-
-funcion int fibonacci(int num);
-{
-  si(num<=1) entonces{
-    regresa(num);
-  }
-  regresa(fibonacci(num-1)+fibonacci(num-2));
-}
-
+int: i,n,t1,t2,sig;
 principal() {
-  escribe('Escribe un número para sacar el número fibonacci correspondiente: ');
-  lee(i);
-  escribe('El fibonacci de ',i," es ","/endl", fibonacci(i));
+  escribe('Escribe el número de términos de la serie de fibonacci: ');
+  lee(n);
+  t1 = 0;
+  t2 = 1;
+  si(n<=0) entonces {
+    escribe('El número tiene que ser mayor a 0.', '/endl');
+  }
+  sino {
+    escribe('La serie de fibonacci es: ',"/endl");
+    desde i=1 hasta n hacer {
+      escribe(t1, " ");
+      sig = t1 + t2;
+      t1 = t2;
+      t2 = sig;
+    }
+  }
 }

@@ -1,11 +1,12 @@
 class ExecutionMemorySegment:
-    def __init__(self, dir):
+    def __init__(self, dir, prev_size):
         self.initial_dir = dir
         self.integers = {}
         self.floats = {}
         self.strings = {}
         self.bools = {}
         self.pointers = {}
+        self.prev_size = prev_size
 
         # Offset for each data type
         self._BASE_INT = 0

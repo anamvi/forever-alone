@@ -1,4 +1,4 @@
-programa factorial;
+programa factorial_recursive;
 var
 int: i;
 

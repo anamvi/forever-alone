@@ -18,21 +18,20 @@ principal() {
   j[4] = 4;
   si(1<=j[4]) entonces{
     lee(j[3]);
-    i=1+2+j[3];
-    escribe(i,j[3],j[j[j[4]]-1], "/endl");
+    escribe(j[3],j[j[j[4]]-1], "/endl");
   }
-  i=1;
-  mientras (i <= 5) hacer {
+  w=0;
+  mientras (w <= 5) hacer {
     k=1;
     mientras (k<4) hacer {
       escribe("wa ");
       k = k+1;
-      desde 1 hasta i+2 hacer {
+      desde i=1 hasta 5 hacer {
         escribe('.');
       }
     }
     escribe('pues si mi ciela el valor es ', uno(5, 4, 8), '/endl');
-    i = i + 1;
+    w = w + 1;
   }
   i=i+2;
 }
