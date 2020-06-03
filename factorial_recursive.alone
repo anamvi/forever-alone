@@ -4,7 +4,7 @@ int: i;
 
 funcion int fact(int num);
 {
-  si(num==0 | num==1) entonces{
+  si(num<=1) entonces{
     regresa(1);
   }
   regresa(num*fact(num-1));

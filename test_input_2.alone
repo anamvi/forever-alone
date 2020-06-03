@@ -6,7 +6,7 @@ funcion int uno(int c, int x, int r);
 {
   escribe("soy c ",c, " ");
   j[0] = 1;
-  si(c==0) entonces{
+  si(c==0 & c==0 & c==0) entonces{
     regresa(0);
   }
   sino {
@@ -16,7 +16,7 @@ funcion int uno(int c, int x, int r);
 
 principal() {
   j[4] = 4;
-  si(1<=j[4]) entonces{
+  si('ana'<='marcela') entonces{
     lee(j[3]);
     escribe(j[3],j[j[j[4]]-1], "/endl");
   }

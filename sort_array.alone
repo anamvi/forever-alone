@@ -1,0 +1,29 @@
+programa sort_array;
+var
+int: arr[7],i, temp;
+funcion void sort();
+{
+  mientras (i<6) hacer {
+    si (arr[i]>arr[i+1]) entonces {
+      temp = arr[i];
+      arr[i] = arr[i+1];
+      arr[i+1] = temp;
+      i = 0;
+    }
+    sino {
+      i = i+1;
+    }
+  }
+}
+principal () {
+  escribe("Escribe 7 números enteros en desorden (presiona enter después de cada uno): ");
+  desde i = 0 hasta 6 hacer {
+    lee(arr[i]);
+  }
+  i=0;
+  sort();
+  escribe("El arreglo ordenado es: ");
+  desde i=0 hasta 6 hacer {
+    escribe(arr[i], " ");
+  }
+}

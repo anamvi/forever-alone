@@ -1,0 +1,29 @@
+programa find_array;
+var
+int: arr[10],i, n;
+funcion int find(int num, int limite);
+{
+  desde i = 0 hasta limite-1 hacer{
+    si (arr[i]==num) entonces{
+      regresa(i);
+    }
+  }
+  escribe('No se encontró el número, intenta de nuevo!', '/endl');
+  regresa(0);
+}
+principal () {
+  desde i = 0 hasta 9 hacer {
+    arr[i] = i+2;
+  }
+  escribe("Escribe un número para encontrar en la siguiente lista: ");
+  desde i = 0 hasta 9 hacer {
+    escribe(arr[i], " ");
+  }
+  escribe("/endl");
+  i=0;
+  mientras (i==0) hacer {
+    lee(n);
+    i = find(n,10);
+  }
+  escribe("¡Éxito! El índice de tu número (empezando de 0) es: ", i);
+}

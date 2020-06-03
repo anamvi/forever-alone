@@ -3,6 +3,12 @@ import copy
 from memory import Memory
 from execution_memory import ExecutionMemorySegment
 
+'''
+    Máquina virtual: maneja el código intermedio recibido de la etapa de compilación y
+    hace las revisiones necesarias para hacer los cálculos que se piden. Tiene acceso a la
+    memoria de ejecución
+'''
+
 class VirtualMachine():
     def __init__(self, file_name):
         with open(file_name, 'r') as json_file:
@@ -17,6 +23,11 @@ class VirtualMachine():
         parameters = []
         self.read_obj_code()
 
+    '''
+    allocate_memory:
+
+    verifica que haya espacio para el segmento de código de la llamada
+    '''
     def allocate_memory(self,locals,temps):
         if self.mem.local_.prev_size+locals >= 8000:
             raise Exception('StackOverflow: local variable stack exceded.')
@@ -27,17 +38,28 @@ class VirtualMachine():
         else:
             self.temp_size = self.mem.temp_.prev_size+temps
 
+    '''
+    add_constants:
+    agrega las constantes del archivo de código intermedio a la memoria de constantes
+    '''
     def add_constants(self):
         for i in self.inter_code['Constants']:
             self.mem.constant_.load_value(i["value"], i["address"])
 
+    '''
+    check_exists:
+    revisa que la variable ya haya sido cargada a memoria de ejecución
+    '''
     def check_exists(self, dir):
         var = self.mem.get_value(int(dir))
         if var is None:
-            # sacar el nombre de la variable de la tabla de variables
             raise NameError('Variable referenced before assignment.')
         return var
 
+    '''
+    compare_input_type:
+    revisa que el valor y la dirección tengan el mismo tipo
+    '''
     def compare_input_type(self, val, address):
         type = self.mem.check_type(address)
         if type == 'int':
@@ -52,11 +74,20 @@ class VirtualMachine():
                 raise TypeError("The value provided (" +val+ ") should be a float.")
         return val
 
+    '''
+    handle_pointer:
+    revisar si el dato que recibimos es un pointer y de ser así obtener la dirección a la que apunta.
+    '''
     def handle_pointer(self, val):
         if val is not None and not isinstance(val, str):
             if self.mem.check_type(int(val))=='ptr':
                 return self.mem.get_value(int(val))
         return val
+
+    '''
+    assign_parameters:
+    cargar los parámetros a la dirección de memoria correspondiente
+    '''
     def assign_parameters(self, param_types):
         if self.parameters:
             base = self.mem._BASE_LOCAL
@@ -69,6 +100,10 @@ class VirtualMachine():
                     base_type = self.mem.local_._BASE_STRING
                 self.mem.load_value(x,base+base_type+i)
 
+    '''
+    read_obj_code:
+    Lee el código obj recibido de la compilación
+    '''
     def read_obj_code(self):
         x=self.inter_code['Quadruples']
         IP = 0
@@ -158,10 +193,9 @@ class VirtualMachine():
             elif quad['operator'] == 'lee':
                 res = self.handle_pointer(quad['result'])
                 val = input()
-                self.mem.load_value(self.compare_input_type(val,res),res) #CHECAR SI ESTO ESTA BIEN???????
+                self.mem.load_value(self.compare_input_type(val,res),res)
                 IP+=1
             elif quad['operator'] == 'return':
-                # go to the next function (endfunc)
                 if quad['result'] is not None:
                     res = self.handle_pointer(quad['result'])
                     self.mem.load_value(self.check_exists(left),res)
@@ -175,7 +209,7 @@ class VirtualMachine():
             elif quad['operator'] == 'ver':
                 res = self.handle_pointer(quad['result'])
                 if self.check_exists(left) >= self.check_exists(res):
-                    raise Exception("Limits of array out of bounds."+str(left)+str(res))
+                    raise Exception("Limits of array out of bounds.")
                 IP+=1
             elif quad['operator'] == 'ERA':
                 self.allocate_memory(quad['left_operand'],quad['right_operand'])
@@ -199,7 +233,6 @@ class VirtualMachine():
                 self.parameters.clear()
                 IP = quad['result']
             elif quad['operator'] == 'ENDFunc':
-                # hacer salto con pila de contextos
                 self.mem.local_.reset_memory()
                 self.mem.temp_.reset_memory()
                 del self.mem.local_
@@ -211,4 +244,3 @@ class VirtualMachine():
                 break
             else:
                 IP+=1
-            # self.check_overflow()

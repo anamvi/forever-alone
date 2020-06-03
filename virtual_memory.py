@@ -1,5 +1,6 @@
 class VirtualMemorySegment:
     def __init__(self, dir):
+        # inicializa los arreglos y la dirección base recibida
         self.initial_dir = dir
         self.integers = []
         self.floats = []
@@ -7,13 +8,22 @@ class VirtualMemorySegment:
         self.bools = []
         self.pointers = []
 
-        # Offset for each data type
+        # Offset para cada tipo de dato
         self._BASE_INT = 0
         self._BASE_FLOAT = 2000
         self._BASE_STRING = 4000
         self._BASE_BOOL = 6000
         self._BASE_PTR = 8000
 
+    '''
+    Módulo de salida
+    Output: función que crea el formato de la memoria para mandarla al código intermedio.
+
+        -- in: -
+        -- out: lista de diccionarios con cada dirección de memoria y su valor
+
+    __str__: método de Python para poder imprimir el objeto en la consola.
+    '''
     def output(self):
         out = []
         for index, val in enumerate(self.integers):
@@ -38,30 +48,24 @@ class VirtualMemorySegment:
         output+= '\n        INTEGERS:'
         output+= '\n        -- start: ' + str(self.initial_dir+self._BASE_INT)
         output+= '\n        -- end: ' + str(self.initial_dir+self._BASE_INT+1999)
-        output+= '\n        -- current: ' + str(self.initial_dir+self._BASE_INT+len(self.integers))
-        output+= '\n        -- ' + str(self.integers)
         output+= '\n        FLOATS:'
         output+= '\n        -- start: ' + str(self.initial_dir+self._BASE_FLOAT)
         output+= '\n        -- end: ' + str(self.initial_dir+self._BASE_FLOAT+1999)
-        output+= '\n        -- current: ' + str(self.initial_dir+self._BASE_FLOAT+len(self.floats))
-        output+= '\n        -- ' + str(self.floats)
         output+= '\n        STRINGS:'
         output+= '\n        -- start: ' + str(self.initial_dir+self._BASE_STRING)
         output+= '\n        -- end: ' + str(self.initial_dir+self._BASE_STRING+1999)
-        output+= '\n        -- current: ' + str(self.initial_dir+self._BASE_STRING+len(self.strings))
-        output+= '\n        -- ' + str(self.strings)
         output+= '\n        BOOLS:'
         output+= '\n        -- start: ' + str(self.initial_dir+self._BASE_BOOL)
         output+= '\n        -- end: ' + str(self.initial_dir+self._BASE_BOOL+1999)
-        output+= '\n        -- current: ' + str(self.initial_dir+self._BASE_BOOL+len(self.bools))
-        output+= '\n        -- ' + str(self.bools)
         output+= '\n        POINTERS:'
         output+= '\n        -- start: ' + str(self.initial_dir+self._BASE_PTR)
         output+= '\n        -- end: ' + str(self.initial_dir+self._BASE_PTR+1999)
-        output+= '\n        -- current: ' + str(self.initial_dir+self._BASE_PTR+len(self.pointers))
-        output+= '\n        -- ' + str(self.pointers)
         output+= '\n\n'
         return output
+
+    '''
+    reset_memory : borrar el contenido de todos los arreglos de la memoria.
+    '''
 
     def reset_memory(self):
         self.integers.clear()
@@ -70,7 +74,14 @@ class VirtualMemorySegment:
         self.bools.clear()
         self.pointers.clear()
 
-    # -------------------------- ACCESS VALUES IN MEMORY --------------------------
+    '''
+    add_value: agregar un valor a la memoria dado el valor y el tipo de dato. Se hace append del dato a la lista y
+    calcula la dirección sumando (índice)+(dir base del tipo de dato)+(dir base del segmento de memoria)
+
+        -- in : valor y tipo de dato
+        -- out : dirección de memoria
+        -- uso : obtener dirección virtual en código intermedio
+    '''
     def add_value(self, value, type):
         if type == 'int':
             if len(self.integers) == 2000:
@@ -105,6 +116,14 @@ class VirtualMemorySegment:
         else:
             raise TypeError("Type not supported")
 
+    '''
+    get_value : función para obtener el valor al tener la dirección
+
+        -- in: dirección virtual
+        -- out: valor dentro de esa dirección
+        -- uso: verificar dimensiones
+    '''
+
     def get_value(self, dir):
         if self._BASE_INT <= dir-self.initial_dir < self._BASE_FLOAT:
             return self.integers[dir-self.initial_dir-self._BASE_INT]
@@ -117,34 +136,13 @@ class VirtualMemorySegment:
         elif self._BASE_PTR <= dir-self.initial_dir:
             return self.pointers[dir-self.initial_dir-self._BASE_PTR]
 
-    # def load_value(self, value, dir):
-    #     print('se agrego '+ str(value) + ' a ' + str(dir))
-    #     if self._BASE_INT <= dir-self.initial_dir < self._BASE_FLOAT:
-    #         if dir-self.initial_dir-self._BASE_INT >= len(self.integers):
-    #             self.integers.append(value)
-    #         else:
-    #             self.integers[dir-self.initial_dir-self._BASE_INT] = value
-    #     elif self._BASE_FLOAT <= dir-self.initial_dir < self._BASE_STRING:
-    #         if dir-self.initial_dir-self._BASE_FLOAT >= len(self.floats):
-    #             self.floats.append(value)
-    #         else:
-    #             self.floats[dir-self.initial_dir-self._BASE_FLOAT] = value
-    #     elif self._BASE_STRING <= dir-self.initial_dir < self._BASE_BOOL:
-    #         if dir-self.initial_dir-self._BASE_STRING >= len(self.strings):
-    #             self.strings.append(value)
-    #         else:
-    #             self.strings[dir-self.initial_dir-self._BASE_STRING] = value
-    #     elif self._BASE_BOOL <= dir-self.initial_dir < self._BASE_PTR:
-    #         if dir-self.initial_dir-self._BASE_BOOL >= len(self.bools):
-    #             self.bools.append(value)
-    #         else:
-    #             self.bools[dir-self.initial_dir-self._BASE_BOOL] = value
-    #     elif self._BASE_PTR <= dir-self.initial_dir:
-    #         if dir-self.initial_dir-self._BASE_PTR >= len(self.pointers):
-    #             self.pointers.append(value)
-    #         else:
-    #             self.pointers[dir-self.initial_dir-self._BASE_PTR] = value
+    '''
+    check_type : verificar el tipo de dato de una dirección.
 
+        -- in: dirección virtual
+        -- out: tipo de dato
+        -- uso: revisar tipo de dirección de retorno para asignarla a un temporal
+    '''
     def check_type(self, dir):
         if self._BASE_INT <= dir-self.initial_dir < self._BASE_FLOAT:
             return 'int'

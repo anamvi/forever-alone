@@ -3,14 +3,14 @@ from execution_memory import ExecutionMemorySegment
 
 class Memory:
     def __init__(self, mem_type):
-        # Declare initial directions of each memory segment.
-        # Global and Local have 8000 spaces each (2000 for each data type).
-        # Temporal and Constant adds 2000 extra for pointers.
+        # Declarar las direciones iniciales para cada segmento de memoria.
+        # Global y Local tienen 8000 espacios cada una (2000 por cada tipo de dato).
+        # Temporal y Constante agrega 2000 extra para pointers.
         self._BASE_GLOBAL = 1000
         self._BASE_LOCAL = 9000
         self._BASE_TEMP = 17000
         self._BASE_CONSTANT = 27000
-        # Create the four memory segments, depending on the type of memory
+        # Crear los cuatro segmentos de memoria, dependiendo en la etapa (ejecución o compilación)
         if mem_type == 'virtual':
             self.global_ = VirtualMemorySegment(self._BASE_GLOBAL)
             self.local_ = VirtualMemorySegment(self._BASE_LOCAL)
@@ -29,6 +29,12 @@ class Memory:
         output += '---------- CONSTANTS ---------- \n' + str(self.constant_)
         output+= '\n'
         return output
+
+    '''
+    Los métodos de la clase Memory, mandan llamar a los métodos locales de los segmentos de memoria, clasificando el qué
+    segmento revisar dependiendo de los rangos de direcciones.
+    
+    '''
 
     def get_value(self, dir):
         if self._BASE_GLOBAL <= dir < self._BASE_LOCAL:

@@ -11,7 +11,7 @@ funcion int fibonacci(int num);
 }
 
 principal() {
-  escribe('Escribe un número para sacar el número fibonacci correspondiente: ');
+  escribe('Escribe el número de términos de la serie fibonacci: ');
   lee(n);
   escribe("La serie de Fibonacci es: ","/endl");
   desde i=0 hasta n-1 hacer {

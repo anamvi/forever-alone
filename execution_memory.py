@@ -1,5 +1,6 @@
 class ExecutionMemorySegment:
     def __init__(self, dir, prev_size):
+        # se inicializan los diccionarios, dirección base y espacio utilizado en llamadas previas
         self.initial_dir = dir
         self.integers = {}
         self.floats = {}
@@ -8,7 +9,7 @@ class ExecutionMemorySegment:
         self.pointers = {}
         self.prev_size = prev_size
 
-        # Offset for each data type
+        # Offset para cada tipo de dato
         self._BASE_INT = 0
         self._BASE_FLOAT = 2000
         self._BASE_STRING = 4000
@@ -45,6 +46,9 @@ class ExecutionMemorySegment:
         output+= '\n\n'
         return output
 
+    '''
+    reset_memory : borrar el contenido de todos los arreglos de la memoria.
+    '''
     def reset_memory(self):
         self.integers.clear()
         self.floats.clear()
@@ -53,29 +57,14 @@ class ExecutionMemorySegment:
         self.pointers.clear()
 
     # -------------------------- ACCESS VALUES IN MEMORY --------------------------
-    # def add_value(self, value, type):
-    #     if type == 'int':
-    #         if value not in self.integers:
-    #             self.integers.append(value)
-    #         return self.integers.index(value)+self._BASE_INT+self.initial_dir
-    #     elif type == 'float':
-    #         if value not in self.floats:
-    #             self.floats.append(value)
-    #         return self.floats.index(value)+self._BASE_FLOAT+self.initial_dir
-    #     elif type == 'string':
-    #         if value not in self.strings:
-    #             self.strings.append(value)
-    #         return self.strings.index(value)+self._BASE_STRING+self.initial_dir
-    #     elif type == 'bool':
-    #         if value not in self.bools:
-    #             self.bools.append(value)
-    #         return self.bools.index(value)+self._BASE_BOOL+self.initial_dir
-    #     elif type == 'ptr':
-    #         if value not in self.pointers:
-    #             self.pointers.append(value)
-    #         return self.pointers.index(value)+self._BASE_PTR+self.initial_dir
-    #     else:
-    #         raise Exception("Type not supported")
+
+    '''
+    get_value : función para obtener el valor al tener la dirección
+
+        -- in: dirección virtual
+        -- out: valor dentro de esa dirección
+        -- uso: verificar que un registro que se está utilizado ya existe
+    '''
 
     def get_value(self, dir):
         if self._BASE_INT <= dir-self.initial_dir < self._BASE_FLOAT:
@@ -89,6 +78,14 @@ class ExecutionMemorySegment:
         elif self._BASE_PTR <= dir-self.initial_dir:
             return self.pointers.get(dir)
 
+    '''
+    load_value : agregar el valor de la operación en la dirección previamente especificada por el código intermedio
+
+        -- in: dirección virtual y valor
+        -- out: -
+        -- uso: asignar un valor a una variable o meter información de código intermedio a la memoria de ejecución
+    '''
+
     def load_value(self, value, dir):
         if self._BASE_INT <= dir-self.initial_dir < self._BASE_FLOAT:
             self.integers[dir] = value
@@ -100,6 +97,14 @@ class ExecutionMemorySegment:
             self.bools[dir] = value
         elif self._BASE_PTR <= dir-self.initial_dir:
             self.pointers[dir] = value
+
+    '''
+    check_type : verificar el tipo de dato de una dirección.
+
+        -- in: dirección virtual
+        -- out: tipo de dato
+        -- uso: revisar parámetros y manejar pointers.
+    '''
 
     def check_type(self, dir):
         if self._BASE_INT <= dir-self.initial_dir < self._BASE_FLOAT:

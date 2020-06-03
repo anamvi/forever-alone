@@ -344,7 +344,7 @@ def p_np_end_function_(p):
     global current_scope, current_type
     # check if function is non-void and should have a return value
     if str(current_type) != 'void' and not inter_code.does_return:
-        raise Exception('Function "'+str(current_scope)+'" should have a return value.')
+        raise Exception('ReturnError: Function "'+str(current_scope)+'" should have a return value.')
     # add amount of temps to the space needed for a function
     temps = inter_code.mem.temp_.count_content()
     inter_code.add_endfunc()
@@ -401,7 +401,6 @@ def p_np_llamada_void_(p):
     # if function call was made as a statement, and not as part of an operation, remove the result from the stack as it was a void function.
     inter_code.variable_stack.pop()
     inter_code.type_stack.pop()
-
 
 def p_np_quadruple_IO_(p):
     '''
@@ -482,10 +481,10 @@ def p_np_verify_dimensions_(p):
     # Verify if the variable has dimensions
     if size == 0:
         if p[-1] == '[':
-            raise Exception('Type mismatch: The variable ' + id + ' is not an array.')
+            raise Exception('TypeMismatch: The variable ' + id + ' is not an array.')
     else:
         if p[-1] != '[':
-            raise Exception('Type mismatch: The variable ' + id + ' is declared as an array.')
+            raise Exception('TypeMismatch: The variable ' + id + ' is declared as an array.')
         # add the virtual address as a constant in order to use it for quadruple operations
         initial_dir = inter_code.mem.constant_.add_value(int(id_dir),'int')
         # adds the address as a constant and the limit of the array to the variable stack, as well as the variable type.
@@ -499,7 +498,7 @@ def p_np_manage_array_(p):
     '''
     # check that the dimension provided is an integer
     if inter_code.type_stack[-1]!='int':
-        raise Exception('Type mismatch: array dimesions must be integers.')
+        raise Exception('TypeMismatch: array dimesions must be integers.')
     # create quadruples to verify array bounds and add the base direction to the index
     inter_code.add_verify_limits_quadruple()
     inter_code.add_array_base_direction_quadruple()
@@ -518,7 +517,7 @@ def p_np_verify_function_(p):
     func_to_call = p[-1]
     # verify that the function being called exists
     if not dir_func.function_exists(p[-1]):
-        raise Exception('Syntax error: function '+ func_to_call +' does not exist.')
+        raise Exception('SyntaxError: function '+ func_to_call +' does not exist.')
 
 def p_expresion_rep(p):
     '''
@@ -529,8 +528,8 @@ def p_expresion_rep(p):
 
 def p_expresion_rep_2(p):
     '''
-        expresion_rep_2 : expresion np_verify_parameters_ COMMA np_next_parameter_check_ expresion_rep_2
-        | expresion np_check np_verify_parameters_
+        expresion_rep_2 : expresion np_next_parameter_check_ np_verify_parameters_ COMMA expresion_rep_2
+        | expresion np_next_parameter_check_ np_verify_parameters_
     '''
 
 def p_np_verify_parameters_(p):
@@ -544,7 +543,7 @@ def p_np_verify_parameters_(p):
     if arg_type == dir_func.functions[func_to_call].parameters[inter_code.parameter_counter-1]:
         inter_code.add_parameter_quadruple(argument)
     else:
-        raise Exception('Type mismatch: Argument type does not match function parameter')
+        raise Exception('TypeMismatch: Argument type does not match function parameter')
 
 def p_np_next_parameter_check_(p):
     '''
@@ -564,7 +563,7 @@ def p_np_end_of_parameters_(p):
     global current_scope
     # Once the parameters given have ended, check that there are no more parameters expected.
     if len(dir_func.functions[func_to_call].parameters) >= inter_code.parameter_counter:
-        raise Exception('Number of arguments in call do not match parameters ('+str(len(dir_func.functions[func_to_call].parameters))+') vs ('+str(inter_code.parameter_counter)+').')
+        raise Exception('Number of arguments in call do not match parameters.')
 
 def p_np_create_era_(p):
     '''
@@ -645,7 +644,7 @@ def p_np_gotoF_(p):
     # if the condition is false, jump to another quadruple
     exp_type = inter_code.type_stack.pop()
     if exp_type != 'bool':
-        raise Exception('Type mismatch ', inter_code.variable_stack.pop()," ",exp_type )
+        raise Exception('TypeMismatch: condition must be boolean and obtained type ' + exp_type )
     else :
         inter_code.add_gotof_quadruple(None)
 
@@ -724,7 +723,7 @@ def p_np_quadruple_for_(p):
         inter_code.operator_stack.append("<=")
         inter_code.add_operation_quadruple()
     else:
-        raise Exception('ERROR type mismatch. Solo se pueden usar enteros en un ciclo no condicional.')
+        raise Exception('TypeMismatch: Only values of type int are supported in a non-conditional cycle.')
 
 def p_np_end_for_actions(p):
     '''
@@ -753,7 +752,7 @@ def p_np_quadruple_return_(p):
     func_addr = dir_func.functions['global'].variables[current_scope].dir
     # throws an error if the function was not supposed to have a return value
     if func_addr is None:
-        raise Exception('Type mismatch: Void function cannot have a return value.')
+        raise Exception('ReturnError: Void function cannot have a return value.')
     inter_code.variable_stack.append(func_addr)
     inter_code.type_stack.append(current_type)
     inter_code.add_return_quadruple()
@@ -766,7 +765,7 @@ def p_np_quadruple_empty_return_(p):
     func_addr = dir_func.functions['global'].variables[current_scope].dir
     # if the return is empty, check if it's a void function and throw an error if it was supposed to have a return
     if func_addr is not None:
-        raise Exception('Type mismatch: non-void function has to have a return value.')
+        raise Exception('ReturnError: non-void function has to have a return value.')
     inter_code.add_empty_return_quadruple()
 
 def p_expresion(p):
@@ -811,8 +810,6 @@ def p_np_quadruple_compare_(p):
     if inter_code.operator_stack!= []:
         if inter_code.operator_stack[len(inter_code.operator_stack)-1] in ['<', '>', '>=', '<=','==', '!=']:
             inter_code.add_operation_quadruple()
-        else:
-            raise Exception('tronando como palomitas')
 
 def p_comp_sym(p):
     '''
@@ -904,13 +901,11 @@ def p_np_remove_false_bottom_(p):
         np_remove_false_bottom_ :
     '''
     fb = inter_code.operator_stack.pop()
-    if fb != '(':
-        raise Exception('el false bottom no jalo')
 
 def p_const(p):
     '''
         const : CTE_INT np_push_const_int_
-        | letrero
+        | CTE_STR np_push_const_string_
         | CTE_FLOAT np_push_const_float_
     '''
 
@@ -940,21 +935,10 @@ def p_np_push_const_string_(p):
     inter_code.variable_stack.append(var)
     inter_code.type_stack.append('string')
 
-def p_letrero(p):
-    '''
-        letrero : CTE_STR np_push_const_string_
-    '''
-
 def p_empty(p):
     '''
         empty :
     '''
-
-def p_np_check(p):
-    '''
-        np_check :
-    '''
-    # print('BEEP BEEP I AM HERE I AM CHECK')
 
 def p_error(p):
    print("Syntax error", p)

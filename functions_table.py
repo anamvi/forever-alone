@@ -1,3 +1,9 @@
+'''
+    Módulo de directorio de funciones:
+    Contiene la clase variable, function y FunctionsTable, los cuales se contienen el uno en el otro
+    para crear el directorio completo
+'''
+
 class Variable:
     def __init__(self, name, type, dir):
         self.name = name
@@ -23,7 +29,7 @@ class Function:
 
     def add_variable(self, name, type, dir):
         if name in self.variables:
-            raise Exception("La variable '"+name+"' ya existe en este contexto.")
+            raise Exception("NameError: Variable '"+name+"' already exists in this context.")
         self.variables[name] = Variable(name, type, dir)
         self.increment_space('local')
         # self.space_needed += 1
@@ -57,7 +63,7 @@ class FunctionsTable:
 
     def add_function(self, name, type, parameters):
         if name in self.functions:
-            raise Exception("La función ya existe.")
+            raise Exception("NameError: Function '"+name+"' already exists.")
         else:
             self.functions[name] = Function(name, type, parameters)
 

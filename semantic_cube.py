@@ -224,8 +224,9 @@ class SemanticCube:
         for i in self.cube:
             output +=  i + " : " + "\n"
             for j in self.cube[i]:
-                output += "-----> " + j + "\n"
+                output += "-----> " + str(j) + "\n"
                 for k in self.cube[i][j]:
-                    output += "             " +j +i+  k + " = " + self.cube[i][j][k] + "\n"
+                    if self.cube[i][j][k] != 'error':
+                        output += "             " +str(j) +" "+str(i)+" "+str(k) + " = " + self.cube[i][j][k] + "\n"
             output += "\n"
         return output
