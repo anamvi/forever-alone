@@ -1,3 +1,9 @@
+'''
+Cubo Semántico:
+Describe la relacion entre operadores y tipos de datos. Se utiliza para verificar, según la operación que se realiza,
+si los tipos de datos son compatibles y cuál es el tipo de dato de su resultado.
+'''
+
 class SemanticCube:
     def __init__(self):
         comparison_ops = ['>', '<', '>=', '<=', '==', '!=']
