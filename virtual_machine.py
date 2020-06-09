@@ -222,23 +222,32 @@ class VirtualMachine():
                 self.parameters.append(self.mem.get_value(left))
                 IP+=1
             elif quad['operator'] == 'GOSUB':
+                # guarda el instruction pointer (cont) en la pila de contextos
                 self.context_stack.append(IP+1)
+                # guarda las memorias local y temporal en las pilas de memorias
                 self.local_memory_stack.append(copy.copy(self.mem.local_))
                 self.temp_memory_stack.append(copy.copy(self.mem.temp_))
                 del self.mem.local_
                 del self.mem.temp_
+                # crea un nuevo segmento de memoria local y temporal y los asigna a la variable que se está utilizando
                 self.mem.local_ = ExecutionMemorySegment(self.mem._BASE_LOCAL, self.local_size)
                 self.mem.temp_ = ExecutionMemorySegment(self.mem._BASE_TEMP, self.temp_size)
+                # asigna los parámetros que se habían leido con el cuádruplo PARAM, a las direcciones de memoria correspondientes a los tipos
                 self.assign_parameters(self.inter_code['DirFunc'][self.current_func]['parameters'])
                 self.parameters.clear()
                 IP = quad['result']
             elif quad['operator'] == 'ENDFunc':
+                # se borran las memorias temporal y local
                 self.mem.local_.reset_memory()
                 self.mem.temp_.reset_memory()
                 del self.mem.local_
                 del self.mem.temp_
+                # se hace un pop a la pila de memorias y se asignan a la variable que se está utilizando
                 self.mem.local_ = self.local_memory_stack.pop()
                 self.mem.temp_ = self.temp_memory_stack.pop()
+                self.local_size = self.mem.local_.prev_size
+                self.temp_size = self.mem.temp_.prev_size
+                # se cambia el IP al guardado en la pila de contextos
                 IP = self.context_stack.pop()
             elif quad['operator'] == 'ENDProg':
                 break
